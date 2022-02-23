@@ -2,6 +2,7 @@
 #include "Mage.h"
 
 #include <thread>
+#include <chrono>
 
 // Singletons
 #include "InputManager.h"
@@ -10,8 +11,12 @@
 #include "Renderer.h"
 #include "Timer.h"
 
-#include <chrono>
+// ImGui
+#include "imgui.h"
+#include "backends/imgui_impl_opengl2.h"
+#include "backends/imgui_impl_sdl.h"
 
+// Scenegraph
 #include "Scene.h"
 #include "GameObject.h"
 
@@ -19,6 +24,7 @@
 #include "RendererComponent.h"
 #include "TextComponent.h"
 #include "FpsCounterComponent.h"
+#include "TrashTheCache.h"
 
 using namespace std;
 
@@ -95,10 +101,16 @@ void Mage::LoadGame() const
 	rc = std::make_shared<RendererComponent>();
 	go->AddComponent(rc);
 	font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 35);
-	tc = std::make_shared<TextComponent>("FPS: -", font, SDL_Color{ 210, 96, 63 }, false);
+	tc = std::make_shared<TextComponent>("FPS: 0", font, SDL_Color{ 210, 96, 63 }, false);
 	go->AddComponent(tc);
 	auto fc = std::make_shared<FpsCounterComponent>();
 	go->AddComponent(fc);
+	scene.Add(go);
+
+	// Cache trasher
+	go = std::make_shared<GameObject>();
+	auto ttc = std::make_shared<TrashTheCache>();
+	go->AddComponent(ttc);
 	scene.Add(go);
 }
 
@@ -108,6 +120,11 @@ void Mage::Cleanup()
 	SDL_DestroyWindow(m_Window);
 	m_Window = nullptr;
 	SDL_Quit();
+}
+
+inline void Update()
+{
+	
 }
 
 void Mage::Run()
@@ -136,6 +153,7 @@ void Mage::Run()
 			// Time calculations
 			const auto currentTime = std::chrono::high_resolution_clock::now();
 			float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+			timer.SetDeltaTime(deltaTime);
 			lastTime = currentTime;
 			lag += deltaTime;
 
@@ -143,8 +161,18 @@ void Mage::Run()
 			quit = !input.ProcessInput();
 
 			// Update
-			timer.SetDeltaTime(deltaTime);
-			sceneManager.Update();
+		    {
+			    // Prepare ImGui
+				ImGui_ImplOpenGL2_NewFrame();
+				ImGui_ImplSDL2_NewFrame(m_Window);
+				ImGui::NewFrame();
+
+				// Update
+				sceneManager.Update();
+
+				// Render ImGui
+				ImGui::Render();
+			}
 
 			while (lag >= m_FixedTimeStep)
 			{

@@ -32,7 +32,6 @@ void Renderer::Init(SDL_Window * window)
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
 	ImGui_ImplSDL2_InitForOpenGL(window, SDL_GL_GetCurrentContext());
 	ImGui_ImplOpenGL2_Init();
@@ -40,22 +39,15 @@ void Renderer::Init(SDL_Window * window)
 
 void Renderer::Render() const
 {
-	// Prepare
+	// Clear last frame
 	const auto& color = GetBackgroundColor();
 	SDL_SetRenderDrawColor(m_Renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderClear(m_Renderer);
 
-	// Render scene
+	// Render everything
 	SceneManager::GetInstance().Render();
 
 	// Render ImGui
-	ImGui_ImplOpenGL2_NewFrame();
-	ImGui_ImplSDL2_NewFrame(m_Window);
-	ImGui::NewFrame();
-
-	//ImGui::ShowDemoWindow();
-
-	ImGui::Render();
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
 	// Display

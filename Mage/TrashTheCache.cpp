@@ -34,7 +34,7 @@ void TrashTheCache::TrashWithInts()
             }
 
             average /= m_IntSamples;
-            m_IntTimes.push_back(average);
+            m_IntTimes.push_back(float(average));
         }
     }
 }
@@ -44,13 +44,13 @@ void TrashTheCache::DisplayIntsGraph()
     std::vector<float> floatStepSizes;
     for (int i : m_StepSizes)
     {
-        floatStepSizes.push_back(i);
+        floatStepSizes.push_back(float(i));
     }
 
     ImGui::PlotConfig conf;
     conf.values.xs = floatStepSizes.data(); // this line is optional
     conf.values.ys = m_IntTimes.data();
-    conf.values.count = m_StepSizes.size();
+    conf.values.count = int(m_StepSizes.size());
     conf.values.color = ImColor(255, 128, 0);
     conf.scale.min = 0;
     conf.scale.max = *std::max_element(m_IntTimes.begin(), m_IntTimes.end());
@@ -93,7 +93,7 @@ void TrashTheCache::TrashWithObjects()
             }
 
             average /= m_ObjectSamples;
-            m_ObjectTimes.push_back(average);
+            m_ObjectTimes.push_back(float(average));
         }
     }
 }
@@ -103,13 +103,13 @@ void TrashTheCache::DisplayObjectsGraph()
     std::vector<float> floatStepSizes;
     for (int i : m_StepSizes)
     {
-        floatStepSizes.push_back(i);
+        floatStepSizes.push_back(float(i));
     }
 
     ImGui::PlotConfig conf;
     conf.values.xs = floatStepSizes.data(); // this line is optional
     conf.values.ys = m_ObjectTimes.data();
-    conf.values.count = m_StepSizes.size();
+    conf.values.count = int(m_StepSizes.size());
     conf.values.color = ImColor(0, 255, 255);
     conf.scale.min = 0;
     conf.scale.max = *std::max_element(m_ObjectTimes.begin(), m_ObjectTimes.end());
@@ -150,7 +150,7 @@ void TrashTheCache::TrashWithAltObjects()
         }
 
         average /= m_AltObjectSamples;
-        m_AltObjectTimes.push_back(average);
+        m_AltObjectTimes.push_back(float(average));
     }
 }
 
@@ -159,13 +159,13 @@ void TrashTheCache::DisplayAltObjectsGraph()
     std::vector<float> floatStepSizes;
     for (int i : m_StepSizes)
     {
-        floatStepSizes.push_back(i);
+        floatStepSizes.push_back(float(i));
     }
 
     ImGui::PlotConfig conf;
     conf.values.xs = floatStepSizes.data(); // this line is optional
     conf.values.ys = m_AltObjectTimes.data();
-    conf.values.count = m_StepSizes.size();
+    conf.values.count = int(m_StepSizes.size());
     conf.values.color = ImColor(0, 255, 128);
     conf.scale.min = 0;
     conf.scale.max = *std::max_element(m_AltObjectTimes.begin(), m_AltObjectTimes.end());
@@ -184,7 +184,7 @@ void TrashTheCache::DisplayCombinedObjectsGraph()
     std::vector<float> floatStepSizes;
     for (int i : m_StepSizes)
     {
-        floatStepSizes.push_back(i);
+        floatStepSizes.push_back(float(i));
     }
 
     const float* combinedTimes[] = { m_AltObjectTimes.data(), m_ObjectTimes.data() };
@@ -194,7 +194,7 @@ void TrashTheCache::DisplayCombinedObjectsGraph()
     conf.values.xs = floatStepSizes.data(); // this line is optional
     conf.values.ys_list = combinedTimes;
     conf.values.ys_count = 2;
-    conf.values.count = m_StepSizes.size();
+    conf.values.count = int(m_StepSizes.size());
     conf.values.colors = colors;
     conf.scale.min = 0;
     conf.scale.max = *std::max_element(m_ObjectTimes.begin(), m_ObjectTimes.end());

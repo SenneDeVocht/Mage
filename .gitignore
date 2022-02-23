@@ -3,9 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-# Files specifically for Mage
-3rdParty/
-
 # User-specific files
 *.rsuser
 *.suo
@@ -399,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+#want entire 3rdparty folder
+!3rdParty/**/x64
+!3rdParty/**/x86

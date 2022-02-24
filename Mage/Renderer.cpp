@@ -29,12 +29,6 @@ void Renderer::Init(SDL_Window * window)
 	{
 		throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
 	}
-
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplSDL2_InitForOpenGL(window, SDL_GL_GetCurrentContext());
-	ImGui_ImplOpenGL2_Init();
 }
 
 void Renderer::Render() const
@@ -52,14 +46,17 @@ void Renderer::Render() const
 
 	// Display
 	SDL_RenderPresent(m_Renderer);
+
+	// Additional ImGui viewports
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
 }
 
 void Renderer::Destroy()
 {
-	ImGui_ImplOpenGL2_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-
 	if (m_Renderer != nullptr)
 	{
 		SDL_DestroyRenderer(m_Renderer);

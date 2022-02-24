@@ -61,6 +61,16 @@ void Mage::Initialize()
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 
 	Renderer::GetInstance().Init(m_Window);
+
+	// imgui
+    IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ImGui::StyleColorsDark();
+	ImGui_ImplSDL2_InitForOpenGL(m_Window, SDL_GL_GetCurrentContext());
+	ImGui_ImplOpenGL2_Init();
 }
 
 /**
@@ -116,6 +126,10 @@ void Mage::LoadGame() const
 
 void Mage::Cleanup()
 {
+	ImGui_ImplOpenGL2_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(m_Window);
 	m_Window = nullptr;

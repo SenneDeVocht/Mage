@@ -8,10 +8,22 @@ Scene::Scene(const std::string& name) : m_Name(name) {}
 
 Scene::~Scene() = default;
 
-void Scene::Add(const std::shared_ptr<SceneObject>& object)
+void Scene::Add(const std::shared_ptr<GameObject>& object)
 {
 	m_Objects.push_back(object);
 }
+
+std::vector<GameObject*> Scene::GetObjects() const
+{
+	std::vector<GameObject*> vecRaw;
+
+	vecRaw.reserve(m_Objects.size());
+	std::transform(m_Objects.cbegin(), m_Objects.cend(), std::back_inserter(vecRaw),
+		[](auto& ptr) { return ptr.get(); });
+
+	return vecRaw;
+}
+
 
 void Scene::Update()
 {

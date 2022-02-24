@@ -2,7 +2,8 @@
 #include "GameObject.h"
 #include "Component.h"
 
-GameObject::GameObject()
+GameObject::GameObject(const std::string& name)
+	: m_Name{ name }
 {
 	// Init Transform
 	m_pTransform->SetGameObject(this);
@@ -63,4 +64,15 @@ void GameObject::AddChild(std::shared_ptr<GameObject> child)
 {
 	m_pChildren.push_back(child);
 	child->SetParent(this);
+}
+
+std::vector<GameObject*> GameObject::GetChildren() const
+{
+	std::vector<GameObject*> vecRaw;
+
+	vecRaw.reserve(m_pChildren.size());
+	std::transform(m_pChildren.cbegin(), m_pChildren.cend(), std::back_inserter(vecRaw),
+		[](auto& ptr) { return ptr.get(); });
+
+	return vecRaw;
 }

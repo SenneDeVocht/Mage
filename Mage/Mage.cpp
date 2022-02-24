@@ -81,14 +81,14 @@ void Mage::LoadGame() const
 	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
 
 	// Background
-	auto go = std::make_shared<GameObject>();
+	auto go = std::make_shared<GameObject>("Background");
 	auto rc = std::make_shared<RendererComponent>();
 	rc->SetTexture("background.jpg");
 	go->AddComponent(rc);
 	scene.Add(go);
 
 	// Logo
-	go = std::make_shared<GameObject>();
+	go = std::make_shared<GameObject>("Logo");
 	rc = std::make_shared<RendererComponent>();
 	rc->SetTexture("logo.png");
 	go->AddComponent(rc);
@@ -97,7 +97,7 @@ void Mage::LoadGame() const
 
 	// Text
 	auto font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 50);
-	go = std::make_shared<GameObject>();
+	go = std::make_shared<GameObject>("SubTitle");
 	go->GetTransform()->SetPosition(128, 150, 0);
 	rc = std::make_shared<RendererComponent>();
 	go->AddComponent(rc);
@@ -106,7 +106,7 @@ void Mage::LoadGame() const
 	scene.Add(go);
 
 	// FPS Counter
-	go = std::make_shared<GameObject>();
+	go = std::make_shared<GameObject>("FpsCounter");
 	go->GetTransform()->SetPosition(5, 0, 0);
 	rc = std::make_shared<RendererComponent>();
 	go->AddComponent(rc);
@@ -117,11 +117,15 @@ void Mage::LoadGame() const
 	go->AddComponent(fc);
 	scene.Add(go);
 
+	auto co = std::make_shared<GameObject>("FpsCounterChild");
+	go->AddChild(co);
+
+
 	// Cache trasher
-	go = std::make_shared<GameObject>();
-	auto ttc = std::make_shared<TrashTheCache>();
-	go->AddComponent(ttc);
-	scene.Add(go);
+	//go = std::make_shared<GameObject>("CacheTrasher");
+	//auto ttc = std::make_shared<TrashTheCache>();
+	//go->AddComponent(ttc);
+	//scene.Add(go);
 }
 
 void Mage::Cleanup()

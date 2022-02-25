@@ -41,6 +41,21 @@ void Scene::FixedUpdate()
 	}
 }
 
+void Scene::DestroyMarkedObjects()
+{
+	// Destroy marked root objects
+	const auto pos = std::remove_if(m_Objects.begin(), m_Objects.end(),
+		[](const auto& o) { return o->IsMarkedForDestroy(); });
+
+	m_Objects.erase(pos, m_Objects.end());
+
+	// Call on remaining objects
+	for (auto& object : m_Objects)
+	{
+		object->DestroyMarkedObjects();
+	}
+}
+
 void Scene::Render() const
 {
 	for (const auto& object : m_Objects)

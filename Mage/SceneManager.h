@@ -11,6 +11,7 @@ public:
 
 	void Update();
 	void FixedUpdate();
+	void DestroyMarkedObjects();
 	void Render();
 
 private:

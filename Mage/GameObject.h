@@ -18,6 +18,7 @@ public:
 
 	void Update();
 	void FixedUpdate();
+	void DestroyMarkedObjects();
 	void Render() const;
 
 	// Name
@@ -39,31 +40,38 @@ public:
 	void SetParent(GameObject* pParentGameObject) { m_pParentGameObject = pParentGameObject; }
 	GameObject* GetParent() const { return m_pParentGameObject; }
 
+	// Destruction
+	void Destroy() { m_IsMarkedForDestroy = true; }
+	bool IsMarkedForDestroy() const { return m_IsMarkedForDestroy; }
+
 private:
 	// Name
 	std::string m_Name;
 
 	// Transform and other components
 	std::shared_ptr<Transform> m_pTransform = std::make_shared<Transform>();
-	std::vector<std::shared_ptr<Component>> m_pComponents;
+	std::vector<std::shared_ptr<Component>> m_Components;
 
 	// Children - Parent
-	std::vector<std::shared_ptr<GameObject>> m_pChildren;
+	std::vector<std::shared_ptr<GameObject>> m_Children;
 	GameObject* m_pParentGameObject = nullptr;
+
+	// Destruction
+	bool m_IsMarkedForDestroy = false;
 };
 
 template<typename typeToFind>
 typeToFind* GameObject::GetComponentByType() const
 {
 	auto it = std::find_if(
-		m_pComponents.begin(),
-		m_pComponents.end(),
+		m_Components.begin(),
+		m_Components.end(),
 		[](std::shared_ptr<Component> component)
 		{
 			return typeid(typeToFind) == typeid(*component);
 		});
 
-	if (it == m_pComponents.end())
+	if (it == m_Components.end())
 		return nullptr;
 
 	return dynamic_cast<typeToFind*>((*it).get());

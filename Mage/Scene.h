@@ -10,6 +10,7 @@ public:
 
 	void Update();
 	void FixedUpdate();
+	void DestroyMarkedObjects();
 	void Render() const;
 
 	std::vector<GameObject*> GetObjects() const;

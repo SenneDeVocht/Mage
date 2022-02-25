@@ -117,9 +117,6 @@ void Mage::LoadGame() const
 	go->AddComponent(fc);
 	scene.Add(go);
 
-	auto co = std::make_shared<GameObject>("FpsCounterChild");
-	go->AddChild(co);
-
 
 	// Cache trasher
 	//go = std::make_shared<GameObject>("CacheTrasher");
@@ -192,12 +189,17 @@ void Mage::Run()
 				ImGui::Render();
 			}
 
+			// Fixed Update
 			while (lag >= m_FixedTimeStep)
 			{
 				sceneManager.FixedUpdate();
 				lag -= m_FixedTimeStep;
 			}
 
+			// Destroy Objects
+			sceneManager.DestroyMarkedObjects();
+
+			// Render
 			renderer.Render();
 		}
 

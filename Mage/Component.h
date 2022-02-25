@@ -19,6 +19,10 @@ public:
 	void SetGameObject(GameObject* pGameObject) { m_pGameObject = pGameObject; }
 	GameObject* GetGameObject() const { return m_pGameObject; }
 
+	void Destroy() { m_IsMarkedForDestroy = true; }
+	bool IsMarkedForDestroy() const { return m_IsMarkedForDestroy; }
+
 protected:
-	GameObject* m_pGameObject{ };
+	GameObject* m_pGameObject = nullptr;
+	bool m_IsMarkedForDestroy = false;
 };

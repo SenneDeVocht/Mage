@@ -43,6 +43,7 @@ void PrintSDLVersion()
 
 void Mage::Initialize()
 {
+	// SDL
 	PrintSDLVersion();
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -65,10 +66,13 @@ void Mage::Initialize()
 	// imgui
     IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
 	ImGui::StyleColorsDark();
+
 	ImGui_ImplSDL2_InitForOpenGL(m_Window, SDL_GL_GetCurrentContext());
 	ImGui_ImplOpenGL2_Init();
 }
@@ -127,19 +131,16 @@ void Mage::LoadGame() const
 
 void Mage::Cleanup()
 {
+	// Stop ImGui
 	ImGui_ImplOpenGL2_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
+	// Stop SDL
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(m_Window);
 	m_Window = nullptr;
 	SDL_Quit();
-}
-
-inline void Update()
-{
-	
 }
 
 void Mage::Run()

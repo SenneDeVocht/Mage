@@ -400,3 +400,4 @@ FodyWeavers.xsd
 #want entire 3rdparty folder
 !3rdParty/**/x64
 !3rdParty/**/x86
+!3rdParty/**/Win32

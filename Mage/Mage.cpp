@@ -21,6 +21,7 @@
 #include "GameObject.h"
 
 // Components
+#include "Transform.h"
 #include "RendererComponent.h"
 #include "TextComponent.h"
 #include "FpsCounterComponent.h"
@@ -85,48 +86,34 @@ void Mage::LoadGame() const
 	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
 
 	// Background
-	auto go = std::make_unique<GameObject>("Background");
-	auto rc = std::make_unique<RendererComponent>();
-	rc->SetTexture("background.jpg");
-	go->AddComponent(std::move(rc));
-	scene.Add(std::move(go));
+	auto go = scene.CreateObject("Background");
+	go->CreateComponent<RendererComponent>("background.jpg");
 
 	// Logo
-	go = std::make_unique<GameObject>("Logo");
-	rc = std::make_unique<RendererComponent>();
-	rc->SetTexture("logo.png");
-	go->AddComponent(std::move(rc));
+	go = scene.CreateObject("Logo");
 	go->GetTransform()->SetPosition(204, 75, 0);
-	scene.Add(std::move(go));
+	go->CreateComponent<RendererComponent>("logo.png");
 
 	// Text
-	auto font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 50);
-	go = std::make_unique<GameObject>("SubTitle");
+	go = scene.CreateObject("SubTitle");
 	go->GetTransform()->SetPosition(128, 150, 0);
-	rc = std::make_unique<RendererComponent>();
-	go->AddComponent(std::move(rc));
-	auto tc = std::make_unique<TextComponent>("Made by Senne De Vocht", font, SDL_Color{ 240, 240, 240 }, false);
-	go->AddComponent(std::move(tc));
-	scene.Add(std::move(go));
+
+	auto font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 50);
+	go->CreateComponent<TextComponent>("Made by Senne De Vocht", font, SDL_Color{ 240, 240, 240 }, false);
+    go->CreateComponent<RendererComponent>();
 
 	// FPS Counter
-	go = std::make_unique<GameObject>("FpsCounter");
+	go = scene.CreateObject("FpsCounter");
 	go->GetTransform()->SetPosition(5, 0, 0);
-	rc = std::make_unique<RendererComponent>();
-	go->AddComponent(std::move(rc));
-	font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 35);
-	tc = std::make_unique<TextComponent>("FPS: 0", font, SDL_Color{ 210, 96, 63 }, false);
-	go->AddComponent(std::move(tc));
-	auto fc = std::make_unique<FpsCounterComponent>();
-	go->AddComponent(std::move(fc));
-	scene.Add(std::move(go));
 
+	font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 35);
+	go->CreateComponent<TextComponent>("FPS: 0", font, SDL_Color{ 210, 96, 63 }, false);
+	go->CreateComponent<FpsCounterComponent>();
+	go->CreateComponent<RendererComponent>();
 
 	// Cache trasher
-	//go = std::make_shared<GameObject>("CacheTrasher");
-	//auto ttc = std::make_shared<TrashTheCache>();
-	//go->AddComponent(ttc);
-	//scene.Add(go);
+	/*go = scene.CreateObject("CacheTrasher");
+	go->CreateComponent<TrashTheCache>();*/
 }
 
 void Mage::Cleanup()

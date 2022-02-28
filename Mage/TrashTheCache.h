@@ -2,9 +2,10 @@
 #include "Component.h"
 class TrashTheCache final : public Component
 {
-public:
-	explicit TrashTheCache() = default;
+	template<typename componentType, typename... argTypes>
+	friend componentType* GameObject::CreateComponent(argTypes&&... args);
 
+public:
 	~TrashTheCache() = default;
 	TrashTheCache(const TrashTheCache& other) = delete;
 	TrashTheCache(TrashTheCache&& other) = delete;
@@ -16,6 +17,8 @@ public:
 	void Render() const override {};
 
 private:
+	explicit TrashTheCache() = default;
+
 	struct Transform
 	{
 		float matrix[16]

@@ -6,13 +6,12 @@ class Scene
 {
 	friend Scene& SceneManager::CreateScene(const std::string& name);
 public:
-	void Add(std::unique_ptr<GameObject> object);
-
 	void Update();
 	void FixedUpdate();
 	void DestroyMarkedObjects();
 	void Render() const;
 
+	GameObject* CreateObject(const std::string& name);
 	std::vector<GameObject*> GetObjects() const;
 
 	~Scene();

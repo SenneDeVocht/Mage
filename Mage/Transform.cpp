@@ -11,7 +11,7 @@ void Transform::SetPosition(const float x, const float y, const float z)
 
 glm::vec3 Transform::GetWorldPosition() const
 {
-	auto gameObjectParent = m_pGameObject->GetParent();
+	const auto gameObjectParent = m_pGameObject->GetParent();
 
 	// No parent -> root object
 	if (!gameObjectParent)

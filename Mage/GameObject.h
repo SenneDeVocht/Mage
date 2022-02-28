@@ -1,65 +1,82 @@
 #pragma once
-#include "Transform.h"
+
 #include <algorithm>
 #include <typeinfo>
-#include "Component.h"
+#include "Scene.h"
+
+class Component;
+class Transform;
 
 class GameObject final
 {
+	friend GameObject* Scene::CreateObject(const std::string& name);
+
 public:
-	GameObject(const std::string& name);
-	~GameObject() = default;
+	~GameObject();
 
 	GameObject(const GameObject& other) = delete;
 	GameObject(GameObject&& other) = delete;
 	GameObject& operator=(const GameObject& other) = delete;
 	GameObject& operator=(GameObject&& other) = delete;
-
-
+	
 	void Update();
 	void FixedUpdate();
 	void DestroyMarkedObjects();
 	void Render() const;
 
 	// Name
-	const std::string& GetName() const { return m_Name; }
-	void SetName(const std::string& name) { m_Name = name; }
+	const std::string& GetName() const;
+	void SetName(const std::string& name);
 
 	// Transform
-	Transform* GetTransform() const { return m_pTransform.get(); }
+	Transform* GetTransform() const;
 
 	// Components
-	void AddComponent(std::unique_ptr<Component> component);
+	template<typename componentType, typename... argTypes>
+	componentType* CreateComponent(argTypes&&... args);
 
 	template<typename typeToFind>
 	typeToFind* GetComponentByType() const;
 
 	// Children - Parent
-	void AddChild(std::unique_ptr<GameObject> child);
+	GameObject* CreateChildObject(const std::string& name);
 	std::vector<GameObject*> GetChildren() const;
-
-	void SetParent(GameObject* pParentGameObject) { m_pParentGameObject = pParentGameObject; }
-	GameObject* GetParent() const { return m_pParentGameObject; }
+	GameObject* GetParent() const;
 
 	// Destruction
-	void Destroy() { m_IsMarkedForDestroy = true; }
-	bool IsMarkedForDestroy() const { return m_IsMarkedForDestroy; }
+	void Destroy();
+	bool IsMarkedForDestroy() const;
 
 private:
-	// Name
+	GameObject(const std::string& name, GameObject* parent);
+	
 	std::string m_Name;
-
-	// Transform and other components
-	std::unique_ptr<Transform> m_pTransform = std::make_unique<Transform>();
+	
+	Transform* m_pTransform;
 	std::vector<std::unique_ptr<Component>> m_Components;
-
-	// Children - Parent
+	
 	std::vector<std::unique_ptr<GameObject>> m_Children;
 	GameObject* m_pParentGameObject = nullptr;
-
-	// Destruction
+	
 	bool m_IsMarkedForDestroy = false;
 };
+
+template<typename componentType, typename... argTypes>
+componentType* GameObject::CreateComponent(argTypes&&... args)
+{
+	// Can't create more than 1 transform
+	if (typeid(componentType) == typeid(Transform) && GetComponentByType<Transform>() != nullptr)
+		return nullptr;
+
+	// Create component and add it
+	auto component = std::unique_ptr<componentType>(new componentType(args...));
+	component->SetGameObject(this);
+    const auto pComponent = component.get();
+	
+	m_Components.push_back(std::move(component));
+
+	return pComponent;
+}
 
 template<typename typeToFind>
 typeToFind* GameObject::GetComponentByType() const

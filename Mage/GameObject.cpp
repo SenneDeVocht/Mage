@@ -1,13 +1,20 @@
 #include "MagePCH.h"
 #include "GameObject.h"
 #include "Component.h"
+#include "Transform.h"
 
-GameObject::GameObject(const std::string& name)
+GameObject::GameObject(const std::string& name, GameObject* parent)
 	: m_Name{ name }
+    , m_pTransform{ CreateComponent<Transform>() }
+    , m_pParentGameObject{ parent }
 {
-	// Init Transform
-	m_pTransform->SetGameObject(this);
 }
+
+// this is necessary to use unique pointers of incomplete types
+GameObject::~GameObject()
+{
+}
+
 
 void GameObject::Update()
 {
@@ -75,16 +82,29 @@ void GameObject::Render() const
 	}
 }
 
-void GameObject::AddComponent(std::unique_ptr<Component> component)
+const std::string& GameObject::GetName() const
 {
-	component->SetGameObject(this);
-	m_Components.push_back(std::move(component));
+    return m_Name;
 }
 
-void GameObject::AddChild(std::unique_ptr<GameObject> child)
+void GameObject::SetName(const std::string& name)
 {
-	child->SetParent(this);
+    m_Name = name;
+}
+
+Transform* GameObject::GetTransform() const
+{
+    return m_pTransform;
+}
+
+GameObject* GameObject::CreateChildObject(const std::string& name)
+{
+	auto child = std::unique_ptr<GameObject>(new GameObject(name, this));
+	const auto pChild = child.get();
+
 	m_Children.push_back(std::move(child));
+
+	return pChild;
 }
 
 std::vector<GameObject*> GameObject::GetChildren() const
@@ -96,4 +116,19 @@ std::vector<GameObject*> GameObject::GetChildren() const
 		[](auto& ptr) { return ptr.get(); });
 
 	return vecRaw;
+}
+
+GameObject* GameObject::GetParent() const
+{
+	return m_pParentGameObject;
+}
+
+void GameObject::Destroy()
+{
+    m_IsMarkedForDestroy = true;
+}
+
+bool GameObject::IsMarkedForDestroy() const
+{
+    return m_IsMarkedForDestroy;
 }

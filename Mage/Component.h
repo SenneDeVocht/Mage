@@ -1,11 +1,13 @@
 #pragma once
 
-class GameObject;
+#include "GameObject.h"
 
 class Component
 {
+	template<typename componentType, typename... argTypes>
+	friend componentType* GameObject::CreateComponent(argTypes&&... args);
+
 public:
-	explicit Component() = default;
 	virtual ~Component() = default;
 	Component(const Component & other) = delete;
 	Component(Component && other) = delete;
@@ -16,13 +18,16 @@ public:
 	virtual void FixedUpdate() = 0;
 	virtual void Render() const = 0;
 
-	void SetGameObject(GameObject* pGameObject) { m_pGameObject = pGameObject; }
-	GameObject* GetGameObject() const { return m_pGameObject; }
+	GameObject* GetGameObject() const;
 
-	void Destroy() { m_IsMarkedForDestroy = true; }
-	bool IsMarkedForDestroy() const { return m_IsMarkedForDestroy; }
+	virtual void Destroy();
+	bool IsMarkedForDestroy() const;
+
 
 protected:
+    explicit Component() = default;
+	void SetGameObject(GameObject* pGameObject);
+
 	GameObject* m_pGameObject = nullptr;
 	bool m_IsMarkedForDestroy = false;
 };

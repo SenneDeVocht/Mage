@@ -3,6 +3,12 @@
 #include "Renderer.h"
 #include "GameObject.h"
 #include "ResourceManager.h"
+#include "Transform.h"
+
+RendererComponent::RendererComponent(const std::string& filename)
+{
+	SetTexture(filename);
+}
 
 void RendererComponent::Render() const
 {
@@ -12,6 +18,11 @@ void RendererComponent::Render() const
 
 		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
 	}
+}
+
+void RendererComponent::SetTexture(std::shared_ptr<Texture2D> pTexture)
+{
+	m_pTexture = pTexture;
 }
 
 void RendererComponent::SetTexture(const std::string& filename)

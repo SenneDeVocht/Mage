@@ -8,10 +8,16 @@ Scene::Scene(const std::string& name) : m_Name(name) {}
 
 Scene::~Scene() = default;
 
-void Scene::Add(std::unique_ptr<GameObject> object)
+GameObject* Scene::CreateObject(const std::string& name)
 {
+	auto object = std::unique_ptr<GameObject>(new GameObject(name, nullptr));
+	const auto pObject = object.get();
+
 	m_Objects.push_back(std::move(object));
+
+	return pObject;
 }
+
 
 std::vector<GameObject*> Scene::GetObjects() const
 {

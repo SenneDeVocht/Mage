@@ -6,6 +6,9 @@ class Texture2D;
 
 class TextComponent : public Component
 {
+	template<typename componentType, typename... argTypes>
+	friend componentType* GameObject::CreateComponent(argTypes&&... args);
+
 public:
 	void Update() override;
 	void FixedUpdate() override {};
@@ -15,7 +18,6 @@ public:
 	void SetColor(const SDL_Color& color);
 	void SetRenderBlended(bool renderBlended);
 
-	explicit TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, bool renderBlended = true);
 	virtual ~TextComponent() = default;
 	TextComponent(const Component & other) = delete;
 	TextComponent(TextComponent&& other) = delete;
@@ -23,6 +25,8 @@ public:
 	TextComponent& operator=(TextComponent&& other) = delete;
 
 private:
+	explicit TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, bool renderBlended = true);
+
 	bool m_NeedsUpdate;
 	std::string m_Text;
 	std::shared_ptr<Font> m_Font;

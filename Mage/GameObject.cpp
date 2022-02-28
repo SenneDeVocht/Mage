@@ -75,16 +75,16 @@ void GameObject::Render() const
 	}
 }
 
-void GameObject::AddComponent(std::shared_ptr<Component> component)
+void GameObject::AddComponent(std::unique_ptr<Component> component)
 {
-	m_Components.push_back(component);
 	component->SetGameObject(this);
+	m_Components.push_back(std::move(component));
 }
 
-void GameObject::AddChild(std::shared_ptr<GameObject> child)
+void GameObject::AddChild(std::unique_ptr<GameObject> child)
 {
-	m_Children.push_back(child);
 	child->SetParent(this);
+	m_Children.push_back(std::move(child));
 }
 
 std::vector<GameObject*> GameObject::GetChildren() const

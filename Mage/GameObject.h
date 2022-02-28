@@ -29,14 +29,15 @@ public:
 	Transform* GetTransform() const { return m_pTransform.get(); }
 
 	// Components
-	void AddComponent(std::shared_ptr<Component> component);
+	void AddComponent(std::unique_ptr<Component> component);
 
 	template<typename typeToFind>
 	typeToFind* GetComponentByType() const;
 
 	// Children - Parent
-	void AddChild(std::shared_ptr<GameObject> child);
+	void AddChild(std::unique_ptr<GameObject> child);
 	std::vector<GameObject*> GetChildren() const;
+
 	void SetParent(GameObject* pParentGameObject) { m_pParentGameObject = pParentGameObject; }
 	GameObject* GetParent() const { return m_pParentGameObject; }
 
@@ -49,11 +50,11 @@ private:
 	std::string m_Name;
 
 	// Transform and other components
-	std::shared_ptr<Transform> m_pTransform = std::make_shared<Transform>();
-	std::vector<std::shared_ptr<Component>> m_Components;
+	std::unique_ptr<Transform> m_pTransform = std::make_unique<Transform>();
+	std::vector<std::unique_ptr<Component>> m_Components;
 
 	// Children - Parent
-	std::vector<std::shared_ptr<GameObject>> m_Children;
+	std::vector<std::unique_ptr<GameObject>> m_Children;
 	GameObject* m_pParentGameObject = nullptr;
 
 	// Destruction
@@ -66,7 +67,7 @@ typeToFind* GameObject::GetComponentByType() const
 	auto it = std::find_if(
 		m_Components.begin(),
 		m_Components.end(),
-		[](std::shared_ptr<Component> component)
+		[](const std::unique_ptr<Component>& component)
 		{
 			return typeid(typeToFind) == typeid(*component);
 		});

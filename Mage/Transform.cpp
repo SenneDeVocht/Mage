@@ -17,5 +17,5 @@ glm::vec3 Transform::GetWorldPosition() const
 	if (!gameObjectParent)
 		return m_Position;
 
-	return gameObjectParent->GetTransform()->GetWorldPosition() + m_Position;
+	return gameObjectParent->GetComponentByType<Transform>()->GetWorldPosition() + m_Position;
 }

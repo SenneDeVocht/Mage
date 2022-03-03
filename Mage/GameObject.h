@@ -28,9 +28,6 @@ public:
 	const std::string& GetName() const;
 	void SetName(const std::string& name);
 
-	// Transform
-	Transform* GetTransform() const;
-
 	// Components
 	template<typename componentType, typename... argTypes>
 	componentType* CreateComponent(argTypes&&... args);
@@ -52,7 +49,7 @@ private:
 	
 	std::string m_Name;
 	
-	Transform* m_pTransform;
+	//Transform* m_pTransform;
 	std::vector<std::unique_ptr<Component>> m_Components;
 	
 	std::vector<std::unique_ptr<GameObject>> m_Children;

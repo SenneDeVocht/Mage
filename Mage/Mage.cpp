@@ -83,28 +83,28 @@ void Mage::Initialize()
  */
 void Mage::LoadGame() const
 {
-	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
+	auto scene = SceneManager::GetInstance().CreateScene("Demo");
 
 	// Background
-	auto go = scene.CreateObject("Background");
+	auto go = scene->CreateObject("Background");
 	go->CreateComponent<RendererComponent>("background.jpg");
 
 	// Logo
-	go = scene.CreateObject("Logo");
-	go->GetTransform()->SetPosition(204, 75, 0);
+	go = scene->CreateObject("Logo");
+	go->GetComponentByType<Transform>()->SetPosition(204, 75, 0);
 	go->CreateComponent<RendererComponent>("logo.png");
 
 	// Text
-	go = scene.CreateObject("SubTitle");
-	go->GetTransform()->SetPosition(128, 150, 0);
+	go = scene->CreateObject("SubTitle");
+	go->GetComponentByType<Transform>()->SetPosition(128, 150, 0);
 
 	auto font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 50);
 	go->CreateComponent<TextComponent>("Made by Senne De Vocht", font, SDL_Color{ 240, 240, 240 }, false);
     go->CreateComponent<RendererComponent>();
 
 	// FPS Counter
-	go = scene.CreateObject("FpsCounter");
-	go->GetTransform()->SetPosition(5, 0, 0);
+	go = scene->CreateObject("FpsCounter");
+	go->GetComponentByType<Transform>()->SetPosition(5, 0, 0);
 
 	font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 35);
 	go->CreateComponent<TextComponent>("FPS: 0", font, SDL_Color{ 210, 96, 63 }, false);
@@ -112,7 +112,7 @@ void Mage::LoadGame() const
 	go->CreateComponent<RendererComponent>();
 
 	// Cache trasher
-	/*go = scene.CreateObject("CacheTrasher");
+	/*go = scene->CreateObject("CacheTrasher");
 	go->CreateComponent<TrashTheCache>();*/
 }
 

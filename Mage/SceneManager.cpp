@@ -5,6 +5,9 @@
 #include "Scene.h"
 #include "imgui.h"
 
+SceneManager::SceneManager() = default;
+SceneManager::~SceneManager() = default;
+
 void SceneManager::Update()
 {
 	for(auto& scene : m_Scenes)
@@ -31,7 +34,6 @@ void SceneManager::DestroyMarkedObjects()
 	}
 }
 
-
 void SceneManager::Render()
 {
 	for (const auto& scene : m_Scenes)
@@ -40,11 +42,14 @@ void SceneManager::Render()
 	}
 }
 
-Scene& SceneManager::CreateScene(const std::string& name)
+Scene* SceneManager::CreateScene(const std::string& name)
 {
-	const auto& scene = std::shared_ptr<Scene>(new Scene(name));
-	m_Scenes.push_back(scene);
-	return *scene;
+	auto scene = std::unique_ptr<Scene>(new Scene(name));
+	const auto pScene = scene.get();
+
+	m_Scenes.push_back(std::move(scene));
+
+	return pScene;
 }
 
 void SceneManager::DisplaySceneGraph() const

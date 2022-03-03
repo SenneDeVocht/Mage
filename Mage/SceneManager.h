@@ -7,7 +7,9 @@ class GameObject;
 class SceneManager final : public Singleton<SceneManager>
 {
 public:
-	Scene& CreateScene(const std::string& name);
+	~SceneManager() override;
+
+	Scene* CreateScene(const std::string& name);
 
 	void Update();
 	void FixedUpdate();
@@ -16,9 +18,10 @@ public:
 
 private:
 	friend class Singleton<SceneManager>;
-	SceneManager() = default;
-	std::vector<std::shared_ptr<Scene>> m_Scenes;
+	SceneManager();
 
 	void DisplaySceneGraph() const;
 	void DisplayChildObjects(const GameObject* parent) const;
+
+	std::vector<std::unique_ptr<Scene>> m_Scenes;
 };

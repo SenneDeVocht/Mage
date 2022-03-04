@@ -91,12 +91,12 @@ void Mage::LoadGame() const
 
 	// Logo
 	go = scene->CreateObject("Logo");
-	go->GetComponentByType<Transform>()->SetPosition(204, 75, 0);
+	go->GetTransform()->SetPosition(204, 75, 0);
 	go->CreateComponent<RendererComponent>("logo.png");
 
 	// Text
 	go = scene->CreateObject("SubTitle");
-	go->GetComponentByType<Transform>()->SetPosition(128, 150, 0);
+	go->GetTransform()->SetPosition(128, 150, 0);
 
 	auto font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 50);
 	go->CreateComponent<TextComponent>("Made by Senne De Vocht", font, SDL_Color{ 240, 240, 240 }, false);
@@ -104,7 +104,7 @@ void Mage::LoadGame() const
 
 	// FPS Counter
 	go = scene->CreateObject("FpsCounter");
-	go->GetComponentByType<Transform>()->SetPosition(5, 0, 0);
+	go->GetTransform()->SetPosition(5, 0, 0);
 
 	font = ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 35);
 	go->CreateComponent<TextComponent>("FPS: 0", font, SDL_Color{ 210, 96, 63 }, false);

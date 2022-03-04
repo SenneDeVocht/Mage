@@ -14,7 +14,7 @@ void RendererComponent::Render() const
 {
 	if (m_pTexture != nullptr)
 	{
-		const auto& pos = m_pGameObject->GetComponentByType<Transform>()->GetWorldPosition();
+		const auto& pos = m_pGameObject->GetTransform()->GetWorldPosition();
 
 		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
 	}

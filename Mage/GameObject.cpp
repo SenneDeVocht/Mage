@@ -5,9 +5,9 @@
 
 GameObject::GameObject(const std::string& name, GameObject* parent)
 	: m_Name{ name }
+	, m_pTransform{ CreateComponent<Transform>() }
     , m_pParentGameObject{ parent }
 {
-	CreateComponent<Transform>();
 }
 
 // this is necessary to use unique pointers of incomplete types
@@ -87,6 +87,11 @@ const std::string& GameObject::GetName() const
 void GameObject::SetName(const std::string& name)
 {
     m_Name = name;
+}
+
+Transform* GameObject::GetTransform() const
+{
+	return m_pTransform;
 }
 
 GameObject* GameObject::CreateChildObject(const std::string& name)

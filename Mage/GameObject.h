@@ -35,6 +35,8 @@ public:
 	template<typename typeToFind>
 	typeToFind* GetComponentByType() const;
 
+	Transform* GetTransform() const;
+
 	// Children - Parent
 	GameObject* CreateChildObject(const std::string& name);
 	std::vector<GameObject*> GetChildren() const;
@@ -51,6 +53,7 @@ private:
 	
 	//Transform* m_pTransform;
 	std::vector<std::unique_ptr<Component>> m_Components;
+	Transform* m_pTransform;
 	
 	std::vector<std::unique_ptr<GameObject>> m_Children;
 	GameObject* m_pParentGameObject = nullptr;

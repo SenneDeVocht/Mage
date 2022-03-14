@@ -26,6 +26,8 @@
 #include "TextComponent.h"
 #include "FpsCounterComponent.h"
 #include "TrashTheCache.h"
+#include "PeterPepper.h"
+#include "HealthDisplayComponent.h"
 
 using namespace std;
 
@@ -114,6 +116,19 @@ void Mage::LoadGame() const
 	// Cache trasher
 	/*go = scene->CreateObject("CacheTrasher");
 	go->CreateComponent<TrashTheCache>();*/
+
+	// Peter Pepper
+	go = scene->CreateObject("PeterPepper");
+	const auto peterPepper = go->CreateComponent<PeterPepper>();
+
+	// Lives display
+	go = scene->CreateObject("LivesDisplay");
+	go->GetTransform()->SetPosition(5, 450, 0);
+	go->CreateComponent<TextComponent>("LIVES: 3", font, SDL_Color{ 136, 186, 116 }, false);
+	go->CreateComponent<RendererComponent>();
+	const auto livesDispay = go->CreateComponent<HealthDisplayComponent>();
+
+	peterPepper->AddLivesObserver(livesDispay);
 }
 
 void Mage::Cleanup()

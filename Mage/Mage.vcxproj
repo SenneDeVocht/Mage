@@ -220,10 +220,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Command.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FpsCounterComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HealthDisplayComponent.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Mage.cpp" />
     <ClCompile Include="MagePCH.cpp">
@@ -233,11 +235,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="PeterPepper.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RendererComponent.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -253,19 +258,24 @@
     <ClInclude Include="..\3rdParty\ImGui\imgui.h" />
     <ClInclude Include="..\3rdParty\ImGui\imgui_internal.h" />
     <ClInclude Include="..\3rdParty\ImGui\imgui_plot.h" />
+    <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FpsCounterComponent.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="HealthDisplayComponent.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Mage.h" />
     <ClInclude Include="MagePCH.h" />
+    <ClInclude Include="Observer.h" />
+    <ClInclude Include="PeterPepper.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RendererComponent.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Subject.h" />
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Timer.h" />

@@ -174,6 +174,16 @@ void Mage::LoadGame() const
 
 	peterPepper->AddPointsObserver(achievementManager);
 	peterPepper2->AddPointsObserver(achievementManager);
+
+	std::cout << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "How to play:" << std::endl;
+	std::cout << "X - Lose one life" << std::endl;
+	std::cout << "Y - Gain one point" << std::endl;
+	std::cout << std::endl;
+	std::cout << "Only two players on controller supported" << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+	std::cout << std::endl;
 }
 
 void Mage::Cleanup()
@@ -203,7 +213,7 @@ void Mage::Run()
 		const auto& renderer = Renderer::GetInstance();
 		auto& sceneManager = SceneManager::GetInstance();
 		const auto& input = InputManager::GetInstance();
-		auto& timer = Timer::GetInstance();
+		const auto& timer = Timer::GetInstance();
 
 		bool quit = false;
 		auto lastTime = std::chrono::high_resolution_clock::now();

@@ -18,5 +18,6 @@ bool Component::IsMarkedForDestroy() const
 
 void Component::SetGameObject(GameObject* pGameObject)
 {
-    m_pGameObject = pGameObject;
+    if (m_pGameObject == nullptr)
+        m_pGameObject = pGameObject;
 }

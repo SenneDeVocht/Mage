@@ -90,7 +90,7 @@ void Mage::Initialize()
  */
 void Mage::LoadGame() const
 {
-	auto scene = SceneManager::GetInstance().CreateScene("Demo");
+	const auto scene = SceneManager::GetInstance().CreateScene("DemoScene");
 
 	// Background
 	auto go = scene->CreateObject("Background");
@@ -123,7 +123,7 @@ void Mage::LoadGame() const
 
 	// Peter Pepper
 	go = peterPepperParent->CreateChildObject("PeterPepper");
-	auto peterPepper = go->CreateComponent<PeterPepper>(0);
+	const auto peterPepper = go->CreateComponent<PeterPepper>(0);
 
 	// Lives display
 	go = peterPepperParent->CreateChildObject("LivesDisplay");
@@ -148,7 +148,7 @@ void Mage::LoadGame() const
 
 	// Peter Pepper
 	go = peterPepperParent->CreateChildObject("PeterPepper");
-	auto peterPepper2 = go->CreateComponent<PeterPepper>(1);
+	const auto peterPepper2 = go->CreateComponent<PeterPepper>(1);
 
 	// Lives display
 	go = peterPepperParent->CreateChildObject("LivesDisplay");
@@ -169,8 +169,8 @@ void Mage::LoadGame() const
 	peterPepper2->AddPointsObserver(pointsDispay);
 
 	// Achievement manager
-	go = scene->CreateObject("Achievement");
-	auto achievementManager = go->CreateComponent<AchievementsManager>();
+	go = scene->CreateObject("AchievementManager");
+	const auto achievementManager = go->CreateComponent<AchievementsManager>();
 
 	peterPepper->AddPointsObserver(achievementManager);
 	peterPepper2->AddPointsObserver(achievementManager);
@@ -200,25 +200,21 @@ void Mage::Run()
 	LoadGame();
 
 	{
-		auto& renderer = Renderer::GetInstance();
+		const auto& renderer = Renderer::GetInstance();
 		auto& sceneManager = SceneManager::GetInstance();
-		auto& input = InputManager::GetInstance();
+		const auto& input = InputManager::GetInstance();
 		auto& timer = Timer::GetInstance();
-		timer.SetFixedTimeStep(m_FixedTimeStep);
 
 		bool quit = false;
 		auto lastTime = std::chrono::high_resolution_clock::now();
 		float lag = 0.0f;
 
-		// Loop
+		// Game Loop
 		while (!quit)
 		{
 			// Time calculations
-			const auto currentTime = std::chrono::high_resolution_clock::now();
-			float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
-			timer.SetDeltaTime(deltaTime);
-			lastTime = currentTime;
-			lag += deltaTime;
+			timer.CalculateTime();
+			lag += timer.GetDeltaTime();
 
 			// Input
 			quit = !input.ProcessInput();
@@ -226,25 +222,26 @@ void Mage::Run()
 			// Steam
 			SteamAPI_RunCallbacks();
 
+			// ImGui
+			// Prepare ImGui
+			ImGui_ImplOpenGL2_NewFrame();
+			ImGui_ImplSDL2_NewFrame(m_Window);
+			ImGui::NewFrame();
+
 			// Update
-		    {
-			    // Prepare ImGui
-				ImGui_ImplOpenGL2_NewFrame();
-				ImGui_ImplSDL2_NewFrame(m_Window);
-				ImGui::NewFrame();
+			sceneManager.DrawImGui();
 
-				// Update
-				sceneManager.Update();
+			// Render ImGui
+			ImGui::Render();
 
-				// Render ImGui
-				ImGui::Render();
-			}
+			// Update
+		    sceneManager.Update();
 
 			// Fixed Update
-			while (lag >= m_FixedTimeStep)
+			while (lag >= timer.GetFixedTimeStep())
 			{
 				sceneManager.FixedUpdate();
-				lag -= m_FixedTimeStep;
+				lag -= timer.GetFixedTimeStep();
 			}
 
 			// Destroy Objects

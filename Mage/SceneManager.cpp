@@ -8,38 +8,31 @@
 SceneManager::SceneManager() = default;
 SceneManager::~SceneManager() = default;
 
-void SceneManager::Update()
+void SceneManager::DrawImGui() const
 {
-	for(auto& scene : m_Scenes)
-	{
-		scene->Update();
-	}
+    m_Scenes[m_ActiveScene]->DrawImGui();
 
 	DisplaySceneGraph();
 }
 
-void SceneManager::FixedUpdate()
+void SceneManager::Update() const
 {
-	for (auto& scene : m_Scenes)
-	{
-		scene->FixedUpdate();
-	}
+	m_Scenes[m_ActiveScene]->Update();
 }
 
-void SceneManager::DestroyMarkedObjects()
+void SceneManager::FixedUpdate() const
 {
-	for (const auto& scene : m_Scenes)
-	{
-		scene->DestroyMarkedObjects();
-	}
+	m_Scenes[m_ActiveScene]->FixedUpdate();
 }
 
-void SceneManager::Render()
+void SceneManager::DestroyMarkedObjects() const
 {
-	for (const auto& scene : m_Scenes)
-	{
-		scene->Render();
-	}
+	m_Scenes[m_ActiveScene]->DestroyMarkedObjects();
+}
+
+void SceneManager::Render() const
+{
+	m_Scenes[m_ActiveScene]->Render();
 }
 
 Scene* SceneManager::CreateScene(const std::string& name)
@@ -52,27 +45,23 @@ Scene* SceneManager::CreateScene(const std::string& name)
 	return pScene;
 }
 
+void SceneManager::SetActiveScene(int sceneIndex)
+{
+	m_ActiveScene = sceneIndex;
+}
+
 void SceneManager::DisplaySceneGraph() const
 {
-	ImGui::Begin("Scene Graph");
-
-	// Scenes
-	for (const auto& scene : m_Scenes)
+	ImGui::Begin(m_Scenes[m_ActiveScene]->GetName().c_str());
+	
+	// Root Objects
+	auto objects = m_Scenes[m_ActiveScene]->GetObjects();
+	for (const auto& rootObject : objects)
 	{
-		if (ImGui::TreeNode("Scene"))
+		if (ImGui::TreeNode(rootObject->GetName().c_str()))
 		{
-			// Root Objects
-			auto objects = scene->GetObjects();
-			for (const auto& rootObject : objects)
-			{
-				if (ImGui::TreeNode(rootObject->GetName().c_str()))
-				{
-					// Display all children recursively
-					DisplayChildObjects(rootObject);
-					ImGui::TreePop();
-				}
-			}
-
+			// Display all children recursively
+			DisplayChildObjects(rootObject);
 			ImGui::TreePop();
 		}
 	}

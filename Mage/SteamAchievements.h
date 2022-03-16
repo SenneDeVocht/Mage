@@ -24,7 +24,6 @@ private:
 
 public:
 	SteamAchievements(Achievement_t* achievements, int numAchievements);
-	~SteamAchievements();
 
 	bool RequestStats();
 	bool SetAchievement(const char* id);

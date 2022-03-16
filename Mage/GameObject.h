@@ -9,18 +9,18 @@ class Transform;
 
 class GameObject final
 {
-	friend GameObject* Scene::CreateObject(const std::string& name);
-
 public:
+	GameObject(const std::string& name, GameObject* parent);	
 	~GameObject();
 
 	GameObject(const GameObject& other) = delete;
 	GameObject(GameObject&& other) = delete;
 	GameObject& operator=(const GameObject& other) = delete;
 	GameObject& operator=(GameObject&& other) = delete;
-	
-	void Update();
-	void FixedUpdate();
+
+	void DrawImGui() const;
+	void Update() const;
+	void FixedUpdate() const;
 	void DestroyMarkedObjects();
 	void Render() const;
 
@@ -47,8 +47,6 @@ public:
 	bool IsMarkedForDestroy() const;
 
 private:
-	GameObject(const std::string& name, GameObject* parent);
-	
 	std::string m_Name;
 	
 	//Transform* m_pTransform;

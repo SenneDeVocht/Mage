@@ -4,16 +4,17 @@
 class Timer final : public Singleton<Timer>
 {
 public:
-	void SetDeltaTime(float deltaTime) { m_DeltaTime = deltaTime; }
-	float GetDeltaTime() const { return m_DeltaTime; }
+	~Timer();
 
-	void SetFixedTimeStep(float fixedTimeStep) { m_FixedTimeStep = fixedTimeStep; }
-	float GetFixedTimeStep() const { return m_FixedTimeStep; }
+	void CalculateTime() const;
+
+	float GetDeltaTime() const;
+	float GetFixedTimeStep() const;
 
 private:
 	friend class Singleton<Timer>;
-	Timer() = default;
+	Timer();
 
-	float m_DeltaTime = 0;
-	float m_FixedTimeStep = 0;
+	class TimerImpl;
+	std::unique_ptr<TimerImpl> m_pImpl;
 };

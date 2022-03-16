@@ -33,7 +33,6 @@ void TextComponent::Update()
 
 		// Create Texture
 		auto texture = SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), surf);
-
 		if (texture == nullptr)
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 
@@ -41,7 +40,7 @@ void TextComponent::Update()
 		SDL_FreeSurface(surf);
 
 		// Send to RenderComponent
-		auto pRendererComponent = m_pGameObject->GetComponentByType<RendererComponent>();
+		const auto pRendererComponent = m_pGameObject->GetComponentByType<RendererComponent>();
 
 		if (pRendererComponent != nullptr)
 			pRendererComponent->SetTexture(std::make_shared<Texture2D>(texture));
@@ -61,4 +60,9 @@ void TextComponent::SetColor(const SDL_Color& color)
 {
 	m_Color = color;
 	m_NeedsUpdate = true;
+}
+
+void TextComponent::SetRenderBlended(bool renderBlended)
+{
+	m_RenderBlended = renderBlended;
 }

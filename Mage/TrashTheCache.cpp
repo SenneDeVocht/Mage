@@ -208,8 +208,7 @@ void TrashTheCache::DisplayCombinedObjectsGraph()
     ImGui::Plot("", conf);
 }
 
-
-void TrashTheCache::Update()
+void TrashTheCache::DrawImGui()
 {
     // With integers
     ImGui::Begin("Exercise 1");

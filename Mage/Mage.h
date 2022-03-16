@@ -12,6 +12,4 @@ public:
 
 private:
 	SDL_Window* m_Window{};
-
-	float m_FixedTimeStep = 0.02f;
 };

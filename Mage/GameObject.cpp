@@ -13,7 +13,22 @@ GameObject::GameObject(const std::string& name, GameObject* parent)
 // this is necessary to use unique pointers of incomplete types
 GameObject::~GameObject() = default;
 
-void GameObject::Update()
+void GameObject::DrawImGui() const
+{
+	// Update components
+	for (const auto& pComponent : m_Components)
+	{
+		pComponent->DrawImGui();
+	}
+
+	// Update children
+	for (const auto& pChild : m_Children)
+	{
+		pChild->DrawImGui();
+	}
+}
+
+void GameObject::Update() const
 {
 	// Update components
 	for (const auto& pComponent : m_Components)
@@ -28,7 +43,7 @@ void GameObject::Update()
 	}
 }
 
-void GameObject::FixedUpdate()
+void GameObject::FixedUpdate() const
 {
 	// Update Components
 	for (const auto& pComponent : m_Components)
@@ -96,7 +111,7 @@ Transform* GameObject::GetTransform() const
 
 GameObject* GameObject::CreateChildObject(const std::string& name)
 {
-	auto child = std::unique_ptr<GameObject>(new GameObject(name, this));
+	auto child = std::make_unique<GameObject>(name, this);
 	const auto pChild = child.get();
 
 	m_Children.push_back(std::move(child));

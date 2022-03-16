@@ -9,7 +9,10 @@ Scene::Scene(const std::string& name)
 {
 }
 
-Scene::~Scene() = default;
+const std::string& Scene::GetName() const
+{
+	return m_Name;
+}
 
 GameObject* Scene::CreateObject(const std::string& name)
 {
@@ -20,7 +23,6 @@ GameObject* Scene::CreateObject(const std::string& name)
 
 	return pObject;
 }
-
 
 std::vector<GameObject*> Scene::GetObjects() const
 {
@@ -33,18 +35,25 @@ std::vector<GameObject*> Scene::GetObjects() const
 	return vecRaw;
 }
 
-
-void Scene::Update()
+void Scene::DrawImGui() const
 {
-	for(auto& object : m_Objects)
+	for (const auto& object : m_Objects)
+	{
+		object->DrawImGui();
+	}
+}
+
+void Scene::Update() const
+{
+	for(const auto& object : m_Objects)
 	{
 		object->Update();
 	}
 }
 
-void Scene::FixedUpdate()
+void Scene::FixedUpdate() const
 {
-	for (auto& object : m_Objects)
+	for (const auto& object : m_Objects)
 	{
 		object->FixedUpdate();
 	}
@@ -59,7 +68,7 @@ void Scene::DestroyMarkedObjects()
 	m_Objects.erase(pos, m_Objects.end());
 
 	// Call on remaining objects
-	for (auto& object : m_Objects)
+	for (const auto& object : m_Objects)
 	{
 		object->DestroyMarkedObjects();
 	}

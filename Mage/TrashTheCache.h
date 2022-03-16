@@ -1,24 +1,12 @@
 #pragma once
 #include "Component.h"
+
 class TrashTheCache final : public Component
 {
-	template<typename componentType, typename... argTypes>
-	friend componentType* GameObject::CreateComponent(argTypes&&... args);
-
 public:
-	~TrashTheCache() = default;
-	TrashTheCache(const TrashTheCache& other) = delete;
-	TrashTheCache(TrashTheCache&& other) = delete;
-	TrashTheCache& operator=(const TrashTheCache& other) = delete;
-	TrashTheCache& operator=(TrashTheCache&& other) = delete;
-
-	void Update() override;
-	void FixedUpdate() override {};
-	void Render() const override {};
+	void DrawImGui() override;
 
 private:
-	explicit TrashTheCache() = default;
-
 	struct Transform
 	{
 		float matrix[16]
@@ -63,6 +51,7 @@ private:
 	int m_AltObjectSamples = 10;
 	std::vector<float> m_AltObjectTimes;
 
+	// Display
 	void DisplayCombinedObjectsGraph();
 };
 

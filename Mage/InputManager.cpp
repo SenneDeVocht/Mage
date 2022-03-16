@@ -3,6 +3,7 @@
 #include "backends/imgui_impl_sdl.h"
 #include "InputManager.h"
 #include <vector>
+#include <array>
 
 #include "Command.h"
 #include "Xinput.h"
@@ -27,16 +28,18 @@ public:
 
     bool ProcessInput()
     {
-        // Get Input
-        m_PreviousState = m_CurrentState;
-        XInputGetState(0, &m_CurrentState);
+        // XInput
+        memcpy(m_PreviousStates.data(), m_CurrentStates.data(), sizeof(m_CurrentStates.data()));
+        for (DWORD i = 0; i < 4; i++)
+        {
+            XInputGetState(i, &(m_CurrentStates[i]));
+        }
 
-        // Execute User-Defined Actions
         for (auto& action : m_InputActions)
         {
-            if (action->State == InputState::Down && IsDown(ToXinputButton(action->Button)) ||
-                action->State == InputState::Hold && IsHeld(ToXinputButton(action->Button)) ||
-                action->State == InputState::Up && IsUp(ToXinputButton(action->Button)))
+            if (action->State == InputState::Down && IsDown(action->ControllerIndex, ToXinputButton(action->Button)) ||
+                action->State == InputState::Hold && IsHeld(action->ControllerIndex, ToXinputButton(action->Button)) ||
+                action->State == InputState::Up   && IsUp  (action->ControllerIndex, ToXinputButton(action->Button)))
             {
                 action->Command->Execute();
             }
@@ -44,7 +47,8 @@ public:
 
         // SDL Events
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&e))
+        {
             // Quit application
             if (e.type == SDL_QUIT)
                 return false;
@@ -112,29 +116,29 @@ private:
             return 0;
         }
     }
-    bool IsDown(WORD button) const
+    bool IsDown(int controllerIndex, WORD button) const
     {
-        WORD changedButtons = m_PreviousState.Gamepad.wButtons ^ m_CurrentState.Gamepad.wButtons;
-        WORD downButtons = changedButtons & m_CurrentState.Gamepad.wButtons;
+        WORD changedButtons = m_PreviousStates[controllerIndex].Gamepad.wButtons ^ m_CurrentStates[controllerIndex].Gamepad.wButtons;
+        WORD downButtons = changedButtons & m_CurrentStates[controllerIndex].Gamepad.wButtons;
 
         return button & downButtons;
     }
-    bool IsHeld(WORD button) const
+    bool IsHeld(int controllerIndex, WORD button) const
     {
-        return button & m_CurrentState.Gamepad.wButtons;
+        return button & m_CurrentStates[controllerIndex].Gamepad.wButtons;
     }
-    bool IsUp(WORD button) const
+    bool IsUp(int controllerIndex, WORD button) const
     {
-        WORD changedButtons = m_PreviousState.Gamepad.wButtons ^ m_CurrentState.Gamepad.wButtons;
-        WORD upButtons = changedButtons & (~m_CurrentState.Gamepad.wButtons);
+        WORD changedButtons = m_PreviousStates[controllerIndex].Gamepad.wButtons ^ m_CurrentStates[controllerIndex].Gamepad.wButtons;
+        WORD upButtons = changedButtons & (~m_CurrentStates[controllerIndex].Gamepad.wButtons);
 
         return button & upButtons;
     }
 
     std::vector<InputAction*> m_InputActions{};
 
-    XINPUT_STATE m_CurrentState{};
-    XINPUT_STATE m_PreviousState{};
+    std::array<XINPUT_STATE, 4> m_CurrentStates;
+    std::array<XINPUT_STATE, 4> m_PreviousStates;
 };
 
 

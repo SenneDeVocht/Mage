@@ -18,3 +18,13 @@ public:
 private:
 	PeterPepper* m_pPeterPepper;
 };
+
+class PeterPepperGainPointsCommand : public Command
+{
+public:
+	PeterPepperGainPointsCommand(PeterPepper* peterPepper);
+	void Execute() override;
+
+private:
+	PeterPepper* m_pPeterPepper;
+};

@@ -24,10 +24,17 @@ public:
 	int GetLives();
 	void Die();
 
+	void AddPointsObserver(Observer* observer);
+	int GetPoints();
+	void GainPoints();
+
 private:
-	explicit PeterPepper();
+	explicit PeterPepper(int controllerIndex);
 
 	int m_Lives;
 	std::unique_ptr<Subject> m_pLivesSubject;
+
+	int m_Points;
+	std::unique_ptr<Subject> m_pPointsSubject;
 };
 

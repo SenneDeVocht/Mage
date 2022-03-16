@@ -6,7 +6,8 @@ class Observer
 public:
     enum class Event
     {
-        PlayerDied
+        PlayerDied,
+        PointsChanged
     };
 
     virtual void Notify(Component* component, Event event) = 0;

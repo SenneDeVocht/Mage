@@ -30,6 +30,7 @@ enum class ControllerButton
 
 struct InputAction
 {
+	int ControllerIndex;
 	ControllerButton Button;
 	InputState State;
 	std::unique_ptr<Command> Command;

@@ -16,11 +16,15 @@
 #include "backends/imgui_impl_opengl2.h"
 #include "backends/imgui_impl_sdl.h"
 
+// Steam
+#include <steam_api.h>
+
 // Scenegraph
 #include "Scene.h"
 #include "GameObject.h"
 
 // Components
+#include "AchievementsManager.h"
 #include "Transform.h"
 #include "RendererComponent.h"
 #include "TextComponent.h"
@@ -28,6 +32,7 @@
 #include "TrashTheCache.h"
 #include "PeterPepper.h"
 #include "HealthDisplayComponent.h"
+#include "PointsDisplayComponent.h"
 
 using namespace std;
 
@@ -113,22 +118,62 @@ void Mage::LoadGame() const
 	go->CreateComponent<FpsCounterComponent>();
 	go->CreateComponent<RendererComponent>();
 
-	// Cache trasher
-	/*go = scene->CreateObject("CacheTrasher");
-	go->CreateComponent<TrashTheCache>();*/
+	// Peter Pepper 1
+	auto peterPepperParent = scene->CreateObject("PeterPepper_01");
 
 	// Peter Pepper
-	go = scene->CreateObject("PeterPepper");
-	const auto peterPepper = go->CreateComponent<PeterPepper>();
+	go = peterPepperParent->CreateChildObject("PeterPepper");
+	auto peterPepper = go->CreateComponent<PeterPepper>(0);
 
 	// Lives display
-	go = scene->CreateObject("LivesDisplay");
+	go = peterPepperParent->CreateChildObject("LivesDisplay");
 	go->GetTransform()->SetPosition(5, 450, 0);
 	go->CreateComponent<TextComponent>("LIVES: 3", font, SDL_Color{ 136, 186, 116 }, false);
 	go->CreateComponent<RendererComponent>();
-	const auto livesDispay = go->CreateComponent<HealthDisplayComponent>();
+	auto livesDispay = go->CreateComponent<HealthDisplayComponent>();
 
 	peterPepper->AddLivesObserver(livesDispay);
+
+	// Points display
+	go = peterPepperParent->CreateChildObject("PointsDisplay");
+	go->GetTransform()->SetPosition(5, 430, 0);
+	go->CreateComponent<TextComponent>("POINTS: 0", font, SDL_Color{ 136, 186, 116 }, false);
+	go->CreateComponent<RendererComponent>();
+	auto pointsDispay = go->CreateComponent<PointsDisplayComponent>();
+
+	peterPepper->AddPointsObserver(pointsDispay);
+
+	// Peter Pepper 2
+	peterPepperParent = scene->CreateObject("PeterPepper_02");
+
+	// Peter Pepper
+	go = peterPepperParent->CreateChildObject("PeterPepper");
+	auto peterPepper2 = go->CreateComponent<PeterPepper>(1);
+
+	// Lives display
+	go = peterPepperParent->CreateChildObject("LivesDisplay");
+	go->GetTransform()->SetPosition(5, 400, 0);
+	go->CreateComponent<TextComponent>("LIVES: 3", font, SDL_Color{ 136, 186, 116 }, false);
+	go->CreateComponent<RendererComponent>();
+	livesDispay = go->CreateComponent<HealthDisplayComponent>();
+
+	peterPepper2->AddLivesObserver(livesDispay);
+
+	// Points display
+	go = peterPepperParent->CreateChildObject("PointsDisplay");
+	go->GetTransform()->SetPosition(5, 380, 0);
+	go->CreateComponent<TextComponent>("POINTS: 0", font, SDL_Color{ 136, 186, 116 }, false);
+	go->CreateComponent<RendererComponent>();
+	pointsDispay = go->CreateComponent<PointsDisplayComponent>();
+
+	peterPepper2->AddPointsObserver(pointsDispay);
+
+	// Achievement manager
+	go = scene->CreateObject("Achievement");
+	auto achievementManager = go->CreateComponent<AchievementsManager>();
+
+	peterPepper->AddPointsObserver(achievementManager);
+	peterPepper2->AddPointsObserver(achievementManager);
 }
 
 void Mage::Cleanup()
@@ -177,6 +222,9 @@ void Mage::Run()
 
 			// Input
 			quit = !input.ProcessInput();
+
+			// Steam
+			SteamAPI_RunCallbacks();
 
 			// Update
 		    {

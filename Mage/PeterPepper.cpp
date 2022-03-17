@@ -34,7 +34,6 @@ int PeterPepper::GetLives()
 void PeterPepper::Die()
 {
     --m_Lives;
-
     m_pLivesSubject->Notify(this, Observer::Event::PlayerDied);
 }
 
@@ -51,6 +50,5 @@ int PeterPepper::GetPoints()
 void PeterPepper::GainPoints()
 {
     ++m_Points;
-
     m_pPointsSubject->Notify(this, Observer::Event::PointsChanged);
 }

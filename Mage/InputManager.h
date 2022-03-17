@@ -43,6 +43,7 @@ public:
 	~InputManager();
 	bool ProcessInput() const;
 	void AddInputAction(InputAction* action) const;
+	void RemoveInputAction(InputAction* action) const;
 
 private:
 	class InputManagerImpl;

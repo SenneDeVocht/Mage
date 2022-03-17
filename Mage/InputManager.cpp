@@ -65,6 +65,13 @@ public:
         m_InputActions.push_back(action);
     }
 
+    void RemoveInputAction(InputAction* action)
+    {
+        delete action;
+        const auto newEnd = std::remove(m_InputActions.begin(), m_InputActions.end(), action);
+        m_InputActions.erase(newEnd, m_InputActions.end());
+    }
+
 private:
     static WORD ToXinputButton(ControllerButton button)
     {
@@ -160,4 +167,9 @@ bool InputManager::ProcessInput() const
 void InputManager::AddInputAction(InputAction* action) const
 {
     m_pImpl->AddInputAction(action);
+}
+
+void InputManager::RemoveInputAction(InputAction* action) const
+{
+    m_pImpl->RemoveInputAction(action);
 }

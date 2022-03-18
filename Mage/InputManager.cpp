@@ -37,12 +37,10 @@ public:
 
         for (auto& action : m_InputActions)
         {
-            if (action->State == InputState::Down && IsDown(action->ControllerIndex, ToXinputButton(action->Button)) ||
-                action->State == InputState::Hold && IsHeld(action->ControllerIndex, ToXinputButton(action->Button)) ||
-                action->State == InputState::Up   && IsUp  (action->ControllerIndex, ToXinputButton(action->Button)))
-            {
+	        if (CheckButton(action->ControllerIndex, action->Button, action->State))
+	        {
                 action->Command->Execute();
-            }
+	        }
         }
 
         // SDL Events
@@ -70,6 +68,23 @@ public:
         delete action;
         const auto newEnd = std::remove(m_InputActions.begin(), m_InputActions.end(), action);
         m_InputActions.erase(newEnd, m_InputActions.end());
+    }
+
+    bool CheckButton(int controllerIndex, ControllerButton button, InputState state) const
+    {
+	    switch (state)
+	    {
+		    case InputState::Down:
+	            return IsDown(controllerIndex, ToXinputButton(button));
+
+	        case InputState::Hold:
+	            return IsHeld(controllerIndex, ToXinputButton(button));
+
+	        case InputState::Up:
+	            return IsUp(controllerIndex, ToXinputButton(button));
+	    }
+
+        return false;
     }
 
 private:
@@ -172,4 +187,9 @@ void InputManager::AddInputAction(InputAction* action) const
 void InputManager::RemoveInputAction(InputAction* action) const
 {
     m_pImpl->RemoveInputAction(action);
+}
+
+bool InputManager::CheckButton(int controllerIndex, ControllerButton button, InputState state) const
+{
+    return m_pImpl->CheckButton(controllerIndex, button, state);
 }

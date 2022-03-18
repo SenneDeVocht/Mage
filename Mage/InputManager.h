@@ -41,9 +41,12 @@ class InputManager final : public Singleton<InputManager>
 public:
 	InputManager();
 	~InputManager();
+
 	bool ProcessInput() const;
 	void AddInputAction(InputAction* action) const;
 	void RemoveInputAction(InputAction* action) const;
+
+	bool CheckButton(int controllerIndex, ControllerButton button, InputState state) const;
 
 private:
 	class InputManagerImpl;

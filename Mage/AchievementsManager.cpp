@@ -57,7 +57,7 @@ void AchievementsManager::Notify(Component* component, Event event)
                 return;
 
             int points = peter->GetPoints();
-            if (points >= 5)
+            if (points >= 500)
             {
                 m_pImpl->SetAchievement(Achievement::OneGameWon);
             }

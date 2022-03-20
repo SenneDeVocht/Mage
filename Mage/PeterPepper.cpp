@@ -49,6 +49,6 @@ int PeterPepper::GetPoints()
 
 void PeterPepper::GainPoints()
 {
-    ++m_Points;
+    m_Points += 100;
     m_pPointsSubject->Notify(this, Observer::Event::PointsChanged);
 }

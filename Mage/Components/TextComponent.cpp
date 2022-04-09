@@ -4,7 +4,7 @@
 #include <SDL_ttf.h>
 #include "Mage/ResourceManagement/Font.h"
 #include "Mage/Scenegraph/GameObject.h"
-#include "Mage/Components/RendererComponent.h"
+#include "Mage/Components/SpriteComponent.h"
 #include "Mage/Engine/Renderer.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
@@ -41,7 +41,7 @@ void Mage::TextComponent::Update()
 		SDL_FreeSurface(surf);
 
 		// Send to RenderComponent
-		const auto pRendererComponent = m_pGameObject->GetComponentByType<RendererComponent>();
+		const auto pRendererComponent = m_pGameObject->GetComponentByType<SpriteComponent>();
 
 		if (pRendererComponent != nullptr)
 			pRendererComponent->SetTexture(std::make_shared<Texture2D>(texture));

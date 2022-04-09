@@ -79,22 +79,30 @@
     <IncludePath>
     </IncludePath>
     <LibraryPath>$(SolutionDir)3rdParty\VLD\lib\Win32;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Bin\Mage\Build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Bin\Mage\Intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>
     </IncludePath>
+    <OutDir>$(SolutionDir)Bin\Mage\Build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Bin\Mage\Intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(SolutionDir)3rdParty\VLD\lib\Win64;$(LibraryPath)</LibraryPath>
     <IncludePath>
     </IncludePath>
+    <OutDir>$(SolutionDir)Bin\Mage\Build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Bin\Mage\Intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>
     </IncludePath>
+    <OutDir>$(SolutionDir)Bin\Mage\Build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Bin\Mage\Intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -279,8 +287,9 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Components\AnimatedSpriteComponent.cpp" />
     <ClCompile Include="Components\Component.cpp" />
-    <ClCompile Include="Components\RendererComponent.cpp" />
+    <ClCompile Include="Components\SpriteComponent.cpp" />
     <ClCompile Include="Components\TextComponent.cpp" />
     <ClCompile Include="Components\Transform.cpp" />
     <ClCompile Include="Engine\Renderer.cpp" />
@@ -307,8 +316,9 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
     <ClInclude Include="..\3rdParty\ImGui\imgui.h" />
     <ClInclude Include="..\3rdParty\ImGui\imgui_internal.h" />
     <ClInclude Include="..\3rdParty\ImGui\imgui_plot.h" />
+    <ClInclude Include="Components\AnimatedSpriteComponent.h" />
     <ClInclude Include="Components\Component.h" />
-    <ClInclude Include="Components\RendererComponent.h" />
+    <ClInclude Include="Components\SpriteComponent.h" />
     <ClInclude Include="Components\TextComponent.h" />
     <ClInclude Include="Components\Transform.h" />
     <ClInclude Include="Engine\Renderer.h" />

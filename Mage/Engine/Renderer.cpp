@@ -65,21 +65,44 @@ void Mage::Renderer::Destroy()
 	}
 }
 
-void Mage::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y) const
+void Mage::Renderer::RenderTexture(const Texture2D& texture, float dstX, float dstY) const
+{
+	int dstW, dstH;
+	SDL_QueryTexture(texture.GetSDLTexture(), nullptr, nullptr, &dstW, &dstH);
+	RenderTexture(texture, dstX, dstY, static_cast<float>(dstW), static_cast<float>(dstH));
+}
+
+void Mage::Renderer::RenderTexture(const Texture2D& texture, const float dstX, const float dstY, const float dstW, const float dstH) const
 {
 	SDL_Rect dst{};
-	dst.x = static_cast<int>(x);
-	dst.y = static_cast<int>(y);
-	SDL_QueryTexture(texture.GetSDLTexture(), nullptr, nullptr, &dst.w, &dst.h);
+	dst.x = static_cast<int>(dstX);
+	dst.y = static_cast<int>(dstY);
+	dst.w = static_cast<int>(dstW);
+	dst.h = static_cast<int>(dstH);
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
-void Mage::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height) const
+void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, float dstX, float dstY) const
 {
+	RenderPartialTexture(texture, srcX, srcY, srcW, srcH, dstX, dstY, static_cast<float>(srcW), static_cast<float>(srcH));
+}
+
+void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, float dstX, float dstY, float dstW, float dstH) const
+{
+	// Source Rect (Part of texture)
+	SDL_Rect src{};
+	src.x = srcX;
+	src.y = srcY;
+	src.w = srcW;
+	src.h = srcH;
+
+	// Destination Rect (Part of screen)
 	SDL_Rect dst{};
-	dst.x = static_cast<int>(x);
-	dst.y = static_cast<int>(y);
-	dst.w = static_cast<int>(width);
-	dst.h = static_cast<int>(height);
-	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
+	dst.x = static_cast<int>(dstX);
+	dst.y = static_cast<int>(dstY);
+	dst.w = static_cast<int>(dstW);
+	dst.h = static_cast<int>(dstH);
+
+	// Render
+	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);
 }

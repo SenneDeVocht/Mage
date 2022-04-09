@@ -3,14 +3,13 @@
 
 namespace Mage
 {
-	class Font;
 	class Texture2D;
 
-	class RendererComponent : public Component
+	class SpriteComponent : public Component
 	{
 	public:
-		explicit RendererComponent() = default;
-		explicit RendererComponent(const std::string& filename);
+		explicit SpriteComponent() = default;
+		explicit SpriteComponent(const std::string& filename);
 
 		void Render() const override;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Singleton.h"
+#include "Mage/Singleton.h"
 
 namespace Mage
 {

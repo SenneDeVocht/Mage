@@ -8,7 +8,8 @@
 #include "Mage/Scenegraph/GameObject.h"
 
 // Components
-#include "Mage/Components/RendererComponent.h"
+#include "Mage/Components/SpriteComponent.h"
+#include "Mage/Components/AnimatedSpriteComponent.h"
 #include "Mage/Components/TextComponent.h"
 #include "Mage/Components/Transform.h"
 
@@ -27,12 +28,12 @@ void BurgerTime::LoadGame() const
 
 	// Background
 	auto go = scene->CreateObject("Background");
-	go->CreateComponent<Mage::RendererComponent>("background.jpg");
+	go->CreateComponent<Mage::SpriteComponent>("background.jpg");
 
 	// Logo
 	go = scene->CreateObject("Logo");
 	go->GetTransform()->SetPosition(204, 75, 0);
-	go->CreateComponent<Mage::RendererComponent>("logo.png");
+	go->CreateComponent<Mage::SpriteComponent>("logo.png");
 
 	// Text
 	go = scene->CreateObject("SubTitle");
@@ -40,7 +41,7 @@ void BurgerTime::LoadGame() const
 
 	auto font = Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 50);
 	go->CreateComponent<Mage::TextComponent>("Made by Senne De Vocht", font, SDL_Color{ 240, 240, 240 }, false);
-	go->CreateComponent<Mage::RendererComponent>();
+	go->CreateComponent<Mage::SpriteComponent>();
 
 	// FPS Counter
 	go = scene->CreateObject("FpsCounter");
@@ -49,7 +50,7 @@ void BurgerTime::LoadGame() const
 	font = Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 35);
 	go->CreateComponent<Mage::TextComponent>("FPS: 0", font, SDL_Color{ 210, 96, 63 }, false);
 	go->CreateComponent<FpsCounterComponent>();
-	go->CreateComponent<Mage::RendererComponent>();
+	go->CreateComponent<Mage::SpriteComponent>();
 
 	// Peter Pepper 1
 	auto peterPepperParent = scene->CreateObject("PeterPepper_01");
@@ -62,7 +63,7 @@ void BurgerTime::LoadGame() const
 	go = peterPepperParent->CreateChildObject("LivesDisplay");
 	go->GetTransform()->SetPosition(5, 450, 0);
 	go->CreateComponent<Mage::TextComponent>("LIVES: 3", font, SDL_Color{ 136, 186, 116 }, false);
-	go->CreateComponent<Mage::RendererComponent>();
+	go->CreateComponent<Mage::SpriteComponent>();
 	auto livesDispay = go->CreateComponent<HealthDisplayComponent>();
 
 	peterPepper->AddLivesObserver(livesDispay);
@@ -71,7 +72,7 @@ void BurgerTime::LoadGame() const
 	go = peterPepperParent->CreateChildObject("PointsDisplay");
 	go->GetTransform()->SetPosition(5, 430, 0);
 	go->CreateComponent<Mage::TextComponent>("POINTS: 0", font, SDL_Color{ 136, 186, 116 }, false);
-	go->CreateComponent<Mage::RendererComponent>();
+	go->CreateComponent<Mage::SpriteComponent>();
 	auto pointsDispay = go->CreateComponent<PointsDisplayComponent>();
 
 	peterPepper->AddPointsObserver(pointsDispay);
@@ -87,7 +88,7 @@ void BurgerTime::LoadGame() const
 	go = peterPepperParent->CreateChildObject("LivesDisplay");
 	go->GetTransform()->SetPosition(5, 400, 0);
 	go->CreateComponent<Mage::TextComponent>("LIVES: 3", font, SDL_Color{ 136, 186, 116 }, false);
-	go->CreateComponent<Mage::RendererComponent>();
+	go->CreateComponent<Mage::SpriteComponent>();
 	livesDispay = go->CreateComponent<HealthDisplayComponent>();
 
 	peterPepper2->AddLivesObserver(livesDispay);
@@ -96,7 +97,7 @@ void BurgerTime::LoadGame() const
 	go = peterPepperParent->CreateChildObject("PointsDisplay");
 	go->GetTransform()->SetPosition(5, 380, 0);
 	go->CreateComponent<Mage::TextComponent>("POINTS: 0", font, SDL_Color{ 136, 186, 116 }, false);
-	go->CreateComponent<Mage::RendererComponent>();
+	go->CreateComponent<Mage::SpriteComponent>();
 	pointsDispay = go->CreateComponent<PointsDisplayComponent>();
 
 	peterPepper2->AddPointsObserver(pointsDispay);
@@ -110,4 +111,10 @@ void BurgerTime::LoadGame() const
 	std::cout << "Only two players on controller supported" << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << std::endl;
+
+
+	// Animation test
+	go = scene->CreateObject("animation");
+	go->CreateComponent<Mage::AnimatedSpriteComponent>("PeterPepper/WalkFront.png", 3, .2f);
+	go->GetTransform()->SetPosition(200, 200);
 }

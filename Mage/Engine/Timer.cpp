@@ -13,6 +13,7 @@ public:
 
 private:
 	float m_DeltaTime = 0;
+	float m_MaxDeltaTime = 1;
 	float m_FixedTimeStep = 0.02f;
 
 	std::chrono::steady_clock::time_point m_LastTime;
@@ -22,6 +23,9 @@ void Mage::Timer::TimerImpl::CalculateTime()
 {
 	const auto currentTime = std::chrono::high_resolution_clock::now();
 	m_DeltaTime = std::chrono::duration<float>(currentTime - m_LastTime).count();
+	if (m_DeltaTime > m_MaxDeltaTime)
+		m_DeltaTime = m_MaxDeltaTime;
+
 	m_LastTime = currentTime;
 }
 

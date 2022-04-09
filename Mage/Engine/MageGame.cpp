@@ -17,7 +17,7 @@
 #include "backends/imgui_impl_sdl.h"
 
 // Scenegraph
-#include "../Scenegraph/GameObject.h"
+#include "Mage/Scenegraph/GameObject.h"
 
 Mage::MageGame::~MageGame()
 {

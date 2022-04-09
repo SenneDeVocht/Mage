@@ -8,11 +8,11 @@
 #include "Mage/Components/Transform.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
-Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(const std::string& filename, int numFrames, float secondsPerFrame)
+Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame)
 	: m_NumFrames{ numFrames }
 	, m_SecondsPerFrame{ secondsPerFrame }
 {
-	SetSpritesheet(filename);
+	SetSpritesheet(pSpritesheet);
 }
 
 void Mage::AnimatedSpriteComponent::Update()
@@ -54,9 +54,4 @@ void Mage::AnimatedSpriteComponent::Render() const
 void Mage::AnimatedSpriteComponent::SetSpritesheet(std::shared_ptr<Texture2D> pTexture)
 {
 	m_pSpritesheet = pTexture;
-}
-
-void Mage::AnimatedSpriteComponent::SetSpritesheet(const std::string& filename)
-{
-	m_pSpritesheet = ResourceManager::GetInstance().LoadTexture(filename);
 }

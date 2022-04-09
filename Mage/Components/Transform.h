@@ -8,7 +8,9 @@ namespace Mage
 	public:
 		const glm::vec3& GetLocalPosition() const { return m_Position; }
 		glm::vec3 GetWorldPosition() const;
+
 		void SetPosition(float x, float y, float z = 0);
+		void Translate(float x, float y, float z = 0);
 
 		// Transform can't be destroyed
 		void Destroy() override {};

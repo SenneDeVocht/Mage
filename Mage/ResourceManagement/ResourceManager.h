@@ -10,7 +10,7 @@ namespace Mage
 	{
 	public:
 		void Init(const std::string& data);
-		std::shared_ptr<Texture2D> LoadTexture(const std::string& file) const;
+		std::shared_ptr<Texture2D> LoadTexture(const std::string& file, float pixelsPerUnit, float pivotX = 0.5f, float pivotY = 0.5f) const;
 		std::shared_ptr<Font> LoadFont(const std::string& file, unsigned int size) const;
 
 	private:

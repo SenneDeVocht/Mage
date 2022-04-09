@@ -3,11 +3,11 @@
 
 #include <SDL_ttf.h>
 
-Mage::Font::Font(const std::string& fullPath, unsigned int size)
+Mage::Font::Font(const std::string& fullPath, unsigned int pointHeight)
 	: m_Font(nullptr)
-	, m_Size(size)
+	, m_Size(pointHeight)
 {
-	m_Font = TTF_OpenFont(fullPath.c_str(), size);
+	m_Font = TTF_OpenFont(fullPath.c_str(), pointHeight);
 	if (m_Font == nullptr)
 	{
 		throw std::runtime_error(std::string("Failed to load font: ") + SDL_GetError());

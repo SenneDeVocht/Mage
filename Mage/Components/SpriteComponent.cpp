@@ -6,9 +6,9 @@
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Components/Transform.h"
 
-Mage::SpriteComponent::SpriteComponent(const std::string& filename)
+Mage::SpriteComponent::SpriteComponent(std::shared_ptr<Texture2D> pTexture)
 {
-	SetTexture(filename);
+	SetTexture(pTexture);
 }
 
 void Mage::SpriteComponent::Render() const
@@ -24,9 +24,4 @@ void Mage::SpriteComponent::Render() const
 void Mage::SpriteComponent::SetTexture(std::shared_ptr<Texture2D> pTexture)
 {
 	m_pTexture = pTexture;
-}
-
-void Mage::SpriteComponent::SetTexture(const std::string& filename)
-{
-	m_pTexture = ResourceManager::GetInstance().LoadTexture(filename);
 }

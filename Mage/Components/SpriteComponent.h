@@ -9,12 +9,11 @@ namespace Mage
 	{
 	public:
 		explicit SpriteComponent() = default;
-		explicit SpriteComponent(const std::string& filename);
+		explicit SpriteComponent(std::shared_ptr<Texture2D> pTexture);
 
 		void Render() const override;
 
 		void SetTexture(std::shared_ptr<Texture2D> pTexture);
-		void SetTexture(const std::string& filename);
 
 	private:
 		std::shared_ptr<Texture2D> m_pTexture;

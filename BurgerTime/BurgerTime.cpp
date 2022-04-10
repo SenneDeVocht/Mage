@@ -15,8 +15,6 @@
 #include "Mage/Components/CameraComponent.h"
 
 #include "FpsCounterComponent.h"
-#include "HealthDisplayComponent.h"
-#include "PointsDisplayComponent.h"
 #include "PeterPepper.h"
 
 // Other
@@ -59,68 +57,31 @@ void BurgerTime::LoadGame() const
 	go->CreateComponent<FpsCounterComponent>();
 	go->CreateComponent<Mage::SpriteComponent>();
 
-	// Peter Pepper 1
-	auto peterPepperParent = scene->CreateObject("PeterPepper_01");
-
 	// Peter Pepper
-	go = peterPepperParent->CreateChildObject("PeterPepper");
-	const auto peterPepper = go->CreateComponent<PeterPepper>(0);
+	{
+		auto peterPepperObject = scene->CreateObject("PeterPepper");
 
-	// Lives display
-	go = peterPepperParent->CreateChildObject("LivesDisplay");
-	go->GetTransform()->SetPosition(-4.875f, -2.5, 0);
-	go->CreateComponent<Mage::TextComponent>("LIVES: 3", font, SDL_Color{ 136, 186, 116 }, 32.f);
-	go->CreateComponent<Mage::SpriteComponent>();
-	auto livesDispay = go->CreateComponent<HealthDisplayComponent>();
+		auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+			Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/Idle.png", 16),
+			1,
+			0.f);
+		auto walkFront = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+			Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkFront.png", 16),
+			4,
+			0.1f);
+		auto walkBack = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+			Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkBack.png", 16),
+			4,
+			0.1f);
+		auto walkLeft = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+			Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkLeft.png", 16),
+			4,
+			0.1f);
+		auto walkRight = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+			Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkRight.png", 16),
+			4,
+			0.1f);
 
-	peterPepper->AddLivesObserver(livesDispay);
-
-	// Points display
-	go = peterPepperParent->CreateChildObject("PointsDisplay");
-	go->GetTransform()->SetPosition(-4.875f, -2.75, 0);
-	go->CreateComponent<Mage::TextComponent>("POINTS: 0", font, SDL_Color{ 136, 186, 116 }, 32.f);
-	go->CreateComponent<Mage::SpriteComponent>();
-	auto pointsDispay = go->CreateComponent<PointsDisplayComponent>();
-
-	peterPepper->AddPointsObserver(pointsDispay);
-
-	// Peter Pepper 2
-	peterPepperParent = scene->CreateObject("PeterPepper_02");
-
-	// Peter Pepper
-	go = peterPepperParent->CreateChildObject("PeterPepper");
-	const auto peterPepper2 = go->CreateComponent<PeterPepper>(1);
-
-	// Lives display
-	go = peterPepperParent->CreateChildObject("LivesDisplay");
-	go->GetTransform()->SetPosition(-4.875f, -3.25, 0);
-	go->CreateComponent<Mage::TextComponent>("LIVES: 3", font, SDL_Color{ 136, 186, 116 }, 32.f);
-	go->CreateComponent<Mage::SpriteComponent>();
-	livesDispay = go->CreateComponent<HealthDisplayComponent>();
-
-	peterPepper2->AddLivesObserver(livesDispay);
-
-	// Points display
-	go = peterPepperParent->CreateChildObject("PointsDisplay");
-	go->GetTransform()->SetPosition(-4.875f, -3.5f, 0);
-	go->CreateComponent<Mage::TextComponent>("POINTS: 0", font, SDL_Color{ 136, 186, 116 }, 32.f);
-	go->CreateComponent<Mage::SpriteComponent>();
-	pointsDispay = go->CreateComponent<PointsDisplayComponent>();
-
-	peterPepper2->AddPointsObserver(pointsDispay);
-
-	std::cout << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "How to play:" << std::endl;
-	std::cout << "X - Lose one life" << std::endl;
-	std::cout << "Y - Gain one point" << std::endl;
-	std::cout << std::endl;
-	std::cout << "Only two players on controller supported" << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << std::endl;
-
-
-	// Animation test
-	go = scene->CreateObject("animation");
-	go->CreateComponent<Mage::AnimatedSpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkFront.png", 16), 4, .1f);
+		peterPepperObject->CreateComponent<PeterPepper>(idle, walkFront, walkBack, walkLeft, walkRight);
+	}
 }

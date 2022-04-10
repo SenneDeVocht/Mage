@@ -1,54 +1,66 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "PeterPepper.h"
 
-#include <functional>
-
-#include "Commands.h"
 #include "Mage/Input/InputManager.h"
-#include "Subject.h"
+#include "Mage/Scenegraph/GameObject.h"
+#include "Mage/Components/Transform.h"
+#include "Mage/Engine/Timer.h"
+#include "Mage/Components/AnimatedSpriteComponent.h"
 
-PeterPepper::PeterPepper(int controllerIndex)
-    : m_Lives{ 3 }
-    , m_pLivesSubject{ std::make_unique<Subject>() }
-    , m_Points{ 0 }
-    , m_pPointsSubject{ std::make_unique<Subject>() }
-{
-	Mage::InputManager::GetInstance().AddInputAction(new Mage::InputAction{ controllerIndex, Mage::ControllerButton::ButtonX, -1, Mage::InputState::Down, std::make_unique<PeterPepperDieCommand>(this) });
-	Mage::InputManager::GetInstance().AddInputAction(new Mage::InputAction{ controllerIndex, Mage::ControllerButton::ButtonY, -1, Mage::InputState::Down, std::make_unique<PeterPepperGainPointsCommand>(this)});
-}
+PeterPepper::PeterPepper(Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront,
+	Mage::AnimatedSpriteComponent* pWalkBack, Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight)
+    : m_pIdle{ pIdle }
+	, m_pWalkFront{ pWalkfront }
+	, m_pWalkBack{ pWalkBack }
+	, m_pWalkLeft{ pWalkLeft }
+	, m_pWalkRight{ pWalkRight }
+{}
 
-PeterPepper::~PeterPepper()
-{
-}
 
-void PeterPepper::AddLivesObserver(Observer* observer)
+void PeterPepper::Update()
 {
-    m_pLivesSubject->AddObserver(observer);
-}
+	// Determine input direction
+	int horizontalDir{ 0 };
+	int verticalDir{ 0 };
 
-int PeterPepper::GetLives()
-{
-    return m_Lives;
-}
+	if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x26, Mage::InputState::Hold))
+		++verticalDir;
+	if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x28, Mage::InputState::Hold))
+		--verticalDir;
+	if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x25, Mage::InputState::Hold))
+		--horizontalDir;
+	if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x27, Mage::InputState::Hold))
+		++horizontalDir;
 
-void PeterPepper::Die()
-{
-    --m_Lives;
-    m_pLivesSubject->Notify(this, Observer::Event::PlayerDied);
-}
+	// Move
+	const glm::vec2 movement = glm::vec2(horizontalDir, verticalDir) * Mage::Timer::GetInstance().GetDeltaTime();
+	this->GetGameObject()->GetTransform()->Translate(movement.x, movement.y);
 
-void PeterPepper::AddPointsObserver(Observer* observer)
-{
-    m_pPointsSubject->AddObserver(observer);
-}
+	// Animations
+	m_pIdle->SetEnabled(false);
+	m_pWalkFront->SetEnabled(false);
+	m_pWalkBack->SetEnabled(false);
+	m_pWalkLeft->SetEnabled(false);
+	m_pWalkRight->SetEnabled(false);
 
-int PeterPepper::GetPoints()
-{
-    return m_Points;
-}
-
-void PeterPepper::GainPoints()
-{
-    m_Points += 100;
-    m_pPointsSubject->Notify(this, Observer::Event::PointsChanged);
+	if (horizontalDir == 0 && verticalDir == 0)
+	{
+		m_pIdle->SetEnabled(true);
+	}
+	else if (horizontalDir > 0)
+	{
+		m_pWalkRight->SetEnabled(true);
+	}
+	else if (horizontalDir < 0)
+	{
+		m_pWalkLeft->SetEnabled(true);
+	}
+	else if (verticalDir > 0)
+	{
+		m_pWalkBack->SetEnabled(true);
+	}
+	else if (verticalDir < 0)
+	{
+		m_pWalkFront->SetEnabled(true);
+	}
 }

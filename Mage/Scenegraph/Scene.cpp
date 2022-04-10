@@ -60,7 +60,15 @@ void Mage::Scene::FixedUpdate() const
 	}
 }
 
-void Mage::Scene::DestroyMarkedObjects()
+void Mage::Scene::Render() const
+{
+	for (const auto& object : m_Objects)
+	{
+		object->Render();
+	}
+}
+
+void Mage::Scene::ChangeSceneGraph()
 {
 	// Destroy marked root objects
 	const auto pos = std::remove_if(m_Objects.begin(), m_Objects.end(),
@@ -71,14 +79,6 @@ void Mage::Scene::DestroyMarkedObjects()
 	// Call on remaining objects
 	for (const auto& object : m_Objects)
 	{
-		object->DestroyMarkedObjects();
-	}
-}
-
-void Mage::Scene::Render() const
-{
-	for (const auto& object : m_Objects)
-	{
-		object->Render();
+		object->ChangeSceneGraph();
 	}
 }

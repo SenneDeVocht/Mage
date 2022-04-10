@@ -139,11 +139,11 @@ void Mage::MageGame::Run(int width, int height, const std::string& title)
 				lag -= timer.GetFixedTimeStep();
 			}
 
-			// Destroy Objects
-			sceneManager.DestroyMarkedObjects();
-
 			// Render
 			renderer.Render();
+
+			// Destroy Objects
+			sceneManager.ChangeSceneGraph();
 		}
 
 		Cleanup();

@@ -17,8 +17,8 @@ namespace Mage
 		void DrawImGui() const;
 		void Update() const;
 		void FixedUpdate() const;
-		void DestroyMarkedObjects() const;
 		void Render() const;
+		void ChangeSceneGraph() const;
 
 	private:
 		friend class Singleton<SceneManager>;

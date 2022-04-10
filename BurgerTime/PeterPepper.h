@@ -1,33 +1,30 @@
 #pragma once
 #include "Mage/Components/Component.h"
 
-class Observer;
-class Subject;
+namespace Mage
+{
+	class AnimatedSpriteComponent;
+}
 
 class PeterPepper final : public Mage::Component
 {
 public:
-	explicit PeterPepper(int controllerIndex);
-	~PeterPepper() override;
+	explicit PeterPepper(Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront, Mage::AnimatedSpriteComponent* pWalkBack,
+		Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight);
+	~PeterPepper() override = default;
 
 	PeterPepper(const PeterPepper& other) = delete;
 	PeterPepper(PeterPepper&& other) = delete;
 	PeterPepper& operator=(const PeterPepper& other) = delete;
 	PeterPepper& operator=(PeterPepper&& other) = delete;
 
-	void AddLivesObserver(Observer* observer);
-	int GetLives();
-	void Die();
-
-	void AddPointsObserver(Observer* observer);
-	int GetPoints();
-	void GainPoints();
+	void Update() override;
 
 private:
-	int m_Lives;
-	std::unique_ptr<Subject> m_pLivesSubject;
-
-	int m_Points;
-	std::unique_ptr<Subject> m_pPointsSubject;
+	Mage::AnimatedSpriteComponent* m_pIdle{};
+	Mage::AnimatedSpriteComponent* m_pWalkFront{};
+	Mage::AnimatedSpriteComponent* m_pWalkBack{};
+	Mage::AnimatedSpriteComponent* m_pWalkLeft{};
+	Mage::AnimatedSpriteComponent* m_pWalkRight{};
 };
 

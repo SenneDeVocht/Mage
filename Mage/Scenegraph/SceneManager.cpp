@@ -26,14 +26,14 @@ void Mage::SceneManager::FixedUpdate() const
 	m_Scenes[m_ActiveScene]->FixedUpdate();
 }
 
-void Mage::SceneManager::DestroyMarkedObjects() const
-{
-	m_Scenes[m_ActiveScene]->DestroyMarkedObjects();
-}
-
 void Mage::SceneManager::Render() const
 {
 	m_Scenes[m_ActiveScene]->Render();
+}
+
+void Mage::SceneManager::ChangeSceneGraph() const
+{
+	m_Scenes[m_ActiveScene]->ChangeSceneGraph();
 }
 
 Mage::Scene* Mage::SceneManager::CreateScene(const std::string & name)

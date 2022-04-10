@@ -174,12 +174,8 @@
     <ClCompile Include="BurgerTimePCH.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="FpsCounterComponent.cpp" />
-    <ClCompile Include="HealthDisplayComponent.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="PeterPepper.cpp" />
-    <ClCompile Include="PointsDisplayComponent.cpp" />
-    <ClCompile Include="Subject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mage\Mage.vcxproj">
@@ -191,11 +187,7 @@
     <ClInclude Include="BurgerTimePCH.h" />
     <ClInclude Include="Commands.h" />
     <ClInclude Include="FpsCounterComponent.h" />
-    <ClInclude Include="HealthDisplayComponent.h" />
-    <ClInclude Include="Observer.h" />
     <ClInclude Include="PeterPepper.h" />
-    <ClInclude Include="PointsDisplayComponent.h" />
-    <ClInclude Include="Subject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

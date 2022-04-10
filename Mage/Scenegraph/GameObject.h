@@ -23,8 +23,8 @@ namespace Mage
 		void DrawImGui() const;
 		void Update() const;
 		void FixedUpdate() const;
-		void DestroyMarkedObjects();
 		void Render() const;
+		void ChangeSceneGraph();
 
 		// Name
 		const std::string& GetName() const;

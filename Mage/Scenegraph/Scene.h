@@ -15,8 +15,8 @@ namespace Mage
 		void DrawImGui() const;
 		void Update() const;
 		void FixedUpdate() const;
-		void DestroyMarkedObjects();
 		void Render() const;
+		void ChangeSceneGraph();
 
 		GameObject* CreateObject(const std::string& name);
 		std::vector<GameObject*> GetObjects() const;

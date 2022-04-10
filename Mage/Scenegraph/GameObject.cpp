@@ -18,7 +18,8 @@ void Mage::GameObject::DrawImGui() const
 	// Update components
 	for (const auto& pComponent : m_Components)
 	{
-		pComponent->DrawImGui();
+		if (pComponent->IsEnabled())
+			pComponent->DrawImGui();
 	}
 
 	// Update children
@@ -33,7 +34,8 @@ void Mage::GameObject::Update() const
 	// Update components
 	for (const auto& pComponent : m_Components)
 	{
-		pComponent->Update();
+		if (pComponent->IsEnabled())
+			pComponent->Update();
 	}
 
 	// Update children
@@ -48,7 +50,8 @@ void Mage::GameObject::FixedUpdate() const
 	// Update Components
 	for (const auto& pComponent : m_Components)
 	{
-		pComponent->FixedUpdate();
+		if (pComponent->IsEnabled())
+			pComponent->FixedUpdate();
 	}
 
 	// Update children
@@ -58,7 +61,23 @@ void Mage::GameObject::FixedUpdate() const
 	}
 }
 
-void Mage::GameObject::DestroyMarkedObjects()
+void Mage::GameObject::Render() const
+{
+	// Render Components
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->Render();
+	}
+
+	// Render children
+	for (const auto& pChild : m_Children)
+	{
+		pChild->Render();
+	}
+}
+
+void Mage::GameObject::ChangeSceneGraph()
 {
 	// Destroy marked objects
 	const auto pos = std::remove_if(m_Children.begin(), m_Children.end(),
@@ -75,22 +94,13 @@ void Mage::GameObject::DestroyMarkedObjects()
 	// Call on remaining objects
 	for (auto& object : m_Children)
 	{
-		object->DestroyMarkedObjects();
-	}
-}
-
-void Mage::GameObject::Render() const
-{
-	// Render Components
-	for (const auto& pComponent : m_Components)
-	{
-		pComponent->Render();
+		object->ChangeSceneGraph();
 	}
 
-	// Render children
-	for (const auto& pChild : m_Children)
+	// Call on remaining components
+	for (auto& component : m_Components)
 	{
-		pChild->Render();
+		component->ChangeSceneGraph();
 	}
 }
 

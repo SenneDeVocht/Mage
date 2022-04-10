@@ -21,3 +21,19 @@ void Mage::Component::SetGameObject(GameObject* pGameObject)
     if (m_pGameObject == nullptr)
         m_pGameObject = pGameObject;
 }
+
+void Mage::Component::ChangeSceneGraph()
+{
+    m_IsEnabled = m_ShouldBeEnabled;
+}
+
+bool Mage::Component::IsEnabled() const
+{
+    return m_IsEnabled;
+}
+
+void Mage::Component::SetEnabled(bool enabled)
+{
+    m_ShouldBeEnabled = enabled;
+}
+

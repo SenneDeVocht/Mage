@@ -6,6 +6,11 @@
 class Mage::Timer::TimerImpl
 {
 public:
+	TimerImpl()
+	{
+		CalculateTime();
+	}
+
 	void CalculateTime();
 
 	float GetDeltaTime() const { return m_DeltaTime; }

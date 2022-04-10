@@ -13,14 +13,22 @@ namespace Mage
 		virtual void FixedUpdate() {};
 		virtual void Render() const {};
 
+		void ChangeSceneGraph();
+
 		void SetGameObject(GameObject* pGameObject);
 		GameObject* GetGameObject() const;
 
 		virtual void Destroy();
 		bool IsMarkedForDestroy() const;
+
+		bool IsEnabled() const;
+		void SetEnabled(bool enabled);
 		
 	protected:
 		GameObject* m_pGameObject = nullptr;
 		bool m_IsMarkedForDestroy = false;
+
+		bool m_IsEnabled{ true };
+		bool m_ShouldBeEnabled{ true };
 	};
 }

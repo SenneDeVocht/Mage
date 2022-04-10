@@ -1,5 +1,4 @@
 #include "BurgerTime/BurgerTimePCH.h"
-
 #include "BurgerTime.h"
 
 // Scenegraph
@@ -13,8 +12,6 @@
 #include "Mage/Components/TextComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/CameraComponent.h"
-
-#include "FpsCounterComponent.h"
 #include "PeterPepper.h"
 
 // Other
@@ -27,39 +24,20 @@ void BurgerTime::LoadGame() const
 	const auto scene = Mage::SceneManager::GetInstance().CreateScene("DemoScene");
 
 	// Camera
-	auto go = scene->CreateObject("Camera");
-	auto cam = go->CreateComponent<Mage::CameraComponent>(10.f, 480.f / 64.f);
-	Mage::Renderer::GetInstance().SetCamera(cam);
+	{
+		const auto cameraObject = scene->CreateObject("Camera");
+		const auto camera = cameraObject->CreateComponent<Mage::CameraComponent>(16.f, 16.f);
+		Mage::Renderer::GetInstance().SetCamera(camera);
+	}
 
-	// Background
-	go = scene->CreateObject("Background");
-	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("background.png", 16));
-
-	// Logo
-	go = scene->CreateObject("Logo");
-	go->GetTransform()->SetPosition(0, 1 + 3/32.f);
-	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("logo.png", 16));
-
-	// Text
-	go = scene->CreateObject("SubTitle");
-	go->GetTransform()->SetPosition(0, -1);
-
-	auto font = Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 15);
-	go->CreateComponent<Mage::TextComponent>("Made by Senne De Vocht", font, SDL_Color{ 240, 240, 240 }, 16.f, Mage::TextComponent::HorizontalAlignment::Middle);
-	go->CreateComponent<Mage::SpriteComponent>();
-
-	// FPS Counter
-	go = scene->CreateObject("FpsCounter");
-	go->GetTransform()->SetPosition(-4.875f, 3.75f);
-
-	font = Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 15);
-	go->CreateComponent<Mage::TextComponent>("FPS: 0", font, SDL_Color{ 210, 96, 63 }, 32.f, Mage::TextComponent::HorizontalAlignment::Left, Mage::TextComponent::VerticalAlignment::Top);
-	go->CreateComponent<FpsCounterComponent>();
-	go->CreateComponent<Mage::SpriteComponent>();
+	// Level
+	{
+		
+	}
 
 	// Peter Pepper
 	{
-		auto peterPepperObject = scene->CreateObject("PeterPepper");
+		const auto peterPepperObject = scene->CreateObject("PeterPepper");
 
 		auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 			Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/Idle.png", 16),

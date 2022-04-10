@@ -26,5 +26,7 @@ private:
 	Mage::AnimatedSpriteComponent* m_pWalkBack{};
 	Mage::AnimatedSpriteComponent* m_pWalkLeft{};
 	Mage::AnimatedSpriteComponent* m_pWalkRight{};
+
+	float m_Speed{ 2 };
 };
 

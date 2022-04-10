@@ -10,7 +10,7 @@ int main(int, char* [])
 {
     // Run
     BurgerTime burgerTime;
-    burgerTime.Run(640, 480, "Burger Time");
+    burgerTime.Run(1024, 1024, "Burger Time");
 
     return 0;
 }

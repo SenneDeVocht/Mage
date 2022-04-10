@@ -16,7 +16,6 @@ PeterPepper::PeterPepper(Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpr
 	, m_pWalkRight{ pWalkRight }
 {}
 
-
 void PeterPepper::Update()
 {
 	// Determine input direction
@@ -33,7 +32,7 @@ void PeterPepper::Update()
 		++horizontalDir;
 
 	// Move
-	const glm::vec2 movement = glm::vec2(horizontalDir, verticalDir) * Mage::Timer::GetInstance().GetDeltaTime();
+	const glm::vec2 movement = glm::vec2(horizontalDir, verticalDir) * Mage::Timer::GetInstance().GetDeltaTime() * m_Speed;
 	this->GetGameObject()->GetTransform()->Translate(movement.x, movement.y);
 
 	// Animations

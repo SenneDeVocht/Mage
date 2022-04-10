@@ -28,19 +28,33 @@ public:
 
     bool ProcessInput()
     {
-        // XInput
-        memcpy(m_PreviousStates.data(), m_CurrentStates.data(), sizeof(m_CurrentStates.data()));
+        // Controller
+        memcpy(m_PreviousControllerStates.data(), m_CurrentControllerStates.data(), sizeof(m_CurrentControllerStates.data()));
         for (DWORD i = 0; i < 4; i++)
         {
-            XInputGetState(i, &(m_CurrentStates[i]));
+            XInputGetState(i, &(m_CurrentControllerStates[i]));
         }
+
+        // Keyboard
+        memcpy(&m_PreviousKeyboardState, &m_CurrentKeyboardState, sizeof(BYTE) * 256);
+        GetKeyboardState(m_CurrentKeyboardState);
 
         for (auto& action : m_InputActions)
         {
-            if (CheckButton(action->ControllerIndex, action->Button, action->State))
-            {
-                action->Command->Execute();
-            }
+	        if (action->ControllerIndex >= 0)
+	        {
+                if (CheckGamepadButton(action->ControllerIndex, action->Button, action->State))
+                {
+                    action->Command->Execute();
+                }
+	        }
+	        if (action->KeyboardKey >= 0)
+	        {
+                if (CheckKeyboardKey(action->KeyboardKey, action->State))
+                {
+                    action->Command->Execute();
+                }
+	        }
         }
 
         // SDL Events
@@ -70,7 +84,7 @@ public:
         m_InputActions.erase(newEnd, m_InputActions.end());
     }
 
-    bool CheckButton(int controllerIndex, ControllerButton button, InputState state) const
+    bool CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const
     {
         switch (state)
         {
@@ -87,7 +101,25 @@ public:
         return false;
     }
 
+    bool CheckKeyboardKey(int keyboardKey, InputState state) const
+    {
+        switch (state)
+        {
+        case InputState::Down:
+            return IsDown(keyboardKey);
+
+        case InputState::Hold:
+            return IsHeld(keyboardKey);
+
+        case InputState::Up:
+            return IsUp(keyboardKey);
+        }
+
+        return false;
+    }
+
 private:
+    // Controller
     static WORD ToXinputButton(ControllerButton button)
     {
         switch (button)
@@ -140,27 +172,44 @@ private:
     }
     bool IsDown(int controllerIndex, WORD button) const
     {
-        WORD changedButtons = m_PreviousStates[controllerIndex].Gamepad.wButtons ^ m_CurrentStates[controllerIndex].Gamepad.wButtons;
-        WORD downButtons = changedButtons & m_CurrentStates[controllerIndex].Gamepad.wButtons;
+        WORD changedButtons = m_PreviousControllerStates[controllerIndex].Gamepad.wButtons ^ m_CurrentControllerStates[controllerIndex].Gamepad.wButtons;
+        WORD downButtons = changedButtons & m_CurrentControllerStates[controllerIndex].Gamepad.wButtons;
 
         return button & downButtons;
     }
     bool IsHeld(int controllerIndex, WORD button) const
     {
-        return button & m_CurrentStates[controllerIndex].Gamepad.wButtons;
+        return button & m_CurrentControllerStates[controllerIndex].Gamepad.wButtons;
     }
     bool IsUp(int controllerIndex, WORD button) const
     {
-        WORD changedButtons = m_PreviousStates[controllerIndex].Gamepad.wButtons ^ m_CurrentStates[controllerIndex].Gamepad.wButtons;
-        WORD upButtons = changedButtons & (~m_CurrentStates[controllerIndex].Gamepad.wButtons);
+        WORD changedButtons = m_PreviousControllerStates[controllerIndex].Gamepad.wButtons ^ m_CurrentControllerStates[controllerIndex].Gamepad.wButtons;
+        WORD upButtons = changedButtons & (~m_CurrentControllerStates[controllerIndex].Gamepad.wButtons);
 
         return button & upButtons;
     }
 
+    // Keyboard
+    bool IsDown(int keyboardKey) const
+    {
+        return (m_CurrentKeyboardState[keyboardKey] & 0x80) && !(m_PreviousKeyboardState[keyboardKey] & 0x80);
+    }
+    bool IsHeld(int keyboardKey) const
+    {
+        return m_CurrentKeyboardState[keyboardKey] & 0x80;
+    }
+    bool IsUp(int keyboardKey) const
+    {
+        return !(m_CurrentKeyboardState[keyboardKey] & 0x80) && (m_PreviousKeyboardState[keyboardKey] & 0x80);
+    }
+
     std::vector<InputAction*> m_InputActions{};
 
-    std::array<XINPUT_STATE, 4> m_CurrentStates;
-    std::array<XINPUT_STATE, 4> m_PreviousStates;
+    std::array<XINPUT_STATE, 4> m_CurrentControllerStates;
+    std::array<XINPUT_STATE, 4> m_PreviousControllerStates;
+
+    BYTE m_CurrentKeyboardState[256];
+    BYTE m_PreviousKeyboardState[256];
 };
 
 
@@ -189,7 +238,12 @@ void Mage::InputManager::RemoveInputAction(InputAction* action) const
     m_pImpl->RemoveInputAction(action);
 }
 
-bool Mage::InputManager::CheckButton(int controllerIndex, ControllerButton button, InputState state) const
+bool Mage::InputManager::CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const
 {
-    return m_pImpl->CheckButton(controllerIndex, button, state);
+    return m_pImpl->CheckGamepadButton(controllerIndex, button, state);
+}
+
+bool Mage::InputManager::CheckKeyboardKey(int keyboardKey, InputState state) const
+{
+    return m_pImpl->CheckKeyboardKey(keyboardKey, state);
 }

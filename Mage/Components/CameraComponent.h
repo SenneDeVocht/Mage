@@ -17,9 +17,6 @@ namespace Mage
 		float GetWidth() const { return m_Width; }
 		float GetHeight() const { return m_Height; }
 
-
-		void Update() override;
-
 	private:
 		float m_Width{};
 		float m_Height{};

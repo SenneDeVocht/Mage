@@ -13,8 +13,8 @@ PeterPepper::PeterPepper(int controllerIndex)
     , m_Points{ 0 }
     , m_pPointsSubject{ std::make_unique<Subject>() }
 {
-	Mage::InputManager::GetInstance().AddInputAction(new Mage::InputAction{ controllerIndex, Mage::ControllerButton::ButtonX, Mage::InputState::Down, std::make_unique<PeterPepperDieCommand>(this) });
-	Mage::InputManager::GetInstance().AddInputAction(new Mage::InputAction{ controllerIndex, Mage::ControllerButton::ButtonY, Mage::InputState::Down, std::make_unique<PeterPepperGainPointsCommand>(this) });
+	Mage::InputManager::GetInstance().AddInputAction(new Mage::InputAction{ controllerIndex, Mage::ControllerButton::ButtonX, -1, Mage::InputState::Down, std::make_unique<PeterPepperDieCommand>(this) });
+	Mage::InputManager::GetInstance().AddInputAction(new Mage::InputAction{ controllerIndex, Mage::ControllerButton::ButtonY, -1, Mage::InputState::Down, std::make_unique<PeterPepperGainPointsCommand>(this)});
 }
 
 PeterPepper::~PeterPepper()

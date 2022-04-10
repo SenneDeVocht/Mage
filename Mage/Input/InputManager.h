@@ -34,6 +34,9 @@ namespace Mage
 	{
 		int ControllerIndex;
 		ControllerButton Button;
+
+		int KeyboardKey;
+
 		InputState State;
 		std::unique_ptr<Command> Command;
 	};
@@ -42,13 +45,14 @@ namespace Mage
 	{
 	public:
 		InputManager();
-		~InputManager();
+		~InputManager() override;
 
 		bool ProcessInput() const;
 		void AddInputAction(InputAction* action) const;
 		void RemoveInputAction(InputAction* action) const;
 
-		bool CheckButton(int controllerIndex, ControllerButton button, InputState state) const;
+		bool CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const;
+		bool CheckKeyboardKey(int keyboardKey, InputState state) const;
 
 	private:
 		class InputManagerImpl;

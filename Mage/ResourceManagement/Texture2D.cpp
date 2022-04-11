@@ -1,9 +1,9 @@
 #include "Mage/MagePCH.h"
 #include "Texture2D.h"
 
-Mage::Texture2D::Texture2D(SDL_Texture* texture, float pixelsPerUnit, float pivotX, float pivotY)
+Mage::Texture2D::Texture2D(SDL_Texture* texture, float pixelsPerUnit, const glm::vec2& pivot)
 	: m_Texture{ texture}
-	, m_Pivot{ pivotX, pivotY }
+	, m_Pivot{ pivot }
 	, m_PixelsPerUnit{ pixelsPerUnit }
 {}
 

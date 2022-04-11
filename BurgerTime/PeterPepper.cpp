@@ -33,7 +33,7 @@ void PeterPepper::Update()
 
 	// Move
 	const glm::vec2 movement = glm::vec2(horizontalDir, verticalDir) * Mage::Timer::GetInstance().GetDeltaTime() * m_Speed;
-	this->GetGameObject()->GetTransform()->Translate(movement.x, movement.y);
+	this->GetGameObject()->GetTransform()->Translate(movement);
 
 	// Animations
 	m_pIdle->SetEnabled(false);

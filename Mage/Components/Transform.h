@@ -6,16 +6,16 @@ namespace Mage
 	class Transform final : public Component
 	{
 	public:
-		const glm::vec3& GetLocalPosition() const { return m_Position; }
-		glm::vec3 GetWorldPosition() const;
+		const glm::vec2& GetLocalPosition() const { return m_Position; }
+		glm::vec2 GetWorldPosition() const;
 
-		void SetPosition(float x, float y, float z = 0);
-		void Translate(float x, float y, float z = 0);
+		void SetPosition(const glm::vec2& position);
+		void Translate(const glm::vec2& translation);
 
 		// Transform can't be destroyed
-		void Destroy() override {};
+		void Destroy() override {}
 
 	private:
-		glm::vec3 m_Position;
+		glm::vec2 m_Position;
 	};
 }

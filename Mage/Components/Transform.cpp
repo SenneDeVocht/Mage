@@ -3,21 +3,17 @@
 
 #include "Mage/Scenegraph/GameObject.h"
 
-void Mage::Transform::SetPosition(const float x, const float y, const float z)
+void Mage::Transform::SetPosition(const glm::vec2& position)
 {
-	m_Position.x = x;
-	m_Position.y = y;
-	m_Position.z = z;
+	m_Position = position;
 }
 
-void Mage::Transform::Translate(float x, float y, float z)
+void Mage::Transform::Translate(const glm::vec2& translation)
 {
-	m_Position.x += x;
-	m_Position.y += y;
-	m_Position.z += z;
+	m_Position += translation;
 }
 
-glm::vec3 Mage::Transform::GetWorldPosition() const
+glm::vec2 Mage::Transform::GetWorldPosition() const
 {
 	const auto gameObjectParent = m_pGameObject->GetParent();
 

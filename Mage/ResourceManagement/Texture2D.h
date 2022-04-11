@@ -8,7 +8,7 @@ namespace Mage
     class Texture2D
     {
     public:
-        explicit Texture2D(SDL_Texture* texture, float pixelsPerUnit, float pivotX = 0.5, float pivotY = 0.5);
+        explicit Texture2D(SDL_Texture* texture, float pixelsPerUnit, const glm::vec2& pivot = { 0.5, 0.5f });
         ~Texture2D();
 
         Texture2D(const Texture2D&) = delete;

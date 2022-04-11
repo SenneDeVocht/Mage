@@ -77,7 +77,7 @@ void Mage::TextComponent::Update()
 		const auto pRendererComponent = m_pGameObject->GetComponentByType<SpriteComponent>();
 
 		if (pRendererComponent != nullptr)
-			pRendererComponent->SetTexture(std::make_shared<Texture2D>(texture, m_PixelsPerUnit, m_Pivot.x, m_Pivot.y));
+			pRendererComponent->SetTexture(std::make_shared<Texture2D>(texture, m_PixelsPerUnit, m_Pivot));
 
 		// Reset flag
 		m_NeedsUpdate = false;

@@ -30,7 +30,7 @@ void Mage::ResourceManager::Init(const std::string& dataPath)
 	}
 }
 
-std::shared_ptr<Mage::Texture2D> Mage::ResourceManager::LoadTexture(const std::string& file, float pixelsPerUnit, float pivotX, float pivotY) const
+std::shared_ptr<Mage::Texture2D> Mage::ResourceManager::LoadTexture(const std::string& file, float pixelsPerUnit, const glm::vec2& pivot) const
 {
 	const auto fullPath = m_DataPath + file;
 	auto texture = IMG_LoadTexture(Renderer::GetInstance().GetSDLRenderer(), fullPath.c_str());
@@ -38,7 +38,7 @@ std::shared_ptr<Mage::Texture2D> Mage::ResourceManager::LoadTexture(const std::s
 	{
 		throw std::runtime_error(std::string("Failed to load texture: ") + SDL_GetError());
 	}
-	return std::make_shared<Texture2D>(texture, pixelsPerUnit, pivotX, pivotY);
+	return std::make_shared<Texture2D>(texture, pixelsPerUnit, pivot);
 }
 
 std::shared_ptr<Mage::Font> Mage::ResourceManager::LoadFont(const std::string& file, unsigned int size) const

@@ -6,13 +6,14 @@
 
 namespace Mage
 {
+	class Scene;
 	class Component;
 	class Transform;
 
 	class GameObject final
 	{
 	public:
-		GameObject(const std::string& name, GameObject* parent);
+		GameObject(const std::string& name, GameObject* parent, Scene* scene);
 		~GameObject();
 
 		GameObject(const GameObject& other) = delete;
@@ -44,6 +45,9 @@ namespace Mage
 		std::vector<GameObject*> GetChildren() const;
 		GameObject* GetParent() const;
 
+		// Scene
+		Scene* GetScene() const { return m_Scene; }
+
 		// Destruction
 		void Destroy();
 		bool IsMarkedForDestroy() const;
@@ -58,6 +62,8 @@ namespace Mage
 		std::vector<std::unique_ptr<GameObject>> m_Children;
 		GameObject* m_pParentGameObject = nullptr;
 
+		Scene* m_Scene;
+
 		bool m_IsMarkedForDestroy = false;
 	};
 
@@ -71,6 +77,7 @@ namespace Mage
 		// Create component and add it
 		auto component = std::unique_ptr<componentType>(new componentType(args...));
 		component->SetGameObject(this);
+		component->Initialize();
 		const auto pComponent = component.get();
 
 		m_Components.push_back(std::move(component));

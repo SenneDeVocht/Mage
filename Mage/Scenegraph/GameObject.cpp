@@ -2,13 +2,14 @@
 #include "GameObject.h"
 
 #include "Mage/Components/Transform.h"
+#include "Mage/SceneGraph/Scene.h"
 
-Mage::GameObject::GameObject(const std::string& name, Mage::GameObject* parent)
+Mage::GameObject::GameObject(const std::string& name, Mage::GameObject* parent, Scene* scene)
 	: m_Name{ name }
 	, m_pTransform{ CreateComponent<Mage::Transform>() }
 	, m_pParentGameObject{ parent }
-{
-}
+	, m_Scene{ scene }
+{}
 
 // this is necessary to use unique pointers of incomplete types
 Mage::GameObject::~GameObject() = default;
@@ -121,7 +122,7 @@ Mage::Transform* Mage::GameObject::GetTransform() const
 
 Mage::GameObject* Mage::GameObject::CreateChildObject(const std::string& name)
 {
-	auto child = std::make_unique<GameObject>(name, this);
+	auto child = std::make_unique<GameObject>(name, this, m_Scene);
 	const auto pChild = child.get();
 
 	m_Children.push_back(std::move(child));

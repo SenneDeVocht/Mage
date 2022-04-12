@@ -12,6 +12,8 @@
 #include "Mage/Components/TextComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/CameraComponent.h"
+#include "Mage/Components/RigidBodyComponent.h"
+#include "Mage/Components/BoxColliderComponent.h"
 #include "PeterPepper.h"
 
 // Other
@@ -238,6 +240,9 @@ void BurgerTime::LoadGame() const
 		0.1f);
 
 	peterPepperObject->CreateComponent<PeterPepper>(idle, walkFront, walkBack, walkLeft, walkRight);
+
+	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
+	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>();
 	
 	#pragma endregion
 }

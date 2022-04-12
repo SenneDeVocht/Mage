@@ -8,10 +8,11 @@ namespace Mage
 	public:
 		virtual ~Component() = default;
 
-		virtual void DrawImGui() {};
-		virtual void Update() {};
-		virtual void FixedUpdate() {};
-		virtual void Render() const {};
+		virtual void Initialize() {}
+		virtual void DrawImGui() {}
+		virtual void Update() {}
+		virtual void FixedUpdate() {}
+		virtual void Render() const {}
 
 		void ChangeSceneGraph();
 

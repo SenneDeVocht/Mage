@@ -22,6 +22,7 @@ namespace Mage
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
+		void Initialize() const;
 		void DrawImGui() const;
 		void Update() const;
 		void FixedUpdate() const;
@@ -37,6 +38,10 @@ namespace Mage
 		// Name
 		const std::string& GetName() const;
 		void SetName(const std::string& name);
+
+		// Tag
+		const std::string& GetTag() const;
+		void SetTag(const std::string& tag, bool changeChildren = false);
 
 		// Components
 		template<typename componentType, typename... argTypes>
@@ -61,6 +66,7 @@ namespace Mage
 
 	private:
 		std::string m_Name;
+		std::string m_Tag{ "Default" };
 
 		//Transform* m_pTransform;
 		std::vector<std::unique_ptr<Component>> m_Components;
@@ -84,7 +90,6 @@ namespace Mage
 		// Create component and add it
 		auto component = std::unique_ptr<componentType>(new componentType(args...));
 		component->SetGameObject(this);
-		component->Initialize();
 		const auto pComponent = component.get();
 
 		m_Components.push_back(std::move(component));

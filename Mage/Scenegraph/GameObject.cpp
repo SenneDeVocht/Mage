@@ -10,10 +10,29 @@ Mage::GameObject::GameObject(const std::string& name, Mage::GameObject* parent, 
 	, m_pTransform{ CreateComponent<Mage::Transform>() }
 	, m_pParentGameObject{ parent }
 	, m_Scene{ scene }
-{}
+{
+	if (m_pParentGameObject != nullptr)
+		m_Tag = m_pParentGameObject->GetTag();
+}
 
 // this is necessary to use unique pointers of incomplete types
 Mage::GameObject::~GameObject() = default;
+
+void Mage::GameObject::Initialize() const
+{
+	// Update components
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->Initialize();
+	}
+
+	// Update children
+	for (const auto& pChild : m_Children)
+	{
+		pChild->Initialize();
+	}
+}
 
 void Mage::GameObject::DrawImGui() const
 {
@@ -151,6 +170,27 @@ void Mage::GameObject::SetName(const std::string& name)
 {
 	m_Name = name;
 }
+
+const std::string& Mage::GameObject::GetTag() const
+{
+	return m_Tag;
+}
+
+void Mage::GameObject::SetTag(const std::string& tag, bool changeChildren)
+{
+	m_Tag = tag;
+
+	// change children?
+	if (changeChildren)
+	{
+		for (const auto& pChild : m_Children)
+		{
+			pChild->SetTag(tag, true);
+		}
+	}
+}
+
+
 
 Mage::Transform* Mage::GameObject::GetTransform() const
 {

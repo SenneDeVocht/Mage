@@ -41,6 +41,14 @@ std::vector<Mage::GameObject*> Mage::Scene::GetObjects() const
 	return vecRaw;
 }
 
+void Mage::Scene::Initialize() const
+{
+	for (const auto& object : m_Objects)
+	{
+		object->Initialize();
+	}
+}
+
 void Mage::Scene::DrawImGui() const
 {
 	for (const auto& object : m_Objects)

@@ -18,6 +18,7 @@ namespace Mage
 
 		const std::string& GetName() const;
 
+		void Initialize() const;
 		void DrawImGui() const;
 		void Update() const;
 		void FixedUpdate() const;

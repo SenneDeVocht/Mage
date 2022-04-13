@@ -99,7 +99,7 @@ void Mage::MageGame::Run(int width, int height, const std::string& title)
 
 	{
 		const auto& renderer = Renderer::GetInstance();
-		auto& sceneManager = SceneManager::GetInstance();
+		const auto& sceneManager = SceneManager::GetInstance();
 		const auto& input = InputManager::GetInstance();
 		const auto& timer = Timer::GetInstance();
 

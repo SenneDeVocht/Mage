@@ -217,6 +217,7 @@ void BurgerTime::LoadGame() const
 	#pragma region PeterPepper
 	
 	const auto peterPepperObject = scene->CreateObject("PeterPepper");
+	peterPepperObject->GetTransform()->SetPosition({ 0, -3.5625f });
 
 	auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/Idle.png", 16),
@@ -242,34 +243,43 @@ void BurgerTime::LoadGame() const
 	peterPepperObject->CreateComponent<PeterPepper>(idle, walkFront, walkBack, walkLeft, walkRight);
 
 	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
-	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{1, 1}, glm::vec2{0, 0});
+	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{0.25f, 0.25f}, glm::vec2{0, -0.375f});
 	
 	#pragma endregion
 
-	// Ground test
-	//------------
-
-	const auto groundObject = scene->CreateObject("Ground");
-	groundObject->GetTransform()->SetPosition({ 0.f, -5.f});
-
-	groundObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
-	groundObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{5, 1}, glm::vec2{0, 0}, true);
+	// DONE
+	//-----
+	scene->Initialize();
 }
 
 void BurgerTime::CreatePlatform(Mage::GameObject* parent, const glm::vec2& position, bool isLight) const
 {
 	const std::string name = isLight ? "PlatformLight" : "PlatformDark";
 	const auto object = parent->CreateChildObject(name);
+	object->SetTag("Platform");
+
 	object->GetTransform()->SetPosition(position);
 
+	// Sprite
 	const std::string texturePath = isLight ? "Level/Platform_Light.png" : "Level/Platform_Dark.png";
 	object->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture(texturePath, 16));
+
+	// Triggerbox
+	object->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
+	object->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{1, 0.125f}, glm::vec2{0, 0}, true);
 }
 
 void BurgerTime::CreateLadder(Mage::GameObject* parent, const glm::vec2& position) const
 {
 	const auto object = parent->CreateChildObject("Ladder");
+	object->SetTag("Ladder");
+
 	object->GetTransform()->SetPosition(position);
 
+	// Sprite
 	object->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Ladder.png", 16));
+
+	// Triggerbox
+	object->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
+	object->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 1.f }, glm::vec2{ 0, 0.25f }, true);
 }

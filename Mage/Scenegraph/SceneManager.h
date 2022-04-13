@@ -13,7 +13,7 @@ namespace Mage
 
 		Scene* CreateScene(const std::string& name);
 		void SetActiveScene(int sceneIndex);
-
+		
 		void DrawImGui() const;
 		void Update() const;
 		void FixedUpdate() const;

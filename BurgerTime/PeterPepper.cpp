@@ -6,9 +6,10 @@
 #include "Mage/Components/Transform.h"
 #include "Mage/Engine/Timer.h"
 #include "Mage/Components/AnimatedSpriteComponent.h"
+#include "Mage/Components/RigidBodyComponent.h"
 
 PeterPepper::PeterPepper(Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront,
-	Mage::AnimatedSpriteComponent* pWalkBack, Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight)
+                         Mage::AnimatedSpriteComponent* pWalkBack, Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight)
     : m_pIdle{ pIdle }
 	, m_pWalkFront{ pWalkfront }
 	, m_pWalkBack{ pWalkBack }
@@ -16,7 +17,7 @@ PeterPepper::PeterPepper(Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpr
 	, m_pWalkRight{ pWalkRight }
 {}
 
-void PeterPepper::Update()
+void PeterPepper::FixedUpdate()
 {
 	// Determine input direction
 	int horizontalDir{ 0 };
@@ -32,8 +33,8 @@ void PeterPepper::Update()
 		++horizontalDir;
 
 	// Move
-	const glm::vec2 movement = glm::vec2(horizontalDir, verticalDir) * Mage::Timer::GetInstance().GetDeltaTime() * m_Speed;
-	this->GetGameObject()->GetTransform()->Translate(movement);
+	const glm::vec2 velocity = glm::vec2(horizontalDir, verticalDir) * m_Speed;
+	GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>()->SetVelocity(velocity);
 
 	// Animations
 	m_pIdle->SetEnabled(false);

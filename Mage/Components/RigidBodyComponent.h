@@ -1,6 +1,8 @@
 #pragma once
 #include "Mage/Components/Component.h"
 
+class b2Body;
+
 namespace Mage
 {
 
@@ -28,14 +30,23 @@ namespace Mage
 		BodyType GetType() const { return m_Type; }
 		bool GetFixedRotation() const { return m_FixedRotation; }
 
-		void SetRunTimeBody(void* body) { m_RunTimeBody = body; }
-		void* GetRunTimeBody() const { return m_RunTimeBody; }
+		void SetRunTimeBody(b2Body* body) { m_RunTimeBody = body; }
+		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
+
+		// Interaction
+		void SetPosition(const glm::vec2& position);
+
+		void SetVelocity(const glm::vec2& velocity);
+		glm::vec2 GetVelocity() const;
+
+		void ApplyForce(const glm::vec2& force, bool wake = true);
+		void ApplyImpulse(const glm::vec2& impulse, bool wake = true);
 
 	private:
 		BodyType m_Type = BodyType::Static;
 		bool m_FixedRotation = true;
 
 		// storage for runtime
-		void* m_RunTimeBody = nullptr;
+		b2Body* m_RunTimeBody = nullptr;
 	};
 }

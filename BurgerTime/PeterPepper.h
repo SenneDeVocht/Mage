@@ -18,7 +18,7 @@ public:
 	PeterPepper& operator=(const PeterPepper& other) = delete;
 	PeterPepper& operator=(PeterPepper&& other) = delete;
 
-	void Update() override;
+	void FixedUpdate() override;
 
 private:
 	Mage::AnimatedSpriteComponent* m_pIdle{};

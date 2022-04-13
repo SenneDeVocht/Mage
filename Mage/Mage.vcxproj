@@ -297,6 +297,7 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Engine\PhysicsHandler.cpp" />
     <ClCompile Include="ResourceManagement\Font.cpp" />
     <ClCompile Include="ResourceManagement\ResourceManager.cpp" />
     <ClCompile Include="ResourceManagement\Texture2D.cpp" />
@@ -324,6 +325,7 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Engine\MageGame.h" />
     <ClInclude Include="MagePCH.h" />
+    <ClInclude Include="Engine\PhysicsHandler.h" />
     <ClInclude Include="ResourceManagement\Font.h" />
     <ClInclude Include="ResourceManagement\ResourceManager.h" />
     <ClInclude Include="ResourceManagement\Texture2D.h" />

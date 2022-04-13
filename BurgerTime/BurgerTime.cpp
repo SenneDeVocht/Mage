@@ -242,9 +242,18 @@ void BurgerTime::LoadGame() const
 	peterPepperObject->CreateComponent<PeterPepper>(idle, walkFront, walkBack, walkLeft, walkRight);
 
 	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
-	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>();
+	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{1, 1}, glm::vec2{0, 0});
 	
 	#pragma endregion
+
+	// Ground test
+	//------------
+
+	const auto groundObject = scene->CreateObject("Ground");
+	groundObject->GetTransform()->SetPosition({ 0.f, -5.f});
+
+	groundObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
+	groundObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{5, 1}, glm::vec2{0, 0}, true);
 }
 
 void BurgerTime::CreatePlatform(Mage::GameObject* parent, const glm::vec2& position, bool isLight) const

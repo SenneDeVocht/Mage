@@ -1,6 +1,7 @@
 #pragma once
 namespace Mage
 {
+	class BoxColliderComponent;
 	class GameObject;
 
 	class Component
@@ -13,6 +14,11 @@ namespace Mage
 		virtual void Update() {}
 		virtual void FixedUpdate() {}
 		virtual void Render() const {}
+
+		virtual void OnTriggerEnter(BoxColliderComponent*) {}
+		virtual void OnTriggerExit(BoxColliderComponent*) {}
+		virtual void OnCollisionEnter(BoxColliderComponent*) {}
+		virtual void OnCollisionExit(BoxColliderComponent*) {}
 
 		void ChangeSceneGraph();
 

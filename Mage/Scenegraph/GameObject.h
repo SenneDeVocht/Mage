@@ -6,6 +6,7 @@
 
 namespace Mage
 {
+	class BoxColliderComponent;
 	class Scene;
 	class Component;
 	class Transform;
@@ -25,6 +26,12 @@ namespace Mage
 		void Update() const;
 		void FixedUpdate() const;
 		void Render() const;
+
+		void OnTriggerEnter(BoxColliderComponent* other) const;
+		void OnTriggerExit(BoxColliderComponent* other) const;
+		void OnCollisionEnter(BoxColliderComponent* other) const;
+		void OnCollisionExit(BoxColliderComponent* other) const;
+
 		void ChangeSceneGraph();
 
 		// Name

@@ -1,8 +1,9 @@
 #include "Mage/MagePCH.h"
 #include "GameObject.h"
 
+#include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Components/Transform.h"
-#include "Mage/SceneGraph/Scene.h"
+#include "Mage/Scenegraph/Scene.h"
 
 Mage::GameObject::GameObject(const std::string& name, Mage::GameObject* parent, Scene* scene)
 	: m_Name{ name }
@@ -75,6 +76,42 @@ void Mage::GameObject::Render() const
 	for (const auto& pChild : m_Children)
 	{
 		pChild->Render();
+	}
+}
+
+void Mage::GameObject::OnTriggerEnter(Mage::BoxColliderComponent* other) const
+{
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->OnTriggerEnter(other);
+	}
+}
+
+void Mage::GameObject::OnTriggerExit(Mage::BoxColliderComponent* other) const
+{
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->OnTriggerExit(other);
+	}
+}
+
+void Mage::GameObject::OnCollisionEnter(Mage::BoxColliderComponent* other) const
+{
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->OnCollisionEnter(other);
+	}
+}
+
+void Mage::GameObject::OnCollisionExit(Mage::BoxColliderComponent* other) const
+{
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->OnCollisionExit(other);
 	}
 }
 

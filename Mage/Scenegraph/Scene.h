@@ -5,8 +5,7 @@ class b2World;
 
 namespace Mage
 {
-	class BoxColliderComponent;
-	class RigidBodyComponent;
+	class PhysicsHandler;
 	class GameObject;
 
 	class Scene final
@@ -28,18 +27,14 @@ namespace Mage
 		GameObject* CreateObject(const std::string& name);
 		std::vector<GameObject*> GetObjects() const;
 
-		template<typename T>
-		std::vector<T*> GetAllComponentsByType() const;
-
-		void AddRigidBody(RigidBodyComponent* rigidBody);
-		void AddBoxCollider(BoxColliderComponent* boxCollider);
+		PhysicsHandler* GetPhysicsHandler() const {	return m_pPhysicsHandler.get(); }
 
 	private:
 		std::string m_Name;
 		std::vector<std::unique_ptr<GameObject>> m_Objects{};
 
-		static unsigned int m_IdCounter;
+		std::unique_ptr<PhysicsHandler> m_pPhysicsHandler{};
 
-		std::unique_ptr<b2World> m_pPhysicsWorld;
+		static unsigned int m_IdCounter;
 	};
 }

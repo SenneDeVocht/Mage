@@ -10,6 +10,7 @@ namespace Mage
 		glm::vec2 GetWorldPosition() const;
 
 		void SetPosition(const glm::vec2& position);
+		void SetWorldPosition(const glm::vec2& position);
 		void Translate(const glm::vec2& translation);
 
 		// Transform can't be destroyed

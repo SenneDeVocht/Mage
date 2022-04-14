@@ -9,16 +9,15 @@
 // Components
 #include "Mage/Components/SpriteComponent.h"
 #include "Mage/Components/AnimatedSpriteComponent.h"
-#include "Mage/Components/TextComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/CameraComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
 #include "PeterPepper.h"
+#include "Level.h"
 
 // Other
 #include "Mage/Engine/Renderer.h"
-#include "Mage/Input/Command.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
 void BurgerTime::LoadGame() const
@@ -40,175 +39,8 @@ void BurgerTime::LoadGame() const
 	#pragma region Level
 
 	const auto levelParent = scene->CreateObject("Level");
-
-	// LADDERS
-	//--------
-	#pragma region Ladders
-	// First collumn
-	CreateLadder(levelParent, { -6, 4.25f });
-	CreateLadder(levelParent, { -6, 3.25f });
-	CreateLadder(levelParent, { -6, 0.25f });
-	CreateLadder(levelParent, { -6, -0.75f });
-	CreateLadder(levelParent, { -6, -1.75f });
-	CreateLadder(levelParent, { -6, -2.75f });
-	CreateLadder(levelParent, { -6, -3.75f });
-
-	// Second collumn
-	CreateLadder(levelParent, { -4.5f, 2.25f });
-	CreateLadder(levelParent, { -4.5f, 1.25f });
-	CreateLadder(levelParent, { -4.5f, 0.25f });
-	CreateLadder(levelParent, { -4.5f, -0.75f });
-	CreateLadder(levelParent, { -4.5f, -1.75f });
-
-	// Third collumn
-	CreateLadder(levelParent, { -3, 4.25f });
-	CreateLadder(levelParent, { -3, 3.25f });
-	CreateLadder(levelParent, { -3, 2.25f });
-	CreateLadder(levelParent, { -3, 1.25f });
-	CreateLadder(levelParent, { -3, 0.25f });
-	CreateLadder(levelParent, { -3, -0.75f });
-	CreateLadder(levelParent, { -3, -1.75f });
-	CreateLadder(levelParent, { -3, -2.75f });
-	CreateLadder(levelParent, { -3, -3.75f });
-
-	// Fourth collumn
-	CreateLadder(levelParent, { -1.5f, 4.25f });
-	CreateLadder(levelParent, { -1.5f, 3.25f });
-	CreateLadder(levelParent, { -1.5f, 2.25f });
-
-	// Fifth collumn
-	CreateLadder(levelParent, { 0, 4.25f });
-	CreateLadder(levelParent, { 0, 3.25f });
-	CreateLadder(levelParent, { 0, 2.25f });
-	CreateLadder(levelParent, { 0, 1.25f });
-	CreateLadder(levelParent, { 0, 0.25f });
-	CreateLadder(levelParent, { 0, -0.75f });
-	CreateLadder(levelParent, { 0, -1.75f });
-	CreateLadder(levelParent, { 0, -2.75f });
-	CreateLadder(levelParent, { 0, -3.75f });
-
-	// Sixth collumn
-	CreateLadder(levelParent, { 1.5f, 2.25f });
-	CreateLadder(levelParent, { 1.5f, 1.25f });
-	CreateLadder(levelParent, { 1.5f, 0.25f });
-
-	// Seventh collumn
-	CreateLadder(levelParent, { 3, 4.25f });
-	CreateLadder(levelParent, { 3, 3.25f });
-	CreateLadder(levelParent, { 3, 2.25f });
-	CreateLadder(levelParent, { 3, 1.25f });
-	CreateLadder(levelParent, { 3, 0.25f });
-	CreateLadder(levelParent, { 3, -0.75f });
-	CreateLadder(levelParent, { 3, -1.75f });
-	CreateLadder(levelParent, { 3, -2.75f });
-	CreateLadder(levelParent, { 3, -3.75f });
-
-	// Eighth collumn
-	CreateLadder(levelParent, { 4.5f, 0.25f });
-	CreateLadder(levelParent, { 4.5f, -0.75f });
-	CreateLadder(levelParent, { 4.5f, -1.75f });
-	CreateLadder(levelParent, { 4.5f, -2.75f });
-	CreateLadder(levelParent, { 4.5f, -3.75f });
-
-	// Ninth collumn
-	CreateLadder(levelParent, { 6, 4.25f });
-	CreateLadder(levelParent, { 6, 3.25f });
-	CreateLadder(levelParent, { 6, 2.25f });
-	CreateLadder(levelParent, { 6, 1.25f });
-	CreateLadder(levelParent, { 6, -1.75f });
-	CreateLadder(levelParent, { 6, -2.75f });
-	CreateLadder(levelParent, { 6, -3.75f });
-	#pragma endregion
-
-	// PLATFORMS
-	//----------
-	#pragma region Platforms
-	// First row
-	CreatePlatform(levelParent, {-6, 5}, true);
-	CreatePlatform(levelParent, {-5, 5});
-	CreatePlatform(levelParent, {-4, 5});
-	CreatePlatform(levelParent, {-3, 5}, true);
-	CreatePlatform(levelParent, {-2, 5});
-	CreatePlatform(levelParent, {-1, 5});
-	CreatePlatform(levelParent, {0, 5}, true);
-	CreatePlatform(levelParent, { 1, 5 });
-	CreatePlatform(levelParent, { 2, 5 });
-	CreatePlatform(levelParent, { 3, 5 }, true);
-	CreatePlatform(levelParent, { 4, 5 });
-	CreatePlatform(levelParent, { 5, 5 });
-	CreatePlatform(levelParent, { 6, 5 }, true);
-
-	// Second row
-	CreatePlatform(levelParent, { -6, 3 }, true);
-	CreatePlatform(levelParent, { -5, 3 });
-	CreatePlatform(levelParent, { -4, 3 });
-	CreatePlatform(levelParent, { -3, 3 }, true);
-	CreatePlatform(levelParent, { 0, 3 }, true);
-	CreatePlatform(levelParent, { 1, 3 });
-	CreatePlatform(levelParent, { 2, 3 });
-	CreatePlatform(levelParent, { 3, 3 }, true);
-	CreatePlatform(levelParent, { 4, 3 });
-	CreatePlatform(levelParent, { 5, 3 });
-	CreatePlatform(levelParent, { 6, 3 }, true);
-
-	// Third row
-	CreatePlatform(levelParent, { -3, 2 }, true);
-	CreatePlatform(levelParent, { -2, 2 });
-	CreatePlatform(levelParent, { -1, 2 });
-	CreatePlatform(levelParent, { 0, 2 }, true);
-
-	// Fourth row
-	CreatePlatform(levelParent, { -6, 1 }, true);
-	CreatePlatform(levelParent, { -5, 1 });
-	CreatePlatform(levelParent, { -4, 1 });
-	CreatePlatform(levelParent, { -3, 1 }, true);
-	CreatePlatform(levelParent, { 3, 1 }, true);
-	CreatePlatform(levelParent, { 4, 1 });
-	CreatePlatform(levelParent, { 5, 1 });
-	CreatePlatform(levelParent, { 6, 1 }, true);
-
-	// Fifth row
-	CreatePlatform(levelParent, { -3, 0 }, true);
-	CreatePlatform(levelParent, { -2, 0 });
-	CreatePlatform(levelParent, { -1, 0 });
-	CreatePlatform(levelParent, { 0, 0 }, true);
-	CreatePlatform(levelParent, { 1, 0 });
-	CreatePlatform(levelParent, { 2, 0 });
-	CreatePlatform(levelParent, { 3, 0 }, true);
-
-	// Sixth row
-	CreatePlatform(levelParent, { 3, -1 }, true);
-	CreatePlatform(levelParent, { 4, -1 });
-	CreatePlatform(levelParent, { 5, -1 });
-	CreatePlatform(levelParent, { 6, -1 }, true);
-
-	// Seventh row
-	CreatePlatform(levelParent, { -6, -2 }, true);
-	CreatePlatform(levelParent, { -5, -2 });
-	CreatePlatform(levelParent, { -4, -2 });
-	CreatePlatform(levelParent, { -3, -2 }, true);
-	CreatePlatform(levelParent, { -2, -2 });
-	CreatePlatform(levelParent, { -1, -2 });
-	CreatePlatform(levelParent, { 0, -2 }, true);
-	CreatePlatform(levelParent, { 1, -2 });
-	CreatePlatform(levelParent, { 2, -2 });
-	CreatePlatform(levelParent, { 3, -2 }, true);
-
-	// Eighth row
-	CreatePlatform(levelParent, { -6, -4 }, true);
-	CreatePlatform(levelParent, { -5, -4 });
-	CreatePlatform(levelParent, { -4, -4 });
-	CreatePlatform(levelParent, { -3, -4 }, true);
-	CreatePlatform(levelParent, { -2, -4 });
-	CreatePlatform(levelParent, { -1, -4 });
-	CreatePlatform(levelParent, { 0, -4 }, true);
-	CreatePlatform(levelParent, { 1, -4 });
-	CreatePlatform(levelParent, { 2, -4 });
-	CreatePlatform(levelParent, { 3, -4 }, true);
-	CreatePlatform(levelParent, { 4, -4 });
-	CreatePlatform(levelParent, { 5, -4 });
-	CreatePlatform(levelParent, { 6, -4 }, true);
-	#pragma endregion
+	const auto level = levelParent->CreateComponent<Level>();
+	level->LoadLevel();
 
 	#pragma endregion
 
@@ -217,7 +49,7 @@ void BurgerTime::LoadGame() const
 	#pragma region PeterPepper
 	
 	const auto peterPepperObject = scene->CreateObject("PeterPepper");
-	peterPepperObject->GetTransform()->SetPosition({ 0, -3.5625f });
+	peterPepperObject->GetTransform()->SetPosition({ 0, -4.3125f });
 
 	auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/Idle.png", 16),
@@ -240,10 +72,7 @@ void BurgerTime::LoadGame() const
 		4,
 		0.1f);
 
-	peterPepperObject->CreateComponent<PeterPepper>(idle, walkFront, walkBack, walkLeft, walkRight);
-
-	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
-	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{0.25f, 0.25f}, glm::vec2{0, -0.375f});
+	peterPepperObject->CreateComponent<PeterPepper>(level, idle, walkFront, walkBack, walkLeft, walkRight);
 	
 	#pragma endregion
 

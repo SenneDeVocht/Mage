@@ -8,7 +8,7 @@
 #include <algorithm>
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <Windows.h>
 
 #pragma warning(push, 0)
 #include <glm/glm.hpp>

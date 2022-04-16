@@ -190,8 +190,6 @@ void Mage::GameObject::SetTag(const std::string& tag, bool changeChildren)
 	}
 }
 
-
-
 Mage::Transform* Mage::GameObject::GetTransform() const
 {
 	return m_pTransform;

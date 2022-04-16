@@ -32,9 +32,10 @@ namespace Mage
 
 	private:
 		std::string m_Name;
-		std::vector<std::unique_ptr<GameObject>> m_Objects{};
 
 		std::unique_ptr<PhysicsHandler> m_pPhysicsHandler{};
+
+		std::vector<std::unique_ptr<GameObject>> m_Objects{};
 
 		static unsigned int m_IdCounter;
 	};

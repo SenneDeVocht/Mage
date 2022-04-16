@@ -67,13 +67,14 @@ void Mage::Scene::Update() const
 
 void Mage::Scene::FixedUpdate() const
 {
-	m_pPhysicsHandler->UpdatePhysics();
-
 	// Fixed Update on objects
 	for (const auto& object : m_Objects)
 	{
 		object->FixedUpdate();
 	}
+
+	// Update physics
+	m_pPhysicsHandler->UpdatePhysics();
 }
 
 void Mage::Scene::Render() const

@@ -9,7 +9,6 @@ public:
 	BurgerIngredientPart(BurgerIngredient* ingredientItsAPartOf);
 
 	void OnTriggerEnter(Mage::BoxColliderComponent* other) override;
-	void Update() override;
 
 	void ReadyForFall();
 	void DoneFalling();

@@ -17,7 +17,7 @@ namespace Mage
 		};
 
 		RigidBodyComponent(BodyType type, bool fixedRotation = true, float gravityScale = 1.0f);
-		~RigidBodyComponent() = default;
+		~RigidBodyComponent();
 
 		RigidBodyComponent(const RigidBodyComponent& other) = delete;
 		RigidBodyComponent(RigidBodyComponent&& other) = delete;
@@ -25,7 +25,8 @@ namespace Mage
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) = delete;
 
 		void Initialize() override;
-		void FixedUpdate() override;
+
+		void UpdateTransform() const;
 
 		BodyType GetType() const { return m_Type; }
 		bool GetFixedRotation() const { return m_FixedRotation; }
@@ -35,13 +36,13 @@ namespace Mage
 		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
 
 		// Interaction
-		void SetPosition(const glm::vec2& position);
+		void SetPosition(const glm::vec2& position) const;
 
-		void SetVelocity(const glm::vec2& velocity);
+		void SetVelocity(const glm::vec2& velocity) const;
 		glm::vec2 GetVelocity() const;
 
-		void ApplyForce(const glm::vec2& force, bool wake = true);
-		void ApplyImpulse(const glm::vec2& impulse, bool wake = true);
+		void ApplyForce(const glm::vec2& force, bool wake = true) const;
+		void ApplyImpulse(const glm::vec2& impulse, bool wake = true) const;
 
 	private:
 		BodyType m_Type = BodyType::Static;

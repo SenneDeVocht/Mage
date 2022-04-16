@@ -16,22 +16,27 @@ Mage::RigidBodyComponent::RigidBodyComponent(BodyType type, bool fixedRotation, 
 	, m_GravityScale{ gravityScale }
 {}
 
+Mage::RigidBodyComponent::~RigidBodyComponent()
+{
+	GetGameObject()->GetScene()->GetPhysicsHandler()->RemoveRigidBody(this);
+}
+
 void Mage::RigidBodyComponent::Initialize()
 {
 	GetGameObject()->GetScene()->GetPhysicsHandler()->AddRigidBody(this);
 }
 
-void Mage::RigidBodyComponent::FixedUpdate()
+void Mage::RigidBodyComponent::UpdateTransform() const
 {
 	GetGameObject()->GetTransform()->SetWorldPosition({ m_RunTimeBody->GetPosition().x, m_RunTimeBody->GetPosition().y });
 }
 
-void Mage::RigidBodyComponent::SetPosition(const glm::vec2& position)
+void Mage::RigidBodyComponent::SetPosition(const glm::vec2& position) const
 {
 	m_RunTimeBody->SetTransform(b2Vec2(position.x, position.y), 0);
 }
 
-void Mage::RigidBodyComponent::SetVelocity(const glm::vec2& velocity)
+void Mage::RigidBodyComponent::SetVelocity(const glm::vec2& velocity) const
 {
 	m_RunTimeBody->SetLinearVelocity(b2Vec2(velocity.x, velocity.y));
 }
@@ -41,12 +46,12 @@ glm::vec2 Mage::RigidBodyComponent::GetVelocity() const
 	return { m_RunTimeBody->GetLinearVelocity().x, m_RunTimeBody->GetLinearVelocity().y };
 }
 
-void Mage::RigidBodyComponent::ApplyForce(const glm::vec2& force, bool wake)
+void Mage::RigidBodyComponent::ApplyForce(const glm::vec2& force, bool wake) const
 {
 	m_RunTimeBody->ApplyForceToCenter(b2Vec2(force.x, force.y), wake);
 }
 
-void Mage::RigidBodyComponent::ApplyImpulse(const glm::vec2& impulse, bool wake)
+void Mage::RigidBodyComponent::ApplyImpulse(const glm::vec2& impulse, bool wake) const
 {
 	m_RunTimeBody->ApplyLinearImpulseToCenter(b2Vec2(impulse.x, impulse.y), wake);
 }

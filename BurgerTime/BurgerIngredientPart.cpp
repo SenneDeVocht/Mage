@@ -21,27 +21,17 @@ void BurgerIngredientPart::OnTriggerEnter(Mage::BoxColliderComponent* other)
 			other->GetGameObject()->GetParent() != m_pIngredientItsAPartOf->GetGameObject())
 		{
 			m_IsSteppedOn = true;
+			GetGameObject()->GetTransform()->Translate({ 0, -m_StepOnDistance });
+
+			m_pIngredientItsAPartOf->PartSteppedOn();
 		}
 	}
 }
-
-void BurgerIngredientPart::Update()
-{
-	if (m_IsSteppedOn && !m_IsMoved && !m_IsFalling)
-	{
-		GetGameObject()->GetTransform()->Translate({ 0, -m_StepOnDistance });
-		m_IsMoved = true;
-
-		m_pIngredientItsAPartOf->PartSteppedOn();
-	}
-}
-
 void BurgerIngredientPart::ReadyForFall()
 {
 	const auto transform = GetGameObject()->GetTransform();
 	transform->SetPosition({ transform->GetLocalPosition().x, 0 });
-
-	m_IsMoved = false;
+	
 	m_IsSteppedOn = false;
 	m_IsFalling = true;
 }

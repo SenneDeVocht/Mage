@@ -116,6 +116,7 @@ void Mage::PhysicsHandler::AddRigidBody(RigidBodyComponent* rigidBody) const
 	bodyDef.position.Set(
 		transform->GetWorldPosition().x,
 		transform->GetWorldPosition().y);
+	bodyDef.gravityScale = rigidBody->GetGravityScale();
 	bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(rigidBody);
 
 	const auto body = m_pPhysicsWorld->CreateBody(&bodyDef);

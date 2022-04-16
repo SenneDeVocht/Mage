@@ -10,9 +10,10 @@
 #include "Mage/Scenegraph/Scene.h"
 #include "Mage/Engine/PhysicsHandler.h"
 
-Mage::RigidBodyComponent::RigidBodyComponent(BodyType type, bool fixedRotation)
+Mage::RigidBodyComponent::RigidBodyComponent(BodyType type, bool fixedRotation, float gravityScale)
 	: m_Type{ type }
 	, m_FixedRotation{ fixedRotation }
+	, m_GravityScale{ gravityScale }
 {}
 
 void Mage::RigidBodyComponent::Initialize()

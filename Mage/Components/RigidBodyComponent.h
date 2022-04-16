@@ -16,7 +16,7 @@ namespace Mage
 			Kinematic
 		};
 
-		RigidBodyComponent(BodyType type, bool fixedRotation = true);
+		RigidBodyComponent(BodyType type, bool fixedRotation = true, float gravityScale = 1.0f);
 		~RigidBodyComponent() = default;
 
 		RigidBodyComponent(const RigidBodyComponent& other) = delete;
@@ -29,6 +29,7 @@ namespace Mage
 
 		BodyType GetType() const { return m_Type; }
 		bool GetFixedRotation() const { return m_FixedRotation; }
+		float GetGravityScale() const { return m_GravityScale; }
 
 		void SetRunTimeBody(b2Body* body) { m_RunTimeBody = body; }
 		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
@@ -45,6 +46,7 @@ namespace Mage
 	private:
 		BodyType m_Type = BodyType::Static;
 		bool m_FixedRotation = true;
+		float m_GravityScale = 1.0f;
 
 		// storage for runtime
 		b2Body* m_RunTimeBody = nullptr;

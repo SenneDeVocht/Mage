@@ -29,7 +29,7 @@ namespace Mage
 		bool IsMarkedForDestroy() const;
 
 		bool IsEnabled() const;
-		void SetEnabled(bool enabled);
+		virtual void SetEnabled(bool enabled);
 		
 	protected:
 		GameObject* m_pGameObject = nullptr;

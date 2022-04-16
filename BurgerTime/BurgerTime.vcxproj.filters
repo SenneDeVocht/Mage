@@ -5,6 +5,8 @@
     <ClInclude Include="PeterPepper.h" />
     <ClInclude Include="BurgerTimePCH.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="BurgerIngredient.h" />
+    <ClInclude Include="BurgerIngredientPart.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -12,5 +14,7 @@
     <ClCompile Include="PeterPepper.cpp" />
     <ClCompile Include="BurgerTimePCH.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="BurgerIngredient.cpp" />
+    <ClCompile Include="BurgerIngredientPart.cpp" />
   </ItemGroup>
 </Project>

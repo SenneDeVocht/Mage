@@ -225,6 +225,28 @@ glm::vec2 Level::SnapToPlatform(const glm::vec2& position) const
 	return { position.x, newYPos };
 }
 
+glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
+{
+	const size_t currentIndex = PositionToIndex(position);
+
+	for (size_t i = 1; i < m_Tiles.size(); i++)
+	{
+		const size_t indexToCheck = currentIndex + i * m_NumCols;
+
+		// Could not find platform underneath
+		if (indexToCheck >= m_Tiles.size())
+			break;
+
+		if (m_Tiles[indexToCheck] == TileType::Platform ||
+			m_Tiles[indexToCheck] == TileType::Both)
+		{
+			return IndexToPosition((int)indexToCheck);
+		}
+	}
+
+	return IndexToPosition((int)currentIndex);
+}
+
 glm::vec2 Level::IndexToPosition(int index) const
 {
 	const int tileX = index % m_NumCols;

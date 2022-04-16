@@ -21,6 +21,7 @@ public:
 	void LoadLevel();
 	bool CanMoveInDirection(const glm::vec2& position, Direction direction) const;
 	glm::vec2 SnapToPlatform(const glm::vec2& position) const;
+	glm::vec2 GetNextPlatformDown(const glm::vec2& position) const;
 
 private:
 	int PositionToIndex(const glm::vec2& position) const;

@@ -17,6 +17,7 @@ namespace Mage
 		BoxColliderComponent& operator=(BoxColliderComponent&& other) = delete;
 
 		void Initialize() override;
+		void SetEnabled(bool enabled) override;
 
 		const glm::vec2& GetSize() const { return m_Size; }
 		const glm::vec2& GetOffset() const { return m_Offset; }

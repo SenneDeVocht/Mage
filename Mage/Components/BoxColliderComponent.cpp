@@ -1,6 +1,8 @@
 #include "Mage/MagePCH.h"
 #include "Mage/Components/BoxColliderComponent.h"
 
+#include <b2_fixture.h>
+
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Scenegraph/Scene.h"
 #include "Mage/Engine/PhysicsHandler.h"
@@ -15,6 +17,25 @@ void Mage::BoxColliderComponent::Initialize()
 {
 	GetGameObject()->GetScene()->GetPhysicsHandler()->AddBoxCollider(this);
 }
+
+void Mage::BoxColliderComponent::SetEnabled(bool enabled)
+{
+	Component::SetEnabled(enabled);
+
+	if (!enabled)
+	{
+		b2Filter filter;
+		filter.maskBits = 0;
+		m_RunTimeFixture->SetFilterData(filter);
+	}
+	else
+	{
+		b2Filter filter;
+		filter.maskBits = 1;
+		m_RunTimeFixture->SetFilterData(filter);
+	}
+}
+
 
 void Mage::BoxColliderComponent::NotifyGameObjectOnTriggerEnter(BoxColliderComponent* other) const
 {

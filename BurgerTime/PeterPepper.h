@@ -5,6 +5,7 @@ class Level;
 
 namespace Mage
 {
+	class RigidBodyComponent;
 	class AnimatedSpriteComponent;
 }
 
@@ -19,18 +20,23 @@ public:
 	PeterPepper(PeterPepper&& other) = delete;
 	PeterPepper& operator=(const PeterPepper& other) = delete;
 	PeterPepper& operator=(PeterPepper&& other) = delete;
-	
+
+	void Initialize() override;
 	void Update() override;
+	void FixedUpdate() override;
 
 private:
 	Level* m_pLevel{};
+
+	Mage::RigidBodyComponent* m_pRigidBody{};
 	
 	Mage::AnimatedSpriteComponent* m_pIdle{};
 	Mage::AnimatedSpriteComponent* m_pWalkFront{};
 	Mage::AnimatedSpriteComponent* m_pWalkBack{};
 	Mage::AnimatedSpriteComponent* m_pWalkLeft{};
 	Mage::AnimatedSpriteComponent* m_pWalkRight{};
-	
+
+	glm::vec2 m_Input{ 0, 0 };
 	float m_Speed{ 2 };
 };
 

@@ -13,8 +13,10 @@
 #include "Mage/Components/CameraComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
+
 #include "PeterPepper.h"
 #include "Level.h"
+#include "BurgerIngredient.h"
 
 // Other
 #include "Mage/Engine/Renderer.h"
@@ -72,9 +74,35 @@ void BurgerTime::LoadGame() const
 		4,
 		0.1f);
 
+	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
+	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, true);
 	peterPepperObject->CreateComponent<PeterPepper>(level, idle, walkFront, walkBack, walkLeft, walkRight);
+	peterPepperObject->SetTag("PeterPepper");
 	
 	#pragma endregion
+
+	// BURGER TEST
+	//------------
+	auto burger = scene->CreateObject("Burger");
+	burger->GetTransform()->SetPosition({ -1.5f, 2 - 0.6875f });
+	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::BunTop);
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
+	burger->SetTag("Ingredient", true);
+
+	burger = scene->CreateObject("Burger");
+	burger->GetTransform()->SetPosition({ -1.5f, -0.6875f });
+	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::Patty);
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
+	burger->SetTag("Ingredient", true);
+
+	burger = scene->CreateObject("Burger");
+	burger->GetTransform()->SetPosition({ -1.5f, -2.6875f });
+	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::BunBottom);
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
+	burger->SetTag("Ingredient", true);
 
 	// DONE
 	//-----

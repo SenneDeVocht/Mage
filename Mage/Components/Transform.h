@@ -17,6 +17,8 @@ namespace Mage
 		void Destroy() override {}
 
 	private:
+		void ApplyTransformToRigidBodiesOfSelfAndChildren() const;
+
 		glm::vec2 m_Position;
 	};
 }

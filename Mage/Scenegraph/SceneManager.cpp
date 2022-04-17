@@ -12,8 +12,6 @@ Mage::SceneManager::~SceneManager() = default;
 void Mage::SceneManager::DrawImGui() const
 {
 	m_Scenes[m_ActiveScene]->DrawImGui();
-
-	DisplaySceneGraph();
 }
 
 void Mage::SceneManager::Update() const
@@ -49,37 +47,4 @@ Mage::Scene* Mage::SceneManager::CreateScene(const std::string & name)
 void Mage::SceneManager::SetActiveScene(int sceneIndex)
 {
 	m_ActiveScene = sceneIndex;
-}
-
-void Mage::SceneManager::DisplaySceneGraph() const
-{
-	ImGui::Begin(m_Scenes[m_ActiveScene]->GetName().c_str());
-
-	// Root Objects
-	auto objects = m_Scenes[m_ActiveScene]->GetObjects();
-	for (const auto& rootObject : objects)
-	{
-		if (ImGui::TreeNode(rootObject->GetName().c_str()))
-		{
-			// Display all children recursively
-			DisplayChildObjects(rootObject);
-			ImGui::TreePop();
-		}
-	}
-
-	ImGui::End();
-}
-
-inline void Mage::SceneManager::DisplayChildObjects(const GameObject * parent) const
-{
-	const auto children = parent->GetChildren();
-	for (const auto& child : children)
-	{
-		// Display self, then show children recursively
-		if (ImGui::TreeNode(child->GetName().c_str()))
-		{
-			DisplayChildObjects(child);
-			ImGui::TreePop();
-		}
-	}
 }

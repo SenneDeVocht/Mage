@@ -5,6 +5,8 @@
 #include <b2_body.h>
 #pragma warning(pop)
 
+#include "imgui.h"
+
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Scenegraph/Scene.h"
@@ -24,6 +26,25 @@ Mage::RigidBodyComponent::~RigidBodyComponent()
 void Mage::RigidBodyComponent::Initialize()
 {
 	GetGameObject()->GetScene()->GetPhysicsHandler()->AddRigidBody(this);
+}
+
+void Mage::RigidBodyComponent::DrawProperties()
+{
+	ImGui::PushID(this);
+
+	if (ImGui::CollapsingHeader("Rigidbody Component"))
+	{
+		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
+
+		// TODO: add type and gravityscale
+
+		ImGui::BeginDisabled();
+		glm::vec2 velocity = GetVelocity();
+		ImGui::DragFloat2("Velocity", &velocity.x);
+		ImGui::EndDisabled();
+	}
+
+	ImGui::PopID();
 }
 
 void Mage::RigidBodyComponent::UpdateTransform() const

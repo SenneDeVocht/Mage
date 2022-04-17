@@ -11,6 +11,7 @@ namespace Mage
 		explicit SpriteComponent() = default;
 		explicit SpriteComponent(std::shared_ptr<Texture2D> pTexture);
 
+		void DrawProperties() override;
 		void Render() const override;
 
 		void SetTexture(std::shared_ptr<Texture2D> pTexture);

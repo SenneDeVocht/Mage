@@ -1,7 +1,10 @@
 #include "Mage/MagePCH.h"
 #include "Mage/Components/BoxColliderComponent.h"
 
+#pragma warning(push, 0)
 #include <b2_fixture.h>
+#pragma warning(pop)
+#include "imgui.h"
 
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Scenegraph/Scene.h"
@@ -16,6 +19,22 @@ Mage::BoxColliderComponent::BoxColliderComponent(const glm::vec2& size, const gl
 void Mage::BoxColliderComponent::Initialize()
 {
 	GetGameObject()->GetScene()->GetPhysicsHandler()->AddBoxCollider(this);
+}
+
+void Mage::BoxColliderComponent::DrawProperties()
+{
+	ImGui::PushID(this);
+
+	if (ImGui::CollapsingHeader("Box Collider Component"))
+	{
+		bool enabled = IsEnabled();
+		if(ImGui::Checkbox("Enabled", &enabled))
+			SetEnabled(enabled);
+
+		// TODO: All box2d specific variables
+	}
+
+	ImGui::PopID();
 }
 
 void Mage::BoxColliderComponent::SetEnabled(bool enabled)

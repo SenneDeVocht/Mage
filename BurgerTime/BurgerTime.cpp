@@ -19,6 +19,7 @@
 #include "BurgerIngredient.h"
 
 // Other
+#include "Mage/Components/TextComponent.h"
 #include "Mage/Engine/Renderer.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
@@ -31,7 +32,7 @@ void BurgerTime::LoadGame() const
 	#pragma region Camera
 	
 	const auto cameraObject = scene->CreateObject("Camera");
-	const auto camera = cameraObject->CreateComponent<Mage::CameraComponent>(16.f, 16.f);
+	const auto camera = cameraObject->CreateComponent<Mage::CameraComponent>(glm::vec2{ 15.f, 15.f });
 	Mage::Renderer::GetInstance().SetCamera(camera);
 	
 	#pragma endregion
@@ -107,36 +108,4 @@ void BurgerTime::LoadGame() const
 	// DONE
 	//-----
 	scene->Initialize();
-}
-
-void BurgerTime::CreatePlatform(Mage::GameObject* parent, const glm::vec2& position, bool isLight) const
-{
-	const std::string name = isLight ? "PlatformLight" : "PlatformDark";
-	const auto object = parent->CreateChildObject(name);
-	object->SetTag("Platform");
-
-	object->GetTransform()->SetPosition(position);
-
-	// Sprite
-	const std::string texturePath = isLight ? "Level/Platform_Light.png" : "Level/Platform_Dark.png";
-	object->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture(texturePath, 16));
-
-	// Triggerbox
-	object->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
-	object->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{1, 0.125f}, glm::vec2{0, 0}, true);
-}
-
-void BurgerTime::CreateLadder(Mage::GameObject* parent, const glm::vec2& position) const
-{
-	const auto object = parent->CreateChildObject("Ladder");
-	object->SetTag("Ladder");
-
-	object->GetTransform()->SetPosition(position);
-
-	// Sprite
-	object->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Ladder.png", 16));
-
-	// Triggerbox
-	object->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
-	object->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 1.f }, glm::vec2{ 0, 0.25f }, true);
 }

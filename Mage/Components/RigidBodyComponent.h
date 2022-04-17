@@ -12,8 +12,8 @@ namespace Mage
 		enum class BodyType
 		{
 			Static,
-			Dynamic,
-			Kinematic
+			Kinematic,
+			Dynamic
 		};
 
 		RigidBodyComponent(BodyType type, bool fixedRotation = true, float gravityScale = 1.0f);
@@ -25,6 +25,7 @@ namespace Mage
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) = delete;
 
 		void Initialize() override;
+		void DrawProperties() override;
 
 		void UpdateTransform() const;
 

@@ -1,6 +1,20 @@
 #include "Mage/MagePCH.h"
 #include "Component.h"
 
+#include "imgui.h"
+
+void Mage::Component::DrawProperties()
+{
+    ImGui::PushID(this);
+
+    if (ImGui::CollapsingHeader("Component"))
+    {
+        ImGui::Text("This component does not have DrawProperties() implemented.");
+    }
+
+    ImGui::PopID();
+}
+
 Mage::GameObject* Mage::Component::GetGameObject() const
 {
     return m_pGameObject;

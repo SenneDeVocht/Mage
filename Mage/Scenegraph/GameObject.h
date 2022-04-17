@@ -23,9 +23,10 @@ namespace Mage
 		GameObject& operator=(GameObject&& other) = delete;
 
 		void Initialize() const;
-		void DrawImGui() const;
 		void Update() const;
 		void FixedUpdate() const;
+		void DrawImGui() const;
+		void DrawProperties() const;
 		void Render() const;
 
 		void OnTriggerEnter(BoxColliderComponent* other) const;

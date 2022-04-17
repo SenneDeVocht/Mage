@@ -6,19 +6,16 @@ namespace Mage
 	class CameraComponent : public Component
 	{
 	public:
-		explicit CameraComponent(float width, float height)
-			: m_Width{ width }
-			, m_Height{ height }
+		explicit CameraComponent(const glm::vec2& size)
+			: m_Size{ size }
 		{}
 
-		void SetWidth(float width) { m_Width = width; }
-		void SetHeight(float height) { m_Height = height; }
+		void DrawProperties() override;
 
-		float GetWidth() const { return m_Width; }
-		float GetHeight() const { return m_Height; }
+		void SetSize(const glm::vec2& size) { m_Size = size; }
+		const glm::vec2& GetSize() { return m_Size; }
 
 	private:
-		float m_Width{};
-		float m_Height{};
+		glm::vec2 m_Size;
 	};
 }

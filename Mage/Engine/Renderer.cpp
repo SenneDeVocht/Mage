@@ -6,10 +6,10 @@
 
 #include "imgui.h"
 #include "backends/imgui_impl_opengl2.h"
-#include "backends/imgui_impl_sdl.h"
 #include "Mage/Components/CameraComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Scenegraph/GameObject.h"
+#include "Mage/Engine/GameSettings.h"
 
 int GetOpenGLDriverIndex()
 {
@@ -27,9 +27,9 @@ int GetOpenGLDriverIndex()
 
 void Mage::Renderer::Init(SDL_Window* window)
 {
-	m_Window = window;
-	m_Renderer = SDL_CreateRenderer(window, GetOpenGLDriverIndex(), SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if (m_Renderer == nullptr)
+	m_pWindow = window;
+	m_pRenderer = SDL_CreateRenderer(window, GetOpenGLDriverIndex(), SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (m_pRenderer == nullptr)
 	{
 		throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
 	}
@@ -40,23 +40,25 @@ void Mage::Renderer::SetCamera(CameraComponent* pCamera)
 	m_pCamera = pCamera;
 }
 
-
 void Mage::Renderer::Render() const
 {
 	// Clear last frame
 	const auto& color = GetBackgroundColor();
-	SDL_SetRenderDrawColor(m_Renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderClear(m_Renderer);
+	SDL_SetRenderDrawColor(m_pRenderer, color.r, color.g, color.b, color.a);
+	SDL_RenderClear(m_pRenderer);
 
 	// Render everything
 	if (m_pCamera != nullptr)
-		SceneManager::GetInstance().Render();
+	{
+		if (m_pCamera->IsEnabled())
+			SceneManager::GetInstance().Render();
+	}
 
 	// Render ImGui
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
 	// Display
-	SDL_RenderPresent(m_Renderer);
+	SDL_RenderPresent(m_pRenderer);
 
 	// Additional ImGui viewports
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -68,10 +70,10 @@ void Mage::Renderer::Render() const
 
 void Mage::Renderer::Destroy()
 {
-	if (m_Renderer != nullptr)
+	if (m_pRenderer != nullptr)
 	{
-		SDL_DestroyRenderer(m_Renderer);
-		m_Renderer = nullptr;
+		SDL_DestroyRenderer(m_pRenderer);
+		m_pRenderer = nullptr;
 	}
 }
 
@@ -94,7 +96,7 @@ void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, in
 
 	// Destination Rect (Part of screen)
 	int windowWidth, windowHeight;
-	SDL_GetWindowSize(m_Window, &windowWidth, &windowHeight);
+	SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
 
 
 	float pivotRelToCamX = dstX - m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition().x;
@@ -102,10 +104,10 @@ void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, in
 
 
 	SDL_Rect dst{};
-	dst.x = static_cast<int>((pivotRelToCamX - texture.GetPivot().x * srcW / texture.GetPixelsPerUnit()) * windowWidth  / m_pCamera->GetWidth()  + windowWidth / 2);
-	dst.y = static_cast<int>((pivotRelToCamY - (1 - texture.GetPivot().y) * srcH / texture.GetPixelsPerUnit()) * windowHeight / m_pCamera->GetHeight() + windowHeight / 2);
-	dst.w = static_cast<int>(srcW / texture.GetPixelsPerUnit() * windowWidth / m_pCamera->GetWidth());
-	dst.h = static_cast<int>(srcH / texture.GetPixelsPerUnit() * windowHeight / m_pCamera->GetHeight());
+	dst.x = static_cast<int>((pivotRelToCamX - texture.GetPivot().x * srcW / texture.GetPixelsPerUnit()) * windowWidth  / m_pCamera->GetSize().x  + windowWidth / 2);
+	dst.y = static_cast<int>((pivotRelToCamY - (1 - texture.GetPivot().y) * srcH / texture.GetPixelsPerUnit()) * windowHeight / m_pCamera->GetSize().y + windowHeight / 2);
+	dst.w = static_cast<int>(srcW / texture.GetPixelsPerUnit() * windowWidth / m_pCamera->GetSize().x);
+	dst.h = static_cast<int>(srcH / texture.GetPixelsPerUnit() * windowHeight / m_pCamera->GetSize().y);
 
 	// Render
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);

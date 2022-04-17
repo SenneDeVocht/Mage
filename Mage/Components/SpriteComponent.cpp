@@ -1,6 +1,8 @@
 #include "Mage/MagePCH.h"
 #include "SpriteComponent.h"
 
+#include "imgui.h"
+
 #include "Mage/Engine/Renderer.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
@@ -9,6 +11,18 @@
 Mage::SpriteComponent::SpriteComponent(std::shared_ptr<Texture2D> pTexture)
 {
 	SetTexture(pTexture);
+}
+
+void Mage::SpriteComponent::DrawProperties()
+{
+	ImGui::PushID(this);
+
+	if (ImGui::CollapsingHeader("Sprite Component"))
+	{
+		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
+	}
+
+	ImGui::PopID();
 }
 
 void Mage::SpriteComponent::Render() const

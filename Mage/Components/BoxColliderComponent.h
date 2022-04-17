@@ -17,15 +17,17 @@ namespace Mage
 		BoxColliderComponent& operator=(BoxColliderComponent&& other) = delete;
 
 		void Initialize() override;
+		void DrawProperties() override;
 		void SetEnabled(bool enabled) override;
 
 		const glm::vec2& GetSize() const { return m_Size; }
 		const glm::vec2& GetOffset() const { return m_Offset; }
+		bool IsTrigger() const { return m_IsTrigger; }
+
 		float GetDensity() const { return m_Density; }
 		float GetFriction() const { return m_Friction; }
 		float GetRestitution() const { return m_Restitution; }
 		float GetRestitutionThreshold() const { return m_RestitutionThreshold; }
-		bool IsTrigger() const { return m_IsTrigger; }
 		
 		void SetRunTimeFixture(b2Fixture* fixture){ m_RunTimeFixture = fixture; }
 

@@ -11,6 +11,7 @@ namespace Mage
 		explicit AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame);
 
 		void Update() override;
+		void DrawProperties() override;
 		void Render() const override;
 
 		void SetSpritesheet(std::shared_ptr<Texture2D> pTexture);

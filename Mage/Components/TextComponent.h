@@ -26,6 +26,7 @@ namespace Mage
 			HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left, VerticalAlignment verticalAlignment = VerticalAlignment::Middle);
 
 		void Update() override;
+		void DrawProperties() override;
 
 		void SetText(const std::string& text);
 		void SetColor(const SDL_Color& color);
@@ -35,7 +36,8 @@ namespace Mage
 		std::string m_Text;
 		std::shared_ptr<Font> m_Font;
 		SDL_Color m_Color;
-		glm::vec2 m_Pivot;
+		HorizontalAlignment m_HorizontalAlignment;
+		VerticalAlignment m_VerticalAlignment;
 		float m_PixelsPerUnit;
 	};
 }

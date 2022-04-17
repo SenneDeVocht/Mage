@@ -17,6 +17,7 @@
 #include "backends/imgui_impl_sdl.h"
 
 // Scenegraph
+#include "GameSettings.h"
 #include "Mage/Scenegraph/GameObject.h"
 
 Mage::MageGame::~MageGame()
@@ -37,7 +38,7 @@ void PrintSDLVersion()
 		linked.major, linked.minor, linked.patch);
 }
 
-void Mage::MageGame::Initialize(int width, int height, const std::string& title)
+void Mage::MageGame::Initialize()
 {
 	// SDL
 	PrintSDLVersion();
@@ -46,11 +47,11 @@ void Mage::MageGame::Initialize(int width, int height, const std::string& title)
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 
 	m_Window = SDL_CreateWindow(
-		title.c_str(),
+		GameSettings::GetInstance().GetWindowTitle().c_str(),
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		width,
-		height,
+		(int)GameSettings::GetInstance().GetWindowSize().x,
+		(int)GameSettings::GetInstance().GetWindowSize().y,
 		SDL_WINDOW_OPENGL
 	);
 
@@ -88,9 +89,9 @@ void Mage::MageGame::Cleanup()
 	SDL_Quit();
 }
 
-void Mage::MageGame::Run(int width, int height, const std::string& title)
+void Mage::MageGame::Run()
 {
-	Initialize(width, height, title);
+	Initialize();
 
 	// tell the resource manager where he can find the game data
 	ResourceManager::GetInstance().Init("../Data/");
@@ -117,18 +118,6 @@ void Mage::MageGame::Run(int width, int height, const std::string& title)
 			// Input
 			quit = !input.ProcessInput();
 
-			// ImGui
-			// Prepare ImGui
-			ImGui_ImplOpenGL2_NewFrame();
-			ImGui_ImplSDL2_NewFrame(m_Window);
-			ImGui::NewFrame();
-
-			// Update
-			sceneManager.DrawImGui();
-
-			// Render ImGui
-			ImGui::Render();
-
 			// Update
 			sceneManager.Update();
 
@@ -138,6 +127,15 @@ void Mage::MageGame::Run(int width, int height, const std::string& title)
 				sceneManager.FixedUpdate();
 				lag -= timer.GetFixedTimeStep();
 			}
+
+			// ImGui
+			ImGui_ImplOpenGL2_NewFrame();
+			ImGui_ImplSDL2_NewFrame(m_Window);
+			ImGui::NewFrame();
+
+			sceneManager.DrawImGui();
+
+			ImGui::Render();
 
 			// Render
 			renderer.Render();

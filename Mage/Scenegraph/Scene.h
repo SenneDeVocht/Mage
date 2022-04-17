@@ -19,7 +19,7 @@ namespace Mage
 		const std::string& GetName() const;
 
 		void Initialize() const;
-		void DrawImGui() const;
+		void DrawImGui();
 		void Update() const;
 		void FixedUpdate() const;
 		void Render() const;
@@ -31,6 +31,10 @@ namespace Mage
 		PhysicsHandler* GetPhysicsHandler() const {	return m_pPhysicsHandler.get(); }
 
 	private:
+		void DisplaySceneGraph();
+		void DisplayObjectInSceneGraph(GameObject* pObject);
+		GameObject* m_pSelectedObjectInHierarchy{};
+
 		std::string m_Name;
 
 		std::unique_ptr<PhysicsHandler> m_pPhysicsHandler{};

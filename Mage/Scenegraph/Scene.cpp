@@ -1,6 +1,7 @@
 #include "Mage/MagePCH.h"
 #include "Scene.h"
 
+#include "imgui.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Engine/Timer.h"
 #include "Mage/Engine/PhysicsHandler.h"
@@ -49,8 +50,12 @@ void Mage::Scene::Initialize() const
 	}
 }
 
-void Mage::Scene::DrawImGui() const
+void Mage::Scene::DrawImGui()
 {
+#ifdef _DEBUG
+	DisplaySceneGraph();
+#endif
+
 	for (const auto& object : m_Objects)
 	{
 		object->DrawImGui();
@@ -98,4 +103,50 @@ void Mage::Scene::ChangeSceneGraph()
 	{
 		object->ChangeSceneGraph();
 	}
+}
+
+void Mage::Scene::DisplaySceneGraph()
+{
+	// HIERARCHY
+	//----------
+	ImGui::Begin("Hierarchy");
+	for (const auto& rootObject : m_Objects)
+	{
+		DisplayObjectInSceneGraph(rootObject.get());
+	}
+	ImGui::End();
+
+	// PROPERTIES
+	//-----------
+	ImGui::Begin("Properties");
+	if (m_pSelectedObjectInHierarchy != nullptr)
+	{
+		m_pSelectedObjectInHierarchy->DrawProperties();
+	}
+	ImGui::End();
+}
+
+void Mage::Scene::DisplayObjectInSceneGraph(GameObject* pObject)
+{
+	ImGui::PushID(pObject);
+
+	const int withArrow = pObject->GetChildren().empty() ? ImGuiTreeNodeFlags_Leaf : 0;
+	const int selected = m_pSelectedObjectInHierarchy == pObject ? ImGuiTreeNodeFlags_Selected : 0;
+	const bool isOpen = ImGui::TreeNodeEx(pObject->GetName().c_str(), ImGuiTreeNodeFlags_OpenOnArrow | withArrow | selected);
+
+	if (ImGui::IsItemClicked())
+		m_pSelectedObjectInHierarchy = pObject;
+
+	if (isOpen)
+	{
+		// Display all children recursively
+		for (const auto child : pObject->GetChildren())
+		{
+			DisplayObjectInSceneGraph(child);
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::PopID();
 }

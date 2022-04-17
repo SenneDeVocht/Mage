@@ -5,6 +5,8 @@
 #include "Mage/Components/Transform.h"
 #include "Mage/Scenegraph/Scene.h"
 
+#include "imgui.h"
+
 Mage::GameObject::GameObject(const std::string& name, Mage::GameObject* parent, Scene* scene)
 	: m_Name{ name }
 	, m_pTransform{ CreateComponent<Mage::Transform>() }
@@ -31,22 +33,6 @@ void Mage::GameObject::Initialize() const
 	for (const auto& pChild : m_Children)
 	{
 		pChild->Initialize();
-	}
-}
-
-void Mage::GameObject::DrawImGui() const
-{
-	// Update components
-	for (const auto& pComponent : m_Components)
-	{
-		if (pComponent->IsEnabled())
-			pComponent->DrawImGui();
-	}
-
-	// Update children
-	for (const auto& pChild : m_Children)
-	{
-		pChild->DrawImGui();
 	}
 }
 
@@ -79,6 +65,30 @@ void Mage::GameObject::FixedUpdate() const
 	for (const auto& pChild : m_Children)
 	{
 		pChild->FixedUpdate();
+	}
+}
+
+void Mage::GameObject::DrawImGui() const
+{
+	// Update components
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->DrawImGui();
+	}
+
+	// Update children
+	for (const auto& pChild : m_Children)
+	{
+		pChild->DrawImGui();
+	}
+}
+
+void Mage::GameObject::DrawProperties() const
+{
+	for (const auto& pComponent : m_Components)
+	{
+		pComponent->DrawProperties();
 	}
 }
 

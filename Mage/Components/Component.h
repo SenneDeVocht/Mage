@@ -1,4 +1,5 @@
 #pragma once
+
 namespace Mage
 {
 	class BoxColliderComponent;
@@ -10,9 +11,10 @@ namespace Mage
 		virtual ~Component() = default;
 
 		virtual void Initialize() {}
-		virtual void DrawImGui() {}
 		virtual void Update() {}
 		virtual void FixedUpdate() {}
+		virtual void DrawImGui() {}
+		virtual void DrawProperties();
 		virtual void Render() const {}
 
 		virtual void OnTriggerEnter(BoxColliderComponent*) {}

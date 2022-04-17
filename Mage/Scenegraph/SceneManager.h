@@ -24,9 +24,6 @@ namespace Mage
 		friend class Singleton<SceneManager>;
 		SceneManager();
 
-		void DisplaySceneGraph() const;
-		void DisplayChildObjects(const GameObject* parent) const;
-
 		std::vector<std::unique_ptr<Scene>> m_Scenes;
 		int m_ActiveScene{};
 	};

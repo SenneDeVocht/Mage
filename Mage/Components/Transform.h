@@ -6,6 +6,8 @@ namespace Mage
 	class Transform final : public Component
 	{
 	public:
+		void DrawProperties() override;
+
 		const glm::vec2& GetLocalPosition() const { return m_Position; }
 		glm::vec2 GetWorldPosition() const;
 

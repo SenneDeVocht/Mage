@@ -1,10 +1,11 @@
 #include "Mage/MagePCH.h"
 #include "AnimatedSpriteComponent.h"
 
+#include "imgui.h"
+
 #include "Mage/Engine/Renderer.h"
 #include "Mage/Engine/Timer.h"
 #include "Mage/Scenegraph/GameObject.h"
-#include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
@@ -31,6 +32,24 @@ void Mage::AnimatedSpriteComponent::Update()
 		++m_CurrentFrame;
 		m_CurrentFrame %= m_NumFrames;
 	}
+}
+
+void Mage::AnimatedSpriteComponent::DrawProperties()
+{
+	ImGui::PushID(this);
+
+	if (ImGui::CollapsingHeader("Animated Sprite Component"))
+	{
+		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
+
+		// TODO: Show Spritesheet
+
+		ImGui::DragInt("Number Of Frames", &m_NumFrames);
+
+		ImGui::DragFloat("Seconds Per Frame", &m_SecondsPerFrame);
+	}
+
+	ImGui::PopID();
 }
 
 void Mage::AnimatedSpriteComponent::Render() const

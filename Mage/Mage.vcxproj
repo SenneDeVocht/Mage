@@ -303,6 +303,7 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
     <ClCompile Include="Engine\Renderer.cpp" />
     <ClCompile Include="Engine\Timer.cpp" />
     <ClCompile Include="Engine\GameSettings.cpp" />
+    <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="Input\Command.cpp" />
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="Engine\MageGame.cpp" />
@@ -338,6 +339,7 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
     <ClInclude Include="Engine\Renderer.h" />
     <ClInclude Include="Engine\Timer.h" />
     <ClInclude Include="Engine\GameSettings.h" />
+    <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="Input\Command.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Engine\MageGame.h" />

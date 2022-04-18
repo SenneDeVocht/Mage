@@ -13,6 +13,7 @@
 #include "Mage/Engine/Timer.h"
 
 // ImGui
+#include "Mage/ImGuiHelper.h"
 #include "imgui.h"
 #include "backends/imgui_impl_opengl2.h"
 #include "backends/imgui_impl_sdl.h"
@@ -62,17 +63,7 @@ void Mage::MageGame::Initialize()
 	Renderer::GetInstance().Init(m_pWindow);
 
 	// imgui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-	ImGui::StyleColorsDark();
-
-	ImGui_ImplSDL2_InitForOpenGL(m_pWindow, SDL_GL_GetCurrentContext());
-	ImGui_ImplOpenGL2_Init();
+	ImGuiHelper::InitImGui(m_pWindow);
 }
 
 

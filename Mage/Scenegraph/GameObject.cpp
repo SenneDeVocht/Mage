@@ -5,8 +5,6 @@
 #include "Mage/Components/Transform.h"
 #include "Mage/Scenegraph/Scene.h"
 
-#include "imgui.h"
-
 Mage::GameObject::GameObject(const std::string& name, Mage::GameObject* parent, Scene* scene)
 	: m_Name{ name }
 	, m_pTransform{ CreateComponent<Mage::Transform>() }

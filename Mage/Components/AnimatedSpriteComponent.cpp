@@ -42,7 +42,16 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 	{
 		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
 
-		ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), {(float)m_pSpritesheet->GetWidth(), (float)m_pSpritesheet->GetHeight()});
+		// Texture Image
+		float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+		float availableHeight = 50.f;
+
+		float scaleFactorX = availableWidth / m_pSpritesheet->GetWidth();
+		float scaleFactorY = availableHeight / m_pSpritesheet->GetHeight();
+
+		float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+
+		ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), { m_pSpritesheet->GetWidth() * scaleFactor, m_pSpritesheet->GetHeight() * scaleFactor });
 
 		ImGui::DragInt("Number Of Frames", &m_NumFrames);
 

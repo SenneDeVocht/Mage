@@ -22,7 +22,16 @@ void Mage::SpriteComponent::DrawProperties()
 	{
 		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
 
-		ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { (float)m_pTexture->GetWidth(), (float)m_pTexture->GetHeight() });
+		// Texture Image
+		float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+		float availableHeight = 50.f;
+
+		float scaleFactorX = availableWidth / m_pTexture->GetWidth();
+		float scaleFactorY = availableHeight / m_pTexture->GetHeight();
+
+		float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+		
+		ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { m_pTexture->GetWidth() * scaleFactor, m_pTexture->GetHeight() * scaleFactor });
 	}
 
 	ImGui::PopID();

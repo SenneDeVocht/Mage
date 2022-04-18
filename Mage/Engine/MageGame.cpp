@@ -8,6 +8,7 @@
 #include "Mage/Input/InputManager.h"
 #include "Mage/Scenegraph/SceneManager.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
+
 #include "Mage/Engine/Renderer.h"
 #include "Mage/Engine/Timer.h"
 
@@ -22,7 +23,7 @@
 
 Mage::MageGame::~MageGame()
 {
-	SDL_DestroyWindow(m_Window);
+	SDL_DestroyWindow(m_pWindow);
 }
 
 void PrintSDLVersion()
@@ -46,7 +47,7 @@ void Mage::MageGame::Initialize()
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 
-	m_Window = SDL_CreateWindow(
+	m_pWindow = SDL_CreateWindow(
 		GameSettings::GetInstance().GetWindowTitle().c_str(),
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
@@ -55,10 +56,10 @@ void Mage::MageGame::Initialize()
 		SDL_WINDOW_OPENGL
 	);
 
-	if (m_Window == nullptr)
+	if (m_pWindow == nullptr)
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 
-	Renderer::GetInstance().Init(m_Window);
+	Renderer::GetInstance().Init(m_pWindow);
 
 	// imgui
 	IMGUI_CHECKVERSION();
@@ -70,7 +71,7 @@ void Mage::MageGame::Initialize()
 
 	ImGui::StyleColorsDark();
 
-	ImGui_ImplSDL2_InitForOpenGL(m_Window, SDL_GL_GetCurrentContext());
+	ImGui_ImplSDL2_InitForOpenGL(m_pWindow, SDL_GL_GetCurrentContext());
 	ImGui_ImplOpenGL2_Init();
 }
 
@@ -84,8 +85,8 @@ void Mage::MageGame::Cleanup()
 
 	// Stop SDL
 	Renderer::GetInstance().Destroy();
-	SDL_DestroyWindow(m_Window);
-	m_Window = nullptr;
+	SDL_DestroyWindow(m_pWindow);
+	m_pWindow = nullptr;
 	SDL_Quit();
 }
 
@@ -130,7 +131,7 @@ void Mage::MageGame::Run()
 
 			// ImGui
 			ImGui_ImplOpenGL2_NewFrame();
-			ImGui_ImplSDL2_NewFrame(m_Window);
+			ImGui_ImplSDL2_NewFrame(m_pWindow);
 			ImGui::NewFrame();
 
 			sceneManager.DrawImGui();

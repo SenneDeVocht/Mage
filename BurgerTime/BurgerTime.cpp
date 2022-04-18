@@ -86,7 +86,7 @@ void BurgerTime::LoadGame() const
 	//------------
 	auto burger = scene->CreateObject("Burger");
 	burger->GetTransform()->SetPosition({ -1.5f, 2 - 0.6875f });
-	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::BunTop);
+	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::Cheese);
 	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
 	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
 	burger->SetTag("Ingredient", true);
@@ -100,7 +100,7 @@ void BurgerTime::LoadGame() const
 
 	burger = scene->CreateObject("Burger");
 	burger->GetTransform()->SetPosition({ -1.5f, -2.6875f });
-	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::BunBottom);
+	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::Tomato);
 	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
 	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
 	burger->SetTag("Ingredient", true);

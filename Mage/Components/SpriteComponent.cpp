@@ -7,6 +7,7 @@
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Components/Transform.h"
+#include "Mage/ResourceManagement/Texture2D.h"
 
 Mage::SpriteComponent::SpriteComponent(std::shared_ptr<Texture2D> pTexture)
 {
@@ -20,6 +21,8 @@ void Mage::SpriteComponent::DrawProperties()
 	if (ImGui::CollapsingHeader("Sprite Component"))
 	{
 		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
+
+		ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { (float)m_pTexture->GetWidth(), (float)m_pTexture->GetHeight() });
 	}
 
 	ImGui::PopID();

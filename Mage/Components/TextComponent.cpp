@@ -8,7 +8,6 @@
 #include "Mage/ResourceManagement/Font.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/SpriteComponent.h"
-#include "Mage/Engine/Renderer.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
 Mage::TextComponent::TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color,
@@ -27,18 +26,10 @@ void Mage::TextComponent::Update()
 	if (m_NeedsUpdate)
 	{
 		// Create surface
-		SDL_Surface* surf = TTF_RenderText_Solid(m_Font->GetFont(), m_Text.c_str(), m_Color);
+		SDL_Surface* surf = TTF_RenderText_Blended(m_Font->GetFont(), m_Text.c_str(), m_Color);
 
 		if (surf == nullptr)
 			throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
-
-		// Create Texture
-		auto texture = SDL_CreateTextureFromSurface(Renderer::GetInstance().GetSDLRenderer(), surf);
-		if (texture == nullptr)
-			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
-
-		// Free Surface
-		SDL_FreeSurface(surf);
 
 		// Send to RenderComponent
 		const auto pRendererComponent = m_pGameObject->GetComponentByType<SpriteComponent>();
@@ -82,7 +73,10 @@ void Mage::TextComponent::Update()
 		}
 
 		if (pRendererComponent != nullptr)
-			pRendererComponent->SetTexture(std::make_shared<Texture2D>(texture, m_PixelsPerUnit, pivot));
+			pRendererComponent->SetTexture(std::make_shared<Texture2D>(surf, surf->w, surf->h, m_PixelsPerUnit, pivot));
+
+		// Free Surface
+		SDL_FreeSurface(surf);
 
 		// Reset flag
 		m_NeedsUpdate = false;

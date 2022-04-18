@@ -12,5 +12,9 @@
 
 #pragma warning(push, 0)
 #include <glm/glm.hpp>
+
 #include <SDL.h>
+
+#define GLEW_STATIC
+#include "glew.h"
 #pragma warning (pop)

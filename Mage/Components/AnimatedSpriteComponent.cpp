@@ -42,7 +42,7 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 	{
 		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
 
-		// TODO: Show Spritesheet
+		ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), {(float)m_pSpritesheet->GetWidth(), (float)m_pSpritesheet->GetHeight()});
 
 		ImGui::DragInt("Number Of Frames", &m_NumFrames);
 
@@ -57,8 +57,8 @@ void Mage::AnimatedSpriteComponent::Render() const
 	if (m_pSpritesheet != nullptr)
 	{
 		// Get partial texture rect
-		int srcWidth, srcHeight;
-		SDL_QueryTexture(m_pSpritesheet->GetSDLTexture(), nullptr, nullptr, &srcWidth, &srcHeight);
+		int srcWidth = m_pSpritesheet->GetWidth();
+		int srcHeight = m_pSpritesheet->GetHeight();
 		srcWidth /= m_NumFrames;
 		int srcX = m_CurrentFrame * srcWidth;
 

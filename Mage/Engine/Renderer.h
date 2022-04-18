@@ -19,8 +19,6 @@ namespace Mage
 		void RenderTexture(const Texture2D& texture, float dstX, float dstY) const;
 		void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, float dstX, float dstY) const;
 
-		SDL_Renderer* GetSDLRenderer() const { return m_pRenderer; }
-
 		const SDL_Color& GetBackgroundColor() const { return m_ClearColor; }
 		void SetBackgroundColor(const SDL_Color& color) { m_ClearColor = color; }
 
@@ -30,7 +28,7 @@ namespace Mage
 
 		CameraComponent* m_pCamera{};
 
-		SDL_Renderer* m_pRenderer{};
+		SDL_GLContext m_Context;
 		SDL_Window* m_pWindow{};
 		SDL_Color m_ClearColor{};
 	};

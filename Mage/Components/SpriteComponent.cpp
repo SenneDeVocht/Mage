@@ -7,6 +7,7 @@
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Components/Transform.h"
+#include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
 Mage::SpriteComponent::SpriteComponent(std::shared_ptr<Texture2D> pTexture)
@@ -16,12 +17,8 @@ Mage::SpriteComponent::SpriteComponent(std::shared_ptr<Texture2D> pTexture)
 
 void Mage::SpriteComponent::DrawProperties()
 {
-	ImGui::PushID(this);
-
-	if (ImGui::CollapsingHeader("Sprite Component"))
+	Mage::ImGuiHelper::Component("Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
-		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
-
 		// Texture Image
 		float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
 		float availableHeight = 50.f;
@@ -30,11 +27,9 @@ void Mage::SpriteComponent::DrawProperties()
 		float scaleFactorY = availableHeight / m_pTexture->GetHeight();
 
 		float scaleFactor = std::min(scaleFactorX, scaleFactorY);
-		
-		ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { m_pTexture->GetWidth() * scaleFactor, m_pTexture->GetHeight() * scaleFactor });
-	}
 
-	ImGui::PopID();
+		ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { m_pTexture->GetWidth() * scaleFactor, m_pTexture->GetHeight() * scaleFactor });
+	});
 }
 
 void Mage::SpriteComponent::Render() const

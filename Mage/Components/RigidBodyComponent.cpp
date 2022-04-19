@@ -11,6 +11,7 @@
 #include "Mage/Components/Transform.h"
 #include "Mage/Scenegraph/Scene.h"
 #include "Mage/Engine/PhysicsHandler.h"
+#include "Mage/ImGui/ImGuiHelper.h"
 
 Mage::RigidBodyComponent::RigidBodyComponent(BodyType type, bool fixedRotation, float gravityScale)
 	: m_Type{ type }
@@ -30,21 +31,15 @@ void Mage::RigidBodyComponent::Initialize()
 
 void Mage::RigidBodyComponent::DrawProperties()
 {
-	ImGui::PushID(this);
-
-	if (ImGui::CollapsingHeader("Rigidbody Component"))
+	Mage::ImGuiHelper::Component("Rigidbody Component", this, &m_ShouldBeEnabled, [&]()
 	{
-		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
-
 		// TODO: add type and gravityscale
 
 		ImGui::BeginDisabled();
 		glm::vec2 velocity = GetVelocity();
 		ImGui::DragFloat2("Velocity", &velocity.x);
 		ImGui::EndDisabled();
-	}
-
-	ImGui::PopID();
+	});
 }
 
 void Mage::RigidBodyComponent::UpdateTransform() const

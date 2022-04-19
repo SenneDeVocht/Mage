@@ -8,6 +8,7 @@
 #include "Mage/ResourceManagement/Font.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/SpriteComponent.h"
+#include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
 Mage::TextComponent::TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color,
@@ -85,25 +86,13 @@ void Mage::TextComponent::Update()
 
 void Mage::TextComponent::DrawProperties()
 {
-	ImGui::PushID(this);
-
-	if (ImGui::CollapsingHeader("Text Component"))
+	Mage::ImGuiHelper::Component("Text Component", this, &m_ShouldBeEnabled, [&]()
 	{
-		// Enabled
-		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
-
 		// Text
 		m_NeedsUpdate |= ImGui::InputText("Text", &m_Text);
 
 		// Color
-		glm::vec4 color = {m_Color.r / 255.f, m_Color.g / 255.f, m_Color.b / 255.f, m_Color.a / 255.f };
-		m_NeedsUpdate |= ImGui::ColorEdit4("Color", &color.x);
-		m_Color = SDL_Color{
-			static_cast<uint8_t>(color.r * 255),
-			static_cast<uint8_t>(color.g * 255),
-			static_cast<uint8_t>(color.b * 255),
-			static_cast<uint8_t>(color.a * 255)
-		};
+		m_NeedsUpdate |= ImGuiHelper::SDLColorPicker("Color", &m_Color);
 
 		// Horizontal Alignment
 		m_NeedsUpdate |= ImGui::Combo("Horizontal Alignment", reinterpret_cast<int*>(&m_HorizontalAlignment), "Left\0Middle\0Right\0");
@@ -113,9 +102,7 @@ void Mage::TextComponent::DrawProperties()
 
 		// Pixels per unit
 		m_NeedsUpdate |= ImGui::DragFloat("Pixels Per Unit", &m_PixelsPerUnit, 0.1f, 0.f);
-	}
-
-	ImGui::PopID();
+	});
 }
 
 void Mage::TextComponent::SetText(const std::string& text)

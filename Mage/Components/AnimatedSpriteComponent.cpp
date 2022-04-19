@@ -7,6 +7,7 @@
 #include "Mage/Engine/Timer.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/Transform.h"
+#include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
 Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame)
@@ -36,29 +37,23 @@ void Mage::AnimatedSpriteComponent::Update()
 
 void Mage::AnimatedSpriteComponent::DrawProperties()
 {
-	ImGui::PushID(this);
-
-	if (ImGui::CollapsingHeader("Animated Sprite Component"))
+	Mage::ImGuiHelper::Component("Animated Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
-		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
+	    // Texture Image
+	    float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+	    float availableHeight = 50.f;
 
-		// Texture Image
-		float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
-		float availableHeight = 50.f;
+	    float scaleFactorX = availableWidth / m_pSpritesheet->GetWidth();
+	    float scaleFactorY = availableHeight / m_pSpritesheet->GetHeight();
 
-		float scaleFactorX = availableWidth / m_pSpritesheet->GetWidth();
-		float scaleFactorY = availableHeight / m_pSpritesheet->GetHeight();
+	    float scaleFactor = std::min(scaleFactorX, scaleFactorY);
 
-		float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+	    ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), { m_pSpritesheet->GetWidth() * scaleFactor, m_pSpritesheet->GetHeight() * scaleFactor });
 
-		ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), { m_pSpritesheet->GetWidth() * scaleFactor, m_pSpritesheet->GetHeight() * scaleFactor });
+	    ImGui::DragInt("Number Of Frames", &m_NumFrames);
 
-		ImGui::DragInt("Number Of Frames", &m_NumFrames);
-
-		ImGui::DragFloat("Seconds Per Frame", &m_SecondsPerFrame);
-	}
-
-	ImGui::PopID();
+	    ImGui::DragFloat("Seconds Per Frame", &m_SecondsPerFrame);
+	});
 }
 
 void Mage::AnimatedSpriteComponent::Render() const

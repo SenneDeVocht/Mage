@@ -19,11 +19,92 @@ void Mage::ImGuiHelper::InitImGui(SDL_Window* pWindow)
 	ImGui_ImplOpenGL2_Init();
 }
 
+ImFont* Mage::ImGuiHelper::GetFontBold()
+{
+	const ImGuiIO& io = ImGui::GetIO();
+	return io.Fonts->Fonts[1];
+}
+
+ImFont* Mage::ImGuiHelper::GetFontItalic()
+{
+	const ImGuiIO& io = ImGui::GetIO();
+	return io.Fonts->Fonts[2];
+}
+
+ImFont* Mage::ImGuiHelper::GetFontBoldItalic()
+{
+	const ImGuiIO& io = ImGui::GetIO();
+	return io.Fonts->Fonts[3];
+}
+
+bool Mage::ImGuiHelper::SDLColorPicker(const char* label, SDL_Color* pColor, int imGuiColorEditFlags)
+{
+	glm::vec4 color = { pColor->r / 255.f, pColor->g / 255.f, pColor->b / 255.f, pColor->a / 255.f };
+	const bool edited = ImGui::ColorEdit4(label, &color.x, imGuiColorEditFlags);
+	*pColor = SDL_Color{
+		static_cast<uint8_t>(color.r * 255),
+		static_cast<uint8_t>(color.g * 255),
+		static_cast<uint8_t>(color.b * 255),
+		static_cast<uint8_t>(color.a * 255)
+	};
+
+	return edited;
+}
+
+void Mage::ImGuiHelper::Component(const char* name, void const* id, bool* enabled, const std::function<void()>& extraUIFunction)
+{
+	ImGui::PushID(id);
+
+	bool open;
+
+	// TODO: Make alignment cleaner
+
+	if (enabled != nullptr)
+	{
+		ImGui::BeginTable("header", 2);
+		ImGui::TableSetupColumn("headerCol");
+		ImGui::TableSetupColumn("enableCol", ImGuiTableColumnFlags_WidthFixed);
+
+		ImGui::TableNextColumn();
+		open = ImGui::CollapsingHeader(name);
+
+		ImGui::TableNextColumn();
+		ImGui::Checkbox("", enabled);
+
+		ImGui::EndTable();
+	}
+    else
+    {
+		ImGui::BeginTable("header", 2, ImGuiTableFlags_NoPadInnerX);
+		ImGui::TableSetupColumn("headerCol");
+		ImGui::TableSetupColumn("enableCol", ImGuiTableColumnFlags_WidthFixed);
+
+		ImGui::TableNextColumn();
+		open = ImGui::CollapsingHeader(name);
+
+		ImGui::TableNextColumn();
+
+		ImGui::EndTable();
+    }
+
+	if (open)
+		extraUIFunction();
+
+	ImGui::PopID();
+}
+
 void Mage::ImGuiHelper::SetCustomStyle()
 {
+	// FONT
+	//-----
+	ImGuiIO& io = ImGui::GetIO();
+	io.FontDefault = io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Medium.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Bold.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Italic.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-BoldItalic.ttf", 16.f);
+
 	// COLORS
 	//-------
-
 	ImVec4* colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 	colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -84,7 +165,6 @@ void Mage::ImGuiHelper::SetCustomStyle()
 
 	// SIZES
 	//------
-
 	auto& style = ImGui::GetStyle();
 
 	// Main

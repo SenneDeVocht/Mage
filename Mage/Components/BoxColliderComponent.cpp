@@ -9,6 +9,7 @@
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Scenegraph/Scene.h"
 #include "Mage/Engine/PhysicsHandler.h"
+#include "Mage/ImGui/ImGuiHelper.h"
 
 Mage::BoxColliderComponent::BoxColliderComponent(const glm::vec2& size, const glm::vec2& offset, bool isTrigger)
 	: m_Size(size)
@@ -23,18 +24,10 @@ void Mage::BoxColliderComponent::Initialize()
 
 void Mage::BoxColliderComponent::DrawProperties()
 {
-	ImGui::PushID(this);
-
-	if (ImGui::CollapsingHeader("Box Collider Component"))
+	Mage::ImGuiHelper::Component("Box Collider Component", this, nullptr, [&]()
 	{
-		bool enabled = IsEnabled();
-		if(ImGui::Checkbox("Enabled", &enabled))
-			SetEnabled(enabled);
-
-		// TODO: All box2d specific variables
-	}
-
-	ImGui::PopID();
+	    ImGui::Text("This component will probably be migrated to be a part of the rigidbody.");
+	});
 }
 
 void Mage::BoxColliderComponent::SetEnabled(bool enabled)

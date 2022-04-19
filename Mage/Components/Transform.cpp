@@ -4,21 +4,18 @@
 #include "imgui.h"
 
 #include "RigidBodyComponent.h"
+#include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/Scenegraph/GameObject.h"
 
 void Mage::Transform::DrawProperties()
 {
-	ImGui::PushID(this);
-
-	if (ImGui::CollapsingHeader("Transform"))
+	Mage::ImGuiHelper::Component("Transform", this, nullptr, [&]()
 	{
 		if (ImGui::DragFloat2("Position", &m_Position.x, 0.1f))
 		{
 			ApplyTransformToRigidBodiesOfSelfAndChildren();
 		}
-	}
-
-	ImGui::PopID();
+	});
 }
 
 void Mage::Transform::SetPosition(const glm::vec2& position)

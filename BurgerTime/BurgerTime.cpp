@@ -105,6 +105,12 @@ void BurgerTime::LoadGame() const
 	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
 	burger->SetTag("Ingredient", true);
 
+	// TEXT
+    //-----
+	const auto textObject = scene->CreateObject("Text");
+	textObject->CreateComponent<Mage::TextComponent>("TEST", Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 16), SDL_Color{ 255, 255, 255, 255 }, 16.f);
+	textObject->CreateComponent<Mage::SpriteComponent>();
+
 	// DONE
 	//-----
 	scene->Initialize();

@@ -2,17 +2,12 @@
 #include "CameraComponent.h"
 
 #include "imgui.h"
+#include "Mage/ImGui/ImGuiHelper.h"
 
 void Mage::CameraComponent::DrawProperties()
 {
-	ImGui::PushID(this);
-
-	if (ImGui::CollapsingHeader("Camera Component"))
+	Mage::ImGuiHelper::Component("Camera Component", this, &m_ShouldBeEnabled, [&]()
 	{
-		ImGui::Checkbox("Enabled", &m_ShouldBeEnabled);
-
 		ImGui::DragFloat2("Size", &m_Size.x, 0.1f);
-	}
-
-	ImGui::PopID();
+	});
 }

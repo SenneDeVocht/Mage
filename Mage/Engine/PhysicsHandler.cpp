@@ -178,7 +178,7 @@ void Mage::PhysicsHandler::AddBoxCollider(BoxColliderComponent* boxCollider) con
 	boxShape.SetAsBox(
 		boxCollider->GetSize().x / 2.f, boxCollider->GetSize().y / 2.f,
 		{ boxCollider->GetOffset().x, boxCollider->GetOffset().y },
-		0.0f);
+		boxCollider->GetAngle());
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;

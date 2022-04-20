@@ -30,7 +30,7 @@ void BurgerIngredientPart::OnTriggerEnter(Mage::BoxColliderComponent* other)
 void BurgerIngredientPart::ReadyForFall()
 {
 	const auto transform = GetGameObject()->GetTransform();
-	transform->SetPosition({ transform->GetLocalPosition().x, 0 });
+	transform->SetLocalPosition({ transform->GetLocalPosition().x, 0 });
 	
 	m_IsSteppedOn = false;
 	m_IsFalling = true;

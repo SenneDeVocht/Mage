@@ -52,7 +52,7 @@ void BurgerTime::LoadGame() const
 	#pragma region PeterPepper
 	
 	const auto peterPepperObject = scene->CreateObject("PeterPepper");
-	peterPepperObject->GetTransform()->SetPosition({ 0, -4.3125f });
+	peterPepperObject->GetTransform()->SetLocalPosition({ 0, -4.3125f });
 
 	auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/Idle.png", 16),
@@ -75,8 +75,8 @@ void BurgerTime::LoadGame() const
 		4,
 		0.1f);
 
-	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
-	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, true);
+	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);
 	peterPepperObject->CreateComponent<PeterPepper>(level, idle, walkFront, walkBack, walkLeft, walkRight);
 	peterPepperObject->SetTag("PeterPepper");
 	
@@ -85,31 +85,26 @@ void BurgerTime::LoadGame() const
 	// BURGER TEST
 	//------------
 	auto burger = scene->CreateObject("Burger");
-	burger->GetTransform()->SetPosition({ -1.5f, 2 - 0.6875f });
-	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::Cheese);
-	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
-	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
+	burger->GetTransform()->SetLocalPosition({ -1.5f, 2 - 0.6875f });
+	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::BunTop);
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
 	burger->SetTag("Ingredient", true);
 
 	burger = scene->CreateObject("Burger");
-	burger->GetTransform()->SetPosition({ -1.5f, -0.6875f });
+	burger->GetTransform()->SetLocalPosition({ -1.5f, -0.6875f });
 	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::Patty);
-	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
-	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
 	burger->SetTag("Ingredient", true);
 
 	burger = scene->CreateObject("Burger");
-	burger->GetTransform()->SetPosition({ -1.5f, -2.6875f });
-	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::Tomato);
-	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic);
-	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, true);
+	burger->GetTransform()->SetLocalPosition({ -1.5f, -2.6875f });
+	burger->CreateComponent<BurgerIngredient>(level, BurgerIngredient::IngredientType::BunBottom);
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
 	burger->SetTag("Ingredient", true);
 
-	// TEXT
-    //-----
-	const auto textObject = scene->CreateObject("Text");
-	textObject->CreateComponent<Mage::TextComponent>("TEST", Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 16), SDL_Color{ 255, 255, 255, 255 }, 16.f);
-	textObject->CreateComponent<Mage::SpriteComponent>();
 
 	// DONE
 	//-----

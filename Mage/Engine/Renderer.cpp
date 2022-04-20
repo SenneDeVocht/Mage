@@ -97,12 +97,12 @@ void Mage::Renderer::Destroy()
 	SDL_GL_DeleteContext(m_Context);
 }
 
-void Mage::Renderer::RenderTexture(const Texture2D& texture, float dstX, float dstY) const
+void Mage::Renderer::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
-	RenderPartialTexture(texture, 0, 0, texture.GetWidth(), texture.GetHeight(), dstX, dstY);
+	RenderPartialTexture(texture, 0, 0, texture.GetWidth(), texture.GetHeight(), position, rotation, scale);
 }
 
-void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, float dstX, float dstY) const
+void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
 	// Source Rect (Part of texture)
 	SDL_FRect src{};
@@ -113,8 +113,8 @@ void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, in
 
 	// Destination Rect (Part of world)
 	SDL_FRect dst{};
-	dst.x = dstX - texture.GetPivot().x * srcW / texture.GetPixelsPerUnit();
-	dst.y = dstY - texture.GetPivot().y * srcH / texture.GetPixelsPerUnit();
+	dst.x = -texture.GetPivot().x * srcW / texture.GetPixelsPerUnit();
+	dst.y = -texture.GetPivot().y * srcH / texture.GetPixelsPerUnit();
 	dst.w = srcW / (float)texture.GetPixelsPerUnit();
 	dst.h = srcH / (float)texture.GetPixelsPerUnit();
 
@@ -144,12 +144,20 @@ void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, in
 	glTranslatef((float)windowWidth / 2.f, (float)windowHeight / 2.f, 0.0f);
 
 	// Scale to camera size
-	const auto camSize = m_pCamera->GetSize();
+	const auto camSize = m_pCamera->GetSize() * m_pCamera->GetGameObject()->GetTransform()->GetWorldScale();
 	glScalef(windowWidth / camSize.x, windowHeight / camSize.y, 1.0f);
 
 	// Translate to camera position
 	const auto camPos = m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition();
 	glTranslatef(-camPos.x, -camPos.y, 0.0f);
+
+	// Rotate with camera
+	glRotatef(m_pCamera->GetGameObject()->GetTransform()->GetWorldRotation(), 0.0f, 0.0f, 1.0f);
+
+	// Transform texture
+	glTranslatef(position.x, position.y, 0.0f);
+	glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+	glScalef(scale.x, scale.y, 1.0f);
 
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);

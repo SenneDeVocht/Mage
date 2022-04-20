@@ -11,9 +11,10 @@
 #include "Mage/Engine/PhysicsHandler.h"
 #include "Mage/ImGui/ImGuiHelper.h"
 
-Mage::BoxColliderComponent::BoxColliderComponent(const glm::vec2& size, const glm::vec2& offset, bool isTrigger)
+Mage::BoxColliderComponent::BoxColliderComponent(const glm::vec2& size, const glm::vec2& offset, float angle, bool isTrigger)
 	: m_Size(size)
 	, m_Offset(offset)
+    , m_Angle(angle)
 	, m_IsTrigger(isTrigger)
 {}
 
@@ -47,7 +48,6 @@ void Mage::BoxColliderComponent::SetEnabled(bool enabled)
 		m_RunTimeFixture->SetFilterData(filter);
 	}
 }
-
 
 void Mage::BoxColliderComponent::NotifyGameObjectOnTriggerEnter(BoxColliderComponent* other) const
 {

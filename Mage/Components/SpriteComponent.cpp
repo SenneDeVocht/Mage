@@ -37,8 +37,10 @@ void Mage::SpriteComponent::Render() const
 	if (m_pTexture != nullptr)
 	{
 		const auto& pos = m_pGameObject->GetTransform()->GetWorldPosition();
+		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
+		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
-		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
+		Renderer::GetInstance().RenderTexture(*m_pTexture, pos, rot, scale);
 	}
 }
 

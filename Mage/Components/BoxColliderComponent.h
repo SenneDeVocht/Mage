@@ -8,7 +8,7 @@ namespace Mage
 	class BoxColliderComponent final : public Component
 	{
 	public:
-		BoxColliderComponent(const glm::vec2& size, const glm::vec2& offset, bool isTrigger = false);
+		BoxColliderComponent(const glm::vec2& size, const glm::vec2& offset, float angle, bool isTrigger = false);
 		~BoxColliderComponent() override = default;
 
 		BoxColliderComponent(const BoxColliderComponent& other) = delete;
@@ -22,6 +22,7 @@ namespace Mage
 
 		const glm::vec2& GetSize() const { return m_Size; }
 		const glm::vec2& GetOffset() const { return m_Offset; }
+		float GetAngle() const { return m_Angle; }
 		bool IsTrigger() const { return m_IsTrigger; }
 
 		float GetDensity() const { return m_Density; }
@@ -40,12 +41,13 @@ namespace Mage
 		// Collider
 		glm::vec2 m_Size = { 1.f, 1.f };
 		glm::vec2 m_Offset = { 0.f, 0.f };
+		float m_Angle = 0.f;
 		bool m_IsTrigger = false;
 
 		// Material
-		float m_Density = 0.f;
+		float m_Density = 1.f;
 		float m_Friction = 0.5f;
-		float m_Restitution = 0.f;
+		float m_Restitution = 0.5f;
 		float m_RestitutionThreshold = 0.5f;
 
 		// storage for runtime

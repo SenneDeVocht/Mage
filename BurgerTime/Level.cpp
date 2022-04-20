@@ -92,7 +92,7 @@ void Level::LoadLevel()
 			}
 
 			if (tile != nullptr)
-				tile->GetTransform()->SetPosition(IndexToPosition(index));
+				tile->GetTransform()->SetLocalPosition(IndexToPosition(index));
 		}
 	}
 }

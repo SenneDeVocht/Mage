@@ -93,7 +93,7 @@ void PeterPepper::FixedUpdate()
 		m_Input.x > 0 && m_pLevel->CanMoveInDirection(position, Level::Direction::Right))
 	{
 		velocity.x = m_Input.x * m_Speed;
-		GetGameObject()->GetTransform()->SetPosition(m_pLevel->SnapToPlatform(position));
+		GetGameObject()->GetTransform()->SetLocalPosition(m_pLevel->SnapToPlatform(position));
 	}
 
 	m_pRigidBody->SetVelocity(velocity);

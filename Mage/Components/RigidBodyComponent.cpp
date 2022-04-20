@@ -24,9 +24,10 @@ Mage::RigidBodyComponent::~RigidBodyComponent()
 	GetGameObject()->GetScene()->GetPhysicsHandler()->RemoveRigidBody(this);
 }
 
-void Mage::RigidBodyComponent::Initialize()
+void Mage::RigidBodyComponent::Awake()
 {
 	GetGameObject()->GetScene()->GetPhysicsHandler()->AddRigidBody(this);
+	TransformChanged();
 }
 
 void Mage::RigidBodyComponent::DrawProperties()
@@ -36,20 +37,34 @@ void Mage::RigidBodyComponent::DrawProperties()
 		// TODO: add type and gravityscale
 
 		ImGui::BeginDisabled();
+
 		glm::vec2 velocity = GetVelocity();
 		ImGui::DragFloat2("Velocity", &velocity.x);
+
+		glm::vec2 position = { m_RunTimeBody->GetPosition().x, m_RunTimeBody->GetPosition().y };
+		ImGui::DragFloat2("Position", &position.x);
+
+		float rotation = glm::degrees(m_RunTimeBody->GetAngle());
+		ImGui::DragFloat("Rotation", &rotation);
+
 		ImGui::EndDisabled();
 	});
 }
 
-void Mage::RigidBodyComponent::UpdateTransform() const
+void Mage::RigidBodyComponent::TransformChanged()
 {
-	GetGameObject()->GetTransform()->SetWorldPosition({ m_RunTimeBody->GetPosition().x, m_RunTimeBody->GetPosition().y });
+	const auto transform = GetGameObject()->GetTransform();
+	m_RunTimeBody->SetTransform(
+		b2Vec2(transform->GetWorldPosition().x, transform->GetWorldPosition().y), 
+		glm::radians(transform->GetWorldRotation())
+	);
+	m_RunTimeBody->SetAwake(true);
 }
 
-void Mage::RigidBodyComponent::SetPosition(const glm::vec2& position) const
+void Mage::RigidBodyComponent::UpdateTransform() const
 {
-	m_RunTimeBody->SetTransform(b2Vec2(position.x, position.y), 0);
+	GetGameObject()->GetTransform()->SetWorldPositionWithoutUpdatingRigidBody({ m_RunTimeBody->GetPosition().x, m_RunTimeBody->GetPosition().y });
+	GetGameObject()->GetTransform()->SetWorldRotationWithoutUpdatingRigidBody(glm::degrees(m_RunTimeBody->GetAngle()));
 }
 
 void Mage::RigidBodyComponent::SetVelocity(const glm::vec2& velocity) const

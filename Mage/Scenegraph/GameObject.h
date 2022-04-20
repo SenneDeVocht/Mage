@@ -91,6 +91,7 @@ namespace Mage
 		// Create component and add it
 		auto component = std::unique_ptr<componentType>(new componentType(args...));
 		component->SetGameObject(this);
+		component->Awake();
 		const auto pComponent = component.get();
 
 		m_Components.push_back(std::move(component));

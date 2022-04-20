@@ -66,11 +66,13 @@ void Mage::AnimatedSpriteComponent::Render() const
 		srcWidth /= m_NumFrames;
 		int srcX = m_CurrentFrame * srcWidth;
 
-		// Get screen pos
+		// Get pos rot scale
 		const auto& pos = m_pGameObject->GetTransform()->GetWorldPosition();
+		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
+		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
 		// Render
-		Renderer::GetInstance().RenderPartialTexture(*m_pSpritesheet, srcX, 0, srcWidth, srcHeight, pos.x, pos.y);
+		Renderer::GetInstance().RenderPartialTexture(*m_pSpritesheet, srcX, 0, srcWidth, srcHeight, pos, rot, scale);
 	}
 }
 

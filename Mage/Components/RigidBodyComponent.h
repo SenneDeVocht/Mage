@@ -16,7 +16,7 @@ namespace Mage
 			Dynamic
 		};
 
-		RigidBodyComponent(BodyType type, bool fixedRotation = true, float gravityScale = 1.0f);
+		RigidBodyComponent(BodyType type, bool fixedRotation = false, float gravityScale = 1.0f);
 		~RigidBodyComponent();
 
 		RigidBodyComponent(const RigidBodyComponent& other) = delete;
@@ -24,9 +24,10 @@ namespace Mage
 		RigidBodyComponent& operator=(const RigidBodyComponent& other) = delete;
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) = delete;
 
-		void Initialize() override;
+		void Awake() override;
 		void DrawProperties() override;
 
+		void TransformChanged();
 		void UpdateTransform() const;
 
 		BodyType GetType() const { return m_Type; }
@@ -37,8 +38,6 @@ namespace Mage
 		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
 
 		// Interaction
-		void SetPosition(const glm::vec2& position) const;
-
 		void SetVelocity(const glm::vec2& velocity) const;
 		glm::vec2 GetVelocity() const;
 

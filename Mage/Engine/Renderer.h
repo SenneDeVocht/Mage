@@ -16,8 +16,8 @@ namespace Mage
 		
 		void SetCamera(CameraComponent* pCamera);
 
-		void RenderTexture(const Texture2D& texture, float dstX, float dstY) const;
-		void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, float dstX, float dstY) const;
+		void RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
+		void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
 
 		const SDL_Color& GetBackgroundColor() const { return m_ClearColor; }
 		void SetBackgroundColor(const SDL_Color& color) { m_ClearColor = color; }

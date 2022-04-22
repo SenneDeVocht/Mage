@@ -50,9 +50,11 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 
 	    ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), { m_pSpritesheet->GetWidth() * scaleFactor, m_pSpritesheet->GetHeight() * scaleFactor });
 
-	    ImGui::DragInt("Number Of Frames", &m_NumFrames);
+		ImGuiHelper::ItemLabel("Number Of Frames", ImGuiHelper::ItemLabelAlignment::Left);
+	    ImGui::DragInt("##Number Of Frames", &m_NumFrames);
 
-	    ImGui::DragFloat("Seconds Per Frame", &m_SecondsPerFrame);
+		ImGuiHelper::ItemLabel("Seconds Per Frame", ImGuiHelper::ItemLabelAlignment::Left);
+	    ImGui::DragFloat("##Seconds Per Frame", &m_SecondsPerFrame);
 	});
 }
 

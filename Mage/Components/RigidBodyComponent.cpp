@@ -39,13 +39,8 @@ void Mage::RigidBodyComponent::DrawProperties()
 		ImGui::BeginDisabled();
 
 		glm::vec2 velocity = GetVelocity();
-		ImGui::DragFloat2("Velocity", &velocity.x);
-
-		glm::vec2 position = { m_RunTimeBody->GetPosition().x, m_RunTimeBody->GetPosition().y };
-		ImGui::DragFloat2("Position", &position.x);
-
-		float rotation = glm::degrees(m_RunTimeBody->GetAngle());
-		ImGui::DragFloat("Rotation", &rotation);
+		ImGuiHelper::ItemLabel("Velocity", ImGuiHelper::ItemLabelAlignment::Left);
+		ImGui::DragFloat2("##Velocity", &velocity.x);
 
 		ImGui::EndDisabled();
 	});

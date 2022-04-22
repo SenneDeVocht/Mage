@@ -1,9 +1,9 @@
 #include "Mage/MagePCH.h"
 #include "Scene.h"
 
+#include "IconsFontAwesome.h"
 #include "imgui.h"
 #include "Mage/Scenegraph/GameObject.h"
-#include "Mage/Engine/Timer.h"
 #include "Mage/Engine/PhysicsHandler.h"
 
 unsigned int Mage::Scene::m_IdCounter = 0;
@@ -109,7 +109,7 @@ void Mage::Scene::DisplaySceneGraph()
 {
 	// HIERARCHY
 	//----------
-	ImGui::Begin("Hierarchy");
+	ImGui::Begin(ICON_FA_SHAPES " Hierarchy");
 	for (const auto& rootObject : m_Objects)
 	{
 		DisplayObjectInSceneGraph(rootObject.get());
@@ -118,7 +118,7 @@ void Mage::Scene::DisplaySceneGraph()
 
 	// PROPERTIES
 	//-----------
-	ImGui::Begin("Properties");
+	ImGui::Begin(ICON_FA_SLIDERS " Properties");
 	if (m_pSelectedObjectInHierarchy != nullptr)
 	{
 		m_pSelectedObjectInHierarchy->DrawProperties();

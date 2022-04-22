@@ -1,8 +1,10 @@
 #include "Mage/MagePCH.h"
 #include "ImGuiHelper.h"
 
+#include "imgui_internal.h"
 #include "backends/imgui_impl_opengl2.h"
 #include "backends/imgui_impl_sdl.h"
+#include "IconsFontAwesome.h"
 
 void Mage::ImGuiHelper::InitImGui(SDL_Window* pWindow)
 {
@@ -49,6 +51,45 @@ bool Mage::ImGuiHelper::SDLColorPicker(const char* label, SDL_Color* pColor, int
 	};
 
 	return edited;
+}
+
+void Mage::ImGuiHelper::ItemLabel(const char* title, ItemLabelAlignment alignment)
+{
+	// Code from https://github.com/ocornut/imgui/issues/3469#issuecomment-691845667
+
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	const ImVec2 lineStart = ImGui::GetCursorScreenPos();
+	const ImGuiStyle& style = ImGui::GetStyle();
+	float fullWidth = ImGui::GetContentRegionAvail().x;
+	float itemWidth = ImGui::CalcItemWidth() + style.ItemSpacing.x;
+	ImVec2 textSize = ImGui::CalcTextSize(title);
+	ImRect textRect;
+	textRect.Min = ImGui::GetCursorScreenPos();
+	if (alignment == ItemLabelAlignment::Right)
+		textRect.Min.x = textRect.Min.x + itemWidth;
+	textRect.Max = textRect.Min;
+	textRect.Max.x += fullWidth - itemWidth;
+	textRect.Max.y += textSize.y;
+
+	ImGui::SetCursorScreenPos(textRect.Min);
+
+	ImGui::AlignTextToFramePadding();
+	// Adjust text rect manually because we render it directly into a drawlist instead of using public functions.
+	textRect.Min.y += window->DC.CurrLineTextBaseOffset;
+	textRect.Max.y += window->DC.CurrLineTextBaseOffset;
+
+    ImGui::ItemSize(textRect);
+	if (ImGui::ItemAdd(textRect, window->GetID(title)))
+	{
+        ImGui::RenderText(textRect.Min, title);
+	}
+	if (alignment == ItemLabelAlignment::Left)
+	{
+		ImGui::SetCursorScreenPos(ImVec2{ textRect.Max.x, textRect.Max.y - textSize.y + window->DC.CurrLineTextBaseOffset });
+		ImGui::SameLine();
+	}
+	else if (alignment == ItemLabelAlignment::Right)
+		ImGui::SetCursorScreenPos(lineStart);
 }
 
 void Mage::ImGuiHelper::Component(const char* name, void const* id, bool* enabled, const std::function<void()>& extraUIFunction)
@@ -98,10 +139,23 @@ void Mage::ImGuiHelper::SetCustomStyle()
 	// FONT
 	//-----
 	ImGuiIO& io = ImGui::GetIO();
+
+	ImFontConfig config;
+	config.MergeMode = true;
+	config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+	static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+
 	io.FontDefault = io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Medium.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+
 	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Bold.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+
 	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Italic.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+
 	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-BoldItalic.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
 
 	// COLORS
 	//-------

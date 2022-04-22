@@ -89,19 +89,24 @@ void Mage::TextComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Text Component", this, &m_ShouldBeEnabled, [&]()
 	{
 		// Text
-		m_NeedsUpdate |= ImGui::InputText("Text", &m_Text);
+	    ImGuiHelper::ItemLabel("Text", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGui::InputText("##Text", &m_Text);
 
 		// Color
-		m_NeedsUpdate |= ImGuiHelper::SDLColorPicker("Color", &m_Color);
+		ImGuiHelper::ItemLabel("Color", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGuiHelper::SDLColorPicker("##Color", &m_Color);
 
 		// Horizontal Alignment
-		m_NeedsUpdate |= ImGui::Combo("Horizontal Alignment", reinterpret_cast<int*>(&m_HorizontalAlignment), "Left\0Middle\0Right\0");
+		ImGuiHelper::ItemLabel("Horizontal Alignment", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGui::Combo("##Horizontal Alignment", reinterpret_cast<int*>(&m_HorizontalAlignment), "Left\0Middle\0Right\0");
 
 		// Vertical Alignment
-		m_NeedsUpdate |= ImGui::Combo("Vertical Alignment", reinterpret_cast<int*>(&m_VerticalAlignment), "Top\0Middle\0Bottom\0");
+		ImGuiHelper::ItemLabel("Vertical Alignment", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGui::Combo("##Vertical Alignment", reinterpret_cast<int*>(&m_VerticalAlignment), "Top\0Middle\0Bottom\0");
 
 		// Pixels per unit
-		m_NeedsUpdate |= ImGui::DragFloat("Pixels Per Unit", &m_PixelsPerUnit, 0.1f, 0.f);
+		ImGuiHelper::ItemLabel("Pixels Per Unit", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGui::DragFloat("##Pixels Per Unit", &m_PixelsPerUnit, 0.1f, 0.f);
 	});
 }
 

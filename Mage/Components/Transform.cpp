@@ -13,9 +13,14 @@ void Mage::Transform::DrawProperties()
 	{
 	    bool changed = false;
 
-		changed |= ImGui::DragFloat2("Position", &m_Position.x, 0.1f);
-		changed |= ImGui::DragFloat("Rotation", &m_Rotation, 0.1f);
-		changed |= ImGui::DragFloat2("Scale", &m_Scale.x, 0.1f);
+		ImGuiHelper::ItemLabel("Position", ImGuiHelper::ItemLabelAlignment::Left);
+		changed |= ImGui::DragFloat2("##Position", &m_Position.x, 0.1f);
+
+		ImGuiHelper::ItemLabel("Rotation", ImGuiHelper::ItemLabelAlignment::Left);
+		changed |= ImGui::DragFloat("##Rotation", &m_Rotation, 0.1f);
+
+		ImGuiHelper::ItemLabel("Scale", ImGuiHelper::ItemLabelAlignment::Left);
+		changed |= ImGui::DragFloat2("##Scale", &m_Scale.x, 0.1f);
 
         if (changed)
 			TransformChanged(true);

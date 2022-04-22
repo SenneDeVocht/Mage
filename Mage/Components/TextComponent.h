@@ -9,35 +9,32 @@ namespace Mage
 	class TextComponent : public Component
 	{
 	public:
-		enum class HorizontalAlignment
+		enum class TextAlignment
 		{
 			Left,
 			Middle,
 			Right
 		};
-		enum class VerticalAlignment
-		{
-			Top,
-			Middle,
-			Bottom
-		};
 
 		explicit TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, float pixelsPerUnit,
-			HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left, VerticalAlignment verticalAlignment = VerticalAlignment::Middle);
+			const glm::vec2& pivot = { 0.0f, 0.0f }, TextAlignment alignment = TextAlignment::Left);
 
 		void Update() override;
+		void Render() const override;
 		void DrawProperties() override;
 
 		void SetText(const std::string& text);
 		void SetColor(const SDL_Color& color);
 
 	private:
-		bool m_NeedsUpdate;
+		std::unique_ptr<Texture2D> m_pTexture;
+
+		bool m_NeedsUpdate{ true };
 		std::string m_Text;
 		std::shared_ptr<Font> m_Font;
 		SDL_Color m_Color;
-		HorizontalAlignment m_HorizontalAlignment;
-		VerticalAlignment m_VerticalAlignment;
 		float m_PixelsPerUnit;
+		glm::vec2 m_Pivot;
+		TextAlignment m_Alignment;
 	};
 }

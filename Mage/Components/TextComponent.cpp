@@ -8,18 +8,19 @@
 #include "Mage/ResourceManagement/Font.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/SpriteComponent.h"
+#include "Mage/Engine/Renderer.h"
 #include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
+#include "Mage/Components/Transform.h"
 
-Mage::TextComponent::TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color,
-	float pixelsPerUnit, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
-	: m_NeedsUpdate{ true }
-	, m_Text{ text }
+Mage::TextComponent::TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, float pixelsPerUnit,
+	const glm::vec2& pivot, TextAlignment alignment)
+    : m_Text{ text }
 	, m_Font{ font }
 	, m_Color{ color }
-	, m_HorizontalAlignment{ horizontalAlignment }
-	, m_VerticalAlignment{ verticalAlignment }
 	, m_PixelsPerUnit{ pixelsPerUnit }
+    , m_Pivot{ pivot }
+	, m_Alignment{ alignment }
 {}
 
 void Mage::TextComponent::Update()
@@ -29,58 +30,29 @@ void Mage::TextComponent::Update()
 		// Create surface
 		SDL_Surface* surf = TTF_RenderText_Blended(m_Font->GetFont(), m_Text.c_str(), m_Color);
 
-		if (surf == nullptr)
-			throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
-
-		// Send to RenderComponent
-		const auto pRendererComponent = m_pGameObject->GetComponentByType<SpriteComponent>();
-
-		glm::vec2 pivot;
-		switch (m_HorizontalAlignment)
+		if (surf != nullptr)
 		{
-			case HorizontalAlignment::Left:
-			{
-				pivot.x = 0.f;
-				break;
-			}
-			case HorizontalAlignment::Middle:
-			{
-				pivot.x = 0.5f;
-				break;
-			}
-			case HorizontalAlignment::Right:
-			{
-				pivot.x = 1.f;
-				break;
-			}
-		}
-		switch (m_VerticalAlignment)
-		{
-			case VerticalAlignment::Top:
-			{
-				pivot.y = 1.f;
-				break;
-			}
-			case VerticalAlignment::Middle:
-			{
-				pivot.y = 0.5f;
-				break;
-			}
-			case VerticalAlignment::Bottom:
-			{
-				pivot.y = 0.f;
-				break;
-			}
-		}
+			// Send to Texture
+			m_pTexture = std::make_unique<Texture2D>(surf, surf->w, surf->h, m_PixelsPerUnit, m_Pivot);
 
-		if (pRendererComponent != nullptr)
-			pRendererComponent->SetTexture(std::make_shared<Texture2D>(surf, surf->w, surf->h, m_PixelsPerUnit, pivot));
-
-		// Free Surface
-		SDL_FreeSurface(surf);
+			// Free Surface
+			SDL_FreeSurface(surf);
+		}
 
 		// Reset flag
 		m_NeedsUpdate = false;
+	}
+}
+
+void Mage::TextComponent::Render() const
+{
+	if (m_pTexture != nullptr && !m_Text.empty())
+	{
+		const auto& pos = m_pGameObject->GetTransform()->GetWorldPosition();
+		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
+		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
+
+		Renderer::GetInstance().RenderTexture(*m_pTexture, pos, rot, scale);
 	}
 }
 
@@ -88,6 +60,20 @@ void Mage::TextComponent::DrawProperties()
 {
 	Mage::ImGuiHelper::Component("Text Component", this, &m_ShouldBeEnabled, [&]()
 	{
+		// Texture Image
+        if (!m_Text.empty())
+        {
+			float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+			float availableHeight = 50.f;
+
+			float scaleFactorX = availableWidth / m_pTexture->GetWidth();
+			float scaleFactorY = availableHeight / m_pTexture->GetHeight();
+
+			float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+
+			ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { m_pTexture->GetWidth() * scaleFactor, m_pTexture->GetHeight() * scaleFactor });
+        }
+
 		// Text
 	    ImGuiHelper::ItemLabel("Text", ImGuiHelper::ItemLabelAlignment::Left);
 		m_NeedsUpdate |= ImGui::InputText("##Text", &m_Text);
@@ -96,14 +82,10 @@ void Mage::TextComponent::DrawProperties()
 		ImGuiHelper::ItemLabel("Color", ImGuiHelper::ItemLabelAlignment::Left);
 		m_NeedsUpdate |= ImGuiHelper::SDLColorPicker("##Color", &m_Color);
 
-		// Horizontal Alignment
-		ImGuiHelper::ItemLabel("Horizontal Alignment", ImGuiHelper::ItemLabelAlignment::Left);
-		m_NeedsUpdate |= ImGui::Combo("##Horizontal Alignment", reinterpret_cast<int*>(&m_HorizontalAlignment), "Left\0Middle\0Right\0");
-
-		// Vertical Alignment
-		ImGuiHelper::ItemLabel("Vertical Alignment", ImGuiHelper::ItemLabelAlignment::Left);
-		m_NeedsUpdate |= ImGui::Combo("##Vertical Alignment", reinterpret_cast<int*>(&m_VerticalAlignment), "Top\0Middle\0Bottom\0");
-
+		// Alignment
+		ImGuiHelper::ItemLabel("Alignment", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGui::Combo("##Alignment", reinterpret_cast<int*>(&m_Alignment), "Left\0Middle\0Right\0");
+		
 		// Pixels per unit
 		ImGuiHelper::ItemLabel("Pixels Per Unit", ImGuiHelper::ItemLabelAlignment::Left);
 		m_NeedsUpdate |= ImGui::DragFloat("##Pixels Per Unit", &m_PixelsPerUnit, 0.1f, 0.f);

@@ -109,7 +109,6 @@ void BurgerTime::LoadGame() const
 	//-----
 	const auto textObject = scene->CreateObject("Text");
 	textObject->CreateComponent<Mage::TextComponent>("TEST", Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 16), SDL_Color{255, 255, 255, 255}, 16.f);
-	textObject->CreateComponent<Mage::SpriteComponent>();
 
 	// DONE
 	//-----

@@ -66,7 +66,7 @@ void Mage::Transform::TransformChanged(bool updateRigidBody)
 	// Update children
 	for (const auto child : GetGameObject()->GetChildren())
 	{
-		child->GetTransform()->TransformChanged(false);
+		child->GetTransform()->TransformChanged(true);
 	}
 }
 

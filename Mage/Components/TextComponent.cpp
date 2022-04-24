@@ -1,8 +1,10 @@
 #include "Mage/MagePCH.h"
 #include "TextComponent.h"
 
+#include <IconsFontAwesome.h>
 #include <SDL_ttf.h>
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "misc/cpp/imgui_stdlib.h"
 
 #include "Mage/ResourceManagement/Font.h"
@@ -27,17 +29,73 @@ void Mage::TextComponent::Update()
 {
 	if (m_NeedsUpdate)
 	{
-		// Create surface
-		SDL_Surface* surf = TTF_RenderText_Blended(m_Font->GetFont(), m_Text.c_str(), m_Color);
+		// Split text in lines
+		std::vector<std::string> lines;
 
-		if (surf != nullptr)
+		size_t last = 0;
+	    size_t next;
+	    while ((next = m_Text.find('\n', last)) != std::string::npos)
+	    {
+            lines.push_back(m_Text.substr(last, next - last));
+	        last = next + 1;
+	    }
+		lines.push_back(m_Text.substr(last));
+
+		// Get final surface dimensions
+		int width = 0;
+		int height = 0;
+
+		for (auto& string : lines)
 		{
-			// Send to Texture
-			m_pTexture = std::make_unique<Texture2D>(surf, surf->w, surf->h, m_PixelsPerUnit, m_Pivot);
+			int linew, lineh;
+    		TTF_SizeText(m_Font->GetFont(), string.c_str(), &linew, &lineh);
 
-			// Free Surface
-			SDL_FreeSurface(surf);
+			width = std::max(width, linew);
+			height += lineh;
 		}
+
+		height += (static_cast<int>(lines.size()) - 1) * m_LineSpacing;
+
+		// Create final surface
+		SDL_Surface* finalSurf = SDL_CreateRGBSurface(0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+
+		// Render lines
+		for (int i = 0; i < lines.size(); i++)
+		{
+			SDL_Surface* lineSurf = TTF_RenderText_Blended(m_Font->GetFont(), lines[i].c_str(), m_Color);
+
+			if (lineSurf != nullptr)
+			{
+				SDL_Rect dstRect;
+				dstRect.y = i * (lineSurf->h + m_LineSpacing);
+				dstRect.w = lineSurf->w;
+				dstRect.h = lineSurf->h;
+
+                switch (m_Alignment)
+                {
+                    case TextAlignment::Left:
+                        dstRect.x = 0;
+                        break;
+					case TextAlignment::Center:
+                        dstRect.x = (width - lineSurf->w) / 2;
+					    break;
+					case TextAlignment::Right:
+                        dstRect.x = width - lineSurf->w;
+					    break;
+                }
+
+				SDL_BlitSurface(lineSurf, nullptr, finalSurf, &dstRect);
+
+				// Free Surface
+				SDL_FreeSurface(lineSurf);
+			}
+		}
+
+		// Send to texture
+		m_pTexture = std::make_unique<Texture2D>(finalSurf, width, height, m_PixelsPerUnit, m_Pivot);
+
+		// Free surface
+		SDL_FreeSurface(finalSurf);
 
 		// Reset flag
 		m_NeedsUpdate = false;
@@ -76,19 +134,43 @@ void Mage::TextComponent::DrawProperties()
 
 		// Text
 	    ImGuiHelper::ItemLabel("Text", ImGuiHelper::ItemLabelAlignment::Left);
-		m_NeedsUpdate |= ImGui::InputText("##Text", &m_Text);
+		m_NeedsUpdate |= ImGui::InputTextMultiline("##Text", &m_Text);
 
 		// Color
 		ImGuiHelper::ItemLabel("Color", ImGuiHelper::ItemLabelAlignment::Left);
 		m_NeedsUpdate |= ImGuiHelper::SDLColorPicker("##Color", &m_Color);
 
 		// Alignment
+		int activeButton = static_cast<int>(m_Alignment);
+
 		ImGuiHelper::ItemLabel("Alignment", ImGuiHelper::ItemLabelAlignment::Left);
-		m_NeedsUpdate |= ImGui::Combo("##Alignment", reinterpret_cast<int*>(&m_Alignment), "Left\0Middle\0Right\0");
-		
+		float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+
+		m_NeedsUpdate |= ImGuiHelper::RadioToggleButton(ICON_FA_ALIGN_LEFT, &activeButton, 0, { ImGui::CalcItemWidth(), 0.f });
+		ImGui::SameLine(0, spacing);
+		ImGui::PopItemWidth();
+
+		m_NeedsUpdate |= ImGuiHelper::RadioToggleButton(ICON_FA_ALIGN_CENTER, &activeButton, 1, { ImGui::CalcItemWidth(), 0.f });
+		ImGui::SameLine(0, spacing);
+		ImGui::PopItemWidth();
+
+		m_NeedsUpdate |= ImGuiHelper::RadioToggleButton(ICON_FA_ALIGN_RIGHT, &activeButton, 2, { ImGui::CalcItemWidth(), 0.f });
+		ImGui::PopItemWidth();
+
+		m_Alignment = static_cast<TextAlignment>(activeButton);
+
+		// Line Spacing
+		ImGuiHelper::ItemLabel("Line Spacing", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGui::DragInt("##Line Spacing", &m_LineSpacing, 0.1f);
+
 		// Pixels per unit
 		ImGuiHelper::ItemLabel("Pixels Per Unit", ImGuiHelper::ItemLabelAlignment::Left);
 		m_NeedsUpdate |= ImGui::DragFloat("##Pixels Per Unit", &m_PixelsPerUnit, 0.1f, 0.f);
+
+		// Pivot
+        ImGuiHelper::ItemLabel("Pivot", ImGuiHelper::ItemLabelAlignment::Left);
+		m_NeedsUpdate |= ImGui::DragFloat2("##Pivot", &m_Pivot.x, 0.1f, 0.f, 1.f);
 	});
 }
 

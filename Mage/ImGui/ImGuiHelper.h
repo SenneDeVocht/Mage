@@ -19,6 +19,9 @@ namespace Mage
 		
 		static bool SDLColorPicker(const char* label, SDL_Color* pColor, int imGuiColorEditFlags = 0);
 
+		static bool ToggleButton(const char* label, bool active, const glm::vec2& size = glm::vec2(0.f, 0.f));
+		static bool RadioToggleButton(const char* label, int* v, int v_button, const glm::vec2& size = glm::vec2(0.f, 0.f));
+
 		static void Component(const char* name, void const* id, bool* enabled, const std::function<void()>& extraUIFunction);
 
 	private:

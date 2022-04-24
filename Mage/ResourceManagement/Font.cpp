@@ -22,4 +22,3 @@ Mage::Font::~Font()
 TTF_Font* Mage::Font::GetFont() const {
 	return m_Font;
 }
-

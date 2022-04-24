@@ -53,6 +53,27 @@ bool Mage::ImGuiHelper::SDLColorPicker(const char* label, SDL_Color* pColor, int
 	return edited;
 }
 
+bool Mage::ImGuiHelper::ToggleButton(const char* label, bool active, const glm::vec2& size)
+{
+    if (active)
+    	ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
+
+	const bool clicked = ImGui::Button(label, { size.x, size.y });
+
+	if (active)
+		ImGui::PopStyleColor();
+
+	return clicked;
+}
+
+bool Mage::ImGuiHelper::RadioToggleButton(const char* label, int* v, int v_button, const glm::vec2& size)
+{
+	const bool pressed = ToggleButton(label, *v == v_button, size);
+	if (pressed)
+		*v = v_button;
+	return pressed;
+}
+
 void Mage::ImGuiHelper::ItemLabel(const char* title, ItemLabelAlignment alignment)
 {
 	// Code from https://github.com/ocornut/imgui/issues/3469#issuecomment-691845667

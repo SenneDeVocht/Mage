@@ -12,7 +12,7 @@ namespace Mage
 		enum class TextAlignment
 		{
 			Left,
-			Middle,
+			Center,
 			Right
 		};
 
@@ -30,11 +30,12 @@ namespace Mage
 		std::unique_ptr<Texture2D> m_pTexture;
 
 		bool m_NeedsUpdate{ true };
-		std::string m_Text;
 		std::shared_ptr<Font> m_Font;
+		std::string m_Text;
 		SDL_Color m_Color;
+		TextAlignment m_Alignment;
+		int m_LineSpacing;
 		float m_PixelsPerUnit;
 		glm::vec2 m_Pivot;
-		TextAlignment m_Alignment;
 	};
 }

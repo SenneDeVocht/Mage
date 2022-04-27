@@ -1,11 +1,13 @@
 #include "Mage/MagePCH.h"
 #include "TextComponent.h"
 
+#pragma warning(push, 0)
 #include <IconsFontAwesome.h>
 #include <SDL_ttf.h>
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "misc/cpp/imgui_stdlib.h"
+#pragma warning(pop)
 
 #include "Mage/ResourceManagement/Font.h"
 #include "Mage/Scenegraph/GameObject.h"
@@ -14,15 +16,17 @@
 #include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 #include "Mage/Components/Transform.h"
+#include "Mage/Engine/ServiceLocator.h"
 
 Mage::TextComponent::TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, float pixelsPerUnit,
-	const glm::vec2& pivot, TextAlignment alignment)
-    : m_Text{ text }
-	, m_Font{ font }
+                                   const glm::vec2& pivot, TextAlignment alignment, int lineSpacing)
+    : m_Font{ font }
+	, m_Text{ text }
 	, m_Color{ color }
+	, m_Alignment{ alignment }
+    , m_LineSpacing{ lineSpacing }
 	, m_PixelsPerUnit{ pixelsPerUnit }
     , m_Pivot{ pivot }
-	, m_Alignment{ alignment }
 {}
 
 void Mage::TextComponent::Update()
@@ -60,13 +64,13 @@ void Mage::TextComponent::Update()
 		SDL_Surface* finalSurf = SDL_CreateRGBSurface(0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
 		// Render lines
-		for (int i = 0; i < lines.size(); i++)
+		for (int i = 0; i < (int)lines.size(); i++)
 		{
 			SDL_Surface* lineSurf = TTF_RenderText_Blended(m_Font->GetFont(), lines[i].c_str(), m_Color);
 
 			if (lineSurf != nullptr)
 			{
-				SDL_Rect dstRect;
+				SDL_Rect dstRect{};
 				dstRect.y = i * (lineSurf->h + m_LineSpacing);
 				dstRect.w = lineSurf->w;
 				dstRect.h = lineSurf->h;
@@ -110,7 +114,7 @@ void Mage::TextComponent::Render() const
 		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
-		Renderer::GetInstance().RenderTexture(*m_pTexture, pos, rot, scale);
+		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale);
 	}
 }
 

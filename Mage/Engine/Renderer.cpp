@@ -24,7 +24,7 @@ int GetOpenGLDriverIndex()
 	return openglIndex;
 }
 
-void Mage::Renderer::Init(SDL_Window* window)
+Mage::GLRenderer::GLRenderer(SDL_Window* window)
 {
 	m_pWindow = window;
 	
@@ -57,12 +57,17 @@ void Mage::Renderer::Init(SDL_Window* window)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void Mage::Renderer::SetCamera(CameraComponent* pCamera)
+Mage::GLRenderer::~GLRenderer()
+{
+	SDL_GL_DeleteContext(m_Context);
+}
+
+void Mage::GLRenderer::SetCamera(CameraComponent* pCamera)
 {
 	m_pCamera = pCamera;
 }
 
-void Mage::Renderer::Render() const
+void Mage::GLRenderer::Render() const
 {
 	// Clear last frame
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -92,17 +97,12 @@ void Mage::Renderer::Render() const
 	}
 }
 
-void Mage::Renderer::Destroy()
-{
-	SDL_GL_DeleteContext(m_Context);
-}
-
-void Mage::Renderer::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const
+void Mage::GLRenderer::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
 	RenderPartialTexture(texture, 0, 0, texture.GetWidth(), texture.GetHeight(), position, rotation, scale);
 }
 
-void Mage::Renderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const
+void Mage::GLRenderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
 	// Source Rect (Part of texture)
 	SDL_FRect src{};

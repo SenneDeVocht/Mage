@@ -17,7 +17,7 @@ namespace Mage
 		};
 
 		explicit TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, float pixelsPerUnit,
-			const glm::vec2& pivot = { 0.0f, 0.0f }, TextAlignment alignment = TextAlignment::Left);
+			const glm::vec2& pivot = { 0.0f, 0.0f }, TextAlignment alignment = TextAlignment::Left, int lineSpacing = 0);
 
 		void Update() override;
 		void Render() const override;

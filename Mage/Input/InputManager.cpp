@@ -8,11 +8,11 @@
 #include <vector>
 #include <array>
 
-class Mage::InputManager::InputManagerImpl
+class Mage::XInputInputManager::XInputInputManagerImpl
 {
 public:
-    InputManagerImpl() = default;
-    ~InputManagerImpl()
+    XInputInputManagerImpl() = default;
+    ~XInputInputManagerImpl()
     {
         for (auto& action : m_InputActions)
         {
@@ -21,10 +21,10 @@ public:
         m_InputActions.clear();
     }
 
-    InputManagerImpl(const InputManagerImpl& other) = delete;
-    InputManagerImpl(InputManagerImpl&& other) noexcept = delete;
-    InputManagerImpl& operator=(const InputManagerImpl& other) = delete;
-    InputManagerImpl& operator=(InputManagerImpl&& other) noexcept = delete;
+    XInputInputManagerImpl(const XInputInputManagerImpl& other) = delete;
+    XInputInputManagerImpl(XInputInputManagerImpl&& other) noexcept = delete;
+    XInputInputManagerImpl& operator=(const XInputInputManagerImpl& other) = delete;
+    XInputInputManagerImpl& operator=(XInputInputManagerImpl&& other) noexcept = delete;
 
     bool ProcessInput()
     {
@@ -213,37 +213,37 @@ private:
 };
 
 
-Mage::InputManager::InputManager()
-    : m_pImpl{ std::make_unique<InputManagerImpl>() }
+Mage::XInputInputManager::XInputInputManager()
+    : m_pImpl{ std::make_unique<XInputInputManagerImpl>() }
 {
 }
 
 // Needed for unique pointer of incomplete type
-Mage::InputManager::~InputManager()
+Mage::XInputInputManager::~XInputInputManager()
 {
 }
 
-bool Mage::InputManager::ProcessInput() const
+bool Mage::XInputInputManager::ProcessInput() const
 {
     return m_pImpl->ProcessInput();
 }
 
-void Mage::InputManager::AddInputAction(InputAction* action) const
+void Mage::XInputInputManager::AddInputAction(InputAction* action) const
 {
     m_pImpl->AddInputAction(action);
 }
 
-void Mage::InputManager::RemoveInputAction(InputAction* action) const
+void Mage::XInputInputManager::RemoveInputAction(InputAction* action) const
 {
     m_pImpl->RemoveInputAction(action);
 }
 
-bool Mage::InputManager::CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const
+bool Mage::XInputInputManager::CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const
 {
     return m_pImpl->CheckGamepadButton(controllerIndex, button, state);
 }
 
-bool Mage::InputManager::CheckKeyboardKey(int keyboardKey, InputState state) const
+bool Mage::XInputInputManager::CheckKeyboardKey(int keyboardKey, InputState state) const
 {
     return m_pImpl->CheckKeyboardKey(keyboardKey, state);
 }

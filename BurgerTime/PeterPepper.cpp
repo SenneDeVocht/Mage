@@ -5,9 +5,11 @@
 #include "Mage/Input/InputManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/Transform.h"
-#include "Mage/Engine/Timer.h"
 #include "Mage/Components/AnimatedSpriteComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
+#include "Mage/Engine/ServiceLocator.h"
+#include "Mage/Engine/SoundManager.h"
+#include "Mage/ResourceManagement/ResourceManager.h"
 
 PeterPepper::PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront,
                          Mage::AnimatedSpriteComponent* pWalkBack, Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight)
@@ -17,7 +19,14 @@ PeterPepper::PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mag
 	, m_pWalkBack{ pWalkBack }
 	, m_pWalkLeft{ pWalkLeft }
 	, m_pWalkRight{ pWalkRight }
+    , m_pSoundClip{Mage::ResourceManager::GetInstance().LoadSoundClip("test.mp3")}
 {}
+
+PeterPepper::~PeterPepper()
+{
+    
+}
+
 
 void PeterPepper::Initialize()
 {
@@ -27,20 +36,27 @@ void PeterPepper::Initialize()
 
 void PeterPepper::Update()
 {
+	// SOUND TEST
+	//-----------
+	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x20, Mage::InputState::Down))
+	{
+		Mage::ServiceLocator::GetSoundManager()->PlaySound(m_pSoundClip.get());
+	}
+
 	// INPUT
 	//------
 	m_Input = { 0, 0 };
 
-	if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x26, Mage::InputState::Hold))
+	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x26, Mage::InputState::Hold))
 		++m_Input.y;
-	if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x28, Mage::InputState::Hold))
+	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x28, Mage::InputState::Hold))
 		--m_Input.y;
 
 	if (m_Input.y == 0)
 	{
-		if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x25, Mage::InputState::Hold))
+		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x25, Mage::InputState::Hold))
 			--m_Input.x;
-		if (Mage::InputManager::GetInstance().CheckKeyboardKey(0x27, Mage::InputState::Hold))
+		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x27, Mage::InputState::Hold))
 			++m_Input.x;
 	}
 

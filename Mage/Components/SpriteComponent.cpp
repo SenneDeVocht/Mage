@@ -3,9 +3,9 @@
 
 #include "imgui.h"
 
+#include "Mage/Engine/ServiceLocator.h"
 #include "Mage/Engine/Renderer.h"
 #include "Mage/Scenegraph/GameObject.h"
-#include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
@@ -40,7 +40,7 @@ void Mage::SpriteComponent::Render() const
 		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
-		Renderer::GetInstance().RenderTexture(*m_pTexture, pos, rot, scale);
+		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale);
 	}
 }
 

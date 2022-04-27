@@ -3,6 +3,7 @@
 
 #include "imgui.h"
 
+#include "Mage/Engine/ServiceLocator.h"
 #include "Mage/Engine/Renderer.h"
 #include "Mage/Engine/Timer.h"
 #include "Mage/Scenegraph/GameObject.h"
@@ -74,7 +75,7 @@ void Mage::AnimatedSpriteComponent::Render() const
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
 		// Render
-		Renderer::GetInstance().RenderPartialTexture(*m_pSpritesheet, srcX, 0, srcWidth, srcHeight, pos, rot, scale);
+		ServiceLocator::GetRenderer()->RenderPartialTexture(*m_pSpritesheet, srcX, 0, srcWidth, srcHeight, pos, rot, scale);
 	}
 }
 

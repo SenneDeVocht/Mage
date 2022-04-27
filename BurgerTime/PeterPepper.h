@@ -5,7 +5,8 @@ class Level;
 
 namespace Mage
 {
-	class RigidBodyComponent;
+    class SoundClip;
+    class RigidBodyComponent;
 	class AnimatedSpriteComponent;
 }
 
@@ -14,7 +15,7 @@ class PeterPepper final : public Mage::Component
 public:
 	explicit PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront, Mage::AnimatedSpriteComponent* pWalkBack,
 		Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight);
-	~PeterPepper() override = default;
+	~PeterPepper() override;
 
 	PeterPepper(const PeterPepper& other) = delete;
 	PeterPepper(PeterPepper&& other) = delete;
@@ -38,5 +39,7 @@ private:
 
 	glm::vec2 m_Input{ 0, 0 };
 	float m_Speed{ 2 };
+
+	std::shared_ptr<Mage::SoundClip> m_pSoundClip;
 };
 

@@ -7,10 +7,10 @@
 #include "Mage/Scenegraph/GameObject.h"
 
 // Components
-#include "Mage/Components/SpriteComponent.h"
-#include "Mage/Components/AnimatedSpriteComponent.h"
-#include "Mage/Components/Transform.h"
 #include "Mage/Components/CameraComponent.h"
+#include "Mage/Components/Transform.h"
+#include "Mage/Components/AnimatedSpriteComponent.h"
+#include "Mage/Components/TextComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
 
@@ -19,7 +19,7 @@
 #include "BurgerIngredient.h"
 
 // Other
-#include "Mage/Components/TextComponent.h"
+#include "Mage/Engine/ServiceLocator.h"
 #include "Mage/Engine/Renderer.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
@@ -33,7 +33,7 @@ void BurgerTime::LoadGame() const
 	
 	const auto cameraObject = scene->CreateObject("Camera");
 	const auto camera = cameraObject->CreateComponent<Mage::CameraComponent>(glm::vec2{ 15.f, 15.f });
-	Mage::Renderer::GetInstance().SetCamera(camera);
+    Mage::ServiceLocator::GetRenderer()->SetCamera(camera);
 	
 	#pragma endregion
 
@@ -108,7 +108,7 @@ void BurgerTime::LoadGame() const
 	// TEXT
 	//-----
 	const auto textObject = scene->CreateObject("Text");
-	textObject->CreateComponent<Mage::TextComponent>("TEST", Mage::ResourceManager::GetInstance().LoadFont("Cyber16.ttf", 16), SDL_Color{255, 255, 255, 255}, 16.f);
+	textObject->CreateComponent<Mage::TextComponent>("TEST", Mage::ResourceManager::GetInstance().LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f);
 
 	// DONE
 	//-----

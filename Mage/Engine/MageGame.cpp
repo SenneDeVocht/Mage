@@ -4,12 +4,15 @@
 #include <thread>
 #include <chrono>
 
-// Singletons
+// Services
+#include "Mage/Engine/ServiceLocator.h"
+#include "Mage/Engine/Renderer.h"
 #include "Mage/Input/InputManager.h"
+#include "Mage/Engine/SoundManager.h"
+
+// Singletons
 #include "Mage/Scenegraph/SceneManager.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
-
-#include "Mage/Engine/Renderer.h"
 #include "Mage/Engine/Timer.h"
 
 // ImGui
@@ -19,7 +22,7 @@
 #include "backends/imgui_impl_sdl.h"
 
 // Scenegraph
-#include "GameSettings.h"
+#include "Mage/Engine/GameSettings.h"
 #include "Mage/Scenegraph/GameObject.h"
 
 Mage::MageGame::~MageGame()
@@ -45,7 +48,7 @@ void Mage::MageGame::Initialize()
 	// SDL
 	PrintSDLVersion();
 
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 
 	m_pWindow = SDL_CreateWindow(
@@ -60,7 +63,15 @@ void Mage::MageGame::Initialize()
 	if (m_pWindow == nullptr)
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 
-	Renderer::GetInstance().Init(m_pWindow);
+	// Register services
+	ServiceLocator::RegisterRenderer(new GLRenderer(m_pWindow));
+	ServiceLocator::RegisterInputManager(new XInputInputManager());
+
+#ifdef _DEBUG
+	ServiceLocator::RegisterSoundManager(new DebugSDLSoundManager());
+#else
+	ServiceLocator::RegisterSoundManager(new SDLSoundManager());
+#endif
 
 	// imgui
 	ImGuiHelper::InitImGui(m_pWindow);
@@ -74,8 +85,12 @@ void Mage::MageGame::Cleanup()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
+	// Stop services
+	ServiceLocator::RegisterRenderer(nullptr);
+	ServiceLocator::RegisterInputManager(nullptr);
+	ServiceLocator::RegisterSoundManager(nullptr);
+
 	// Stop SDL
-	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(m_pWindow);
 	m_pWindow = nullptr;
 	SDL_Quit();
@@ -91,9 +106,9 @@ void Mage::MageGame::Run()
 	LoadGame();
 
 	{
-		const auto& renderer = Renderer::GetInstance();
+		const auto& renderer = ServiceLocator::GetRenderer();
 		const auto& sceneManager = SceneManager::GetInstance();
-		const auto& input = InputManager::GetInstance();
+		const auto& input = ServiceLocator::GetInputManager();
 		const auto& timer = Timer::GetInstance();
 
 		bool quit = false;
@@ -108,7 +123,7 @@ void Mage::MageGame::Run()
 			lag += timer.GetDeltaTime();
 
 			// Input
-			quit = !input.ProcessInput();
+			quit = !input->ProcessInput();
 
 			// Update
 			sceneManager.Update();
@@ -130,7 +145,7 @@ void Mage::MageGame::Run()
 			ImGui::Render();
 
 			// Render
-			renderer.Render();
+			renderer->Render();
 
 			// Destroy Objects
 			sceneManager.ChangeSceneGraph();

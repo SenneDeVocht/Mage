@@ -32,7 +32,7 @@ private:
 	const int m_EquivalentNumSmallCols{ 13 };
 	const int m_NumRows{ 10 };
 
-	const float m_LadderWidth{ 0.625 };
+	const float m_LadderWidth{ 0.625f };
 	const float m_PlatformHeight{ 3/16.f };
 
 	const float m_MaxAbovePlatform{ 0.4f };

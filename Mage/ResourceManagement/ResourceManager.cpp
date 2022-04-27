@@ -8,6 +8,7 @@
 
 #include "Mage/ResourceManagement/Texture2D.h"
 #include "Mage/ResourceManagement/Font.h"
+#include "Mage/ResourceManagement/SoundClip.h"
 
 void Mage::ResourceManager::Init(const std::string& dataPath)
 {
@@ -49,4 +50,9 @@ std::shared_ptr<Mage::Texture2D> Mage::ResourceManager::LoadTexture(const std::s
 std::shared_ptr<Mage::Font> Mage::ResourceManager::LoadFont(const std::string& file, unsigned int size) const
 {
 	return std::make_shared<Font>(m_DataPath + file, size);
+}
+
+std::shared_ptr<Mage::SoundClip> Mage::ResourceManager::LoadSoundClip(const std::string& file) const
+{
+	return std::make_shared<SoundClip>(m_DataPath + file);
 }

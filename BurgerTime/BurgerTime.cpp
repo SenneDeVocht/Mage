@@ -17,6 +17,7 @@
 #include "PeterPepper.h"
 #include "Level.h"
 #include "BurgerIngredient.h"
+#include "SoundTester.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -109,6 +110,11 @@ void BurgerTime::LoadGame() const
 	//-----
 	const auto textObject = scene->CreateObject("Text");
 	textObject->CreateComponent<Mage::TextComponent>("TEST", Mage::ResourceManager::GetInstance().LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f);
+
+	// SOUND
+	//------
+	const auto sound = scene->CreateObject("Sound");
+	sound->CreateComponent<SoundTester>();
 
 	// DONE
 	//-----

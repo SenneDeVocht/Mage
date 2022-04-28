@@ -8,8 +8,6 @@
 #include "Mage/Components/AnimatedSpriteComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Engine/ServiceLocator.h"
-#include "Mage/Engine/SoundManager.h"
-#include "Mage/ResourceManagement/ResourceManager.h"
 
 PeterPepper::PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront,
                          Mage::AnimatedSpriteComponent* pWalkBack, Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight)
@@ -19,13 +17,11 @@ PeterPepper::PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mag
 	, m_pWalkBack{ pWalkBack }
 	, m_pWalkLeft{ pWalkLeft }
 	, m_pWalkRight{ pWalkRight }
-    , m_pSoundClip{Mage::ResourceManager::GetInstance().LoadSoundClip("test.mp3")}
-{}
-
-PeterPepper::~PeterPepper()
 {
-    
+	std::cout << "[PeterPepper] Arrow keys to move" << std::endl;
 }
+
+PeterPepper::~PeterPepper() = default;
 
 
 void PeterPepper::Initialize()
@@ -36,13 +32,6 @@ void PeterPepper::Initialize()
 
 void PeterPepper::Update()
 {
-	// SOUND TEST
-	//-----------
-	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x20, Mage::InputState::Down))
-	{
-		Mage::ServiceLocator::GetSoundManager()->PlaySound(m_pSoundClip.get());
-	}
-
 	// INPUT
 	//------
 	m_Input = { 0, 0 };

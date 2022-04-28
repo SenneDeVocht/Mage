@@ -5,7 +5,6 @@ class Level;
 
 namespace Mage
 {
-    class SoundClip;
     class RigidBodyComponent;
 	class AnimatedSpriteComponent;
 }
@@ -39,7 +38,5 @@ private:
 
 	glm::vec2 m_Input{ 0, 0 };
 	float m_Speed{ 2 };
-
-	std::shared_ptr<Mage::SoundClip> m_pSoundClip;
 };
 

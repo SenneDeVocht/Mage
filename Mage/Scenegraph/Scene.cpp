@@ -90,6 +90,15 @@ void Mage::Scene::Render() const
 	}
 }
 
+void Mage::Scene::RenderGizmos() const
+{
+	for (const auto& object : m_Objects)
+	{
+		object->RenderGizmos();
+	}
+}
+
+
 void Mage::Scene::ChangeSceneGraph()
 {
 	// Destroy marked root objects

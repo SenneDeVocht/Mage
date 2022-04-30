@@ -18,6 +18,7 @@ namespace Mage
 		void Update() const;
 		void FixedUpdate() const;
 		void Render() const;
+		void RenderGizmos() const;
 		void ChangeSceneGraph() const;
 
 	private:

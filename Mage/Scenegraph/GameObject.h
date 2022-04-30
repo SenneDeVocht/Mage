@@ -28,6 +28,7 @@ namespace Mage
 		void DrawImGui() const;
 		void DrawProperties() const;
 		void Render() const;
+		void RenderGizmos() const;
 
 		void OnTriggerEnter(BoxColliderComponent* other) const;
 		void OnTriggerExit(BoxColliderComponent* other) const;

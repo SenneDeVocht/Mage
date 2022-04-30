@@ -29,6 +29,11 @@ void Mage::SceneManager::Render() const
 	m_Scenes[m_ActiveScene]->Render();
 }
 
+void Mage::SceneManager::RenderGizmos() const
+{
+	m_Scenes[m_ActiveScene]->RenderGizmos();
+}
+
 void Mage::SceneManager::ChangeSceneGraph() const
 {
 	m_Scenes[m_ActiveScene]->ChangeSceneGraph();

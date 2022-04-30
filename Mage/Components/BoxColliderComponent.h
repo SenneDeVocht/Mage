@@ -17,7 +17,9 @@ namespace Mage
 		BoxColliderComponent& operator=(BoxColliderComponent&& other) = delete;
 
 		void Initialize() override;
+		void RenderGizmos() const override;
 		void DrawProperties() override;
+
 		void SetEnabled(bool enabled) override;
 
 		const glm::vec2& GetSize() const { return m_Size; }
@@ -29,7 +31,8 @@ namespace Mage
 		float GetFriction() const { return m_Friction; }
 		float GetRestitution() const { return m_Restitution; }
 		float GetRestitutionThreshold() const { return m_RestitutionThreshold; }
-		
+
+		void RecalculateShape();
 		void SetRunTimeFixture(b2Fixture* fixture){ m_RunTimeFixture = fixture; }
 
 		void NotifyGameObjectOnTriggerEnter(BoxColliderComponent* other) const;
@@ -44,7 +47,7 @@ namespace Mage
 		float m_Angle = 0.f;
 		bool m_IsTrigger = false;
 
-		// Material
+		// TODO: Physics Material
 		float m_Density = 1.f;
 		float m_Friction = 0.5f;
 		float m_Restitution = 0.5f;
@@ -52,5 +55,10 @@ namespace Mage
 
 		// storage for runtime
 		b2Fixture* m_RunTimeFixture = nullptr;
+
+		// Needed to see if new shape needs to be created
+		glm::vec2 m_PreviousSize = { 0.f, 0.f };
+		glm::vec2 m_PreviousOffset = { 0.f, 0.f };
+		float m_PreviousAngle = 0.f;
 	};
 }

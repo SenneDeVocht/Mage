@@ -1,6 +1,7 @@
 #include "Mage/MagePCH.h"
 #include "Transform.h"
 
+#include "BoxColliderComponent.h"
 #include "imgui.h"
 
 #include "RigidBodyComponent.h"
@@ -62,6 +63,10 @@ void Mage::Transform::TransformChanged(bool updateRigidBody)
 		if (rb != nullptr)
 			rb->TransformChanged();
     }
+
+	const auto col = GetGameObject()->GetComponentByType<BoxColliderComponent>();
+	if (col != nullptr)
+		col->RecalculateShape();
 
 	// Update children
 	for (const auto child : GetGameObject()->GetChildren())

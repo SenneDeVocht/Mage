@@ -73,11 +73,17 @@ void Mage::GLRenderer::Render() const
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Render everything
+	// Render Gane Window
 	if (m_pCamera != nullptr)
 	{
 		if (m_pCamera->IsEnabled())
+		{
+			// Render game
 			SceneManager::GetInstance().Render();
+
+			// Render Gizmos
+			SceneManager::GetInstance().RenderGizmos();
+		}
 	}
 	
 	// Render ImGui
@@ -95,6 +101,40 @@ void Mage::GLRenderer::Render() const
 		ImGui::RenderPlatformWindowsDefault();
 		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 	}
+}
+
+void Mage::GLRenderer::RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const
+{
+	// Draw
+	glPushMatrix();
+
+		// First translate [0, 0] to the center of the screen
+		int windowWidth, windowHeight;
+		SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
+		glTranslatef((float)windowWidth / 2.f, (float)windowHeight / 2.f, 0.0f);
+
+		// Scale to camera size
+		const auto camSize = m_pCamera->GetSize() * m_pCamera->GetGameObject()->GetTransform()->GetWorldScale();
+		glScalef(windowWidth / camSize.x, windowHeight / camSize.y, 1.0f);
+
+		// Translate to camera position
+		const auto camPos = m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition();
+		glTranslatef(-camPos.x, -camPos.y, 0.0f);
+
+		// Rotate with camera
+		glRotatef(m_pCamera->GetGameObject()->GetTransform()->GetWorldRotation(), 0.0f, 0.0f, 1.0f);
+
+		glBegin(GL_QUADS);
+
+			for (const auto& position : positions)
+			{
+				glColor4f(color.r, color.g, color.b, color.a);
+				glVertex2f(position.x, position.y);
+			}
+
+		glEnd();
+
+	glPopMatrix();
 }
 
 void Mage::GLRenderer::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const

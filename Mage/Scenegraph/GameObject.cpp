@@ -106,6 +106,23 @@ void Mage::GameObject::Render() const
 	}
 }
 
+void Mage::GameObject::RenderGizmos() const
+{
+	// Render Components
+	for (const auto& pComponent : m_Components)
+	{
+		if (pComponent->IsEnabled())
+			pComponent->RenderGizmos();
+	}
+
+	// Render children
+	for (const auto& pChild : m_Children)
+	{
+		pChild->RenderGizmos();
+	}
+}
+
+
 void Mage::GameObject::OnTriggerEnter(Mage::BoxColliderComponent* other) const
 {
 	for (const auto& pComponent : m_Components)

@@ -32,9 +32,19 @@ void Mage::RigidBodyComponent::Awake()
 
 void Mage::RigidBodyComponent::DrawProperties()
 {
-	Mage::ImGuiHelper::Component("Rigidbody Component", this, &m_ShouldBeEnabled, [&]()
+	ImGuiHelper::Component("Rigidbody Component", this, &m_ShouldBeEnabled, [&]()
 	{
-		// TODO: add type and gravityscale
+		ImGuiHelper::ItemLabel("Type", ImGuiHelper::ItemLabelAlignment::Left);
+		if(ImGui::Combo("##Type", reinterpret_cast<int*>(&m_Type), "Static\0Kinematic\0Dynamic\0"))
+			m_RunTimeBody->SetType(static_cast<b2BodyType>(PhysicsHandler::RigidBodyTypeToBox2D(static_cast<int>(m_Type))));
+
+		ImGuiHelper::ItemLabel("Fix Rotation", ImGuiHelper::ItemLabelAlignment::Left);
+		if(ImGui::Checkbox("##FixRotation", &m_FixedRotation))
+			m_RunTimeBody->SetFixedRotation(m_FixedRotation);
+
+		ImGuiHelper::ItemLabel("Gravity Scale", ImGuiHelper::ItemLabelAlignment::Left);
+		if(ImGui::DragFloat("##GravityScale", &m_GravityScale, 0.1f))
+			m_RunTimeBody->SetGravityScale(m_GravityScale);
 
 		ImGui::BeginDisabled();
 

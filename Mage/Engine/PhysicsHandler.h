@@ -26,6 +26,8 @@ namespace Mage
 
 		void AddBoxCollider(BoxColliderComponent* boxCollider) const;
 
+		static int RigidBodyTypeToBox2D(int type);
+
 	private:
 		std::unique_ptr<b2World> m_pPhysicsWorld;
 		std::unique_ptr<ContactListener> m_pContactListener;

@@ -120,9 +120,9 @@ void Mage::PhysicsHandler::UpdatePhysics() const
 	}
 }
 
-b2BodyType RigidBodyTypeToBox2D(Mage::RigidBodyComponent::BodyType type)
+int Mage::PhysicsHandler::RigidBodyTypeToBox2D(int type)
 {
-	switch (type)
+	switch (static_cast<RigidBodyComponent::BodyType>(type))
 	{
 	case Mage::RigidBodyComponent::BodyType::Static:
 		return b2_staticBody;
@@ -146,7 +146,7 @@ void Mage::PhysicsHandler::AddRigidBody(RigidBodyComponent* rigidBody)
 	const auto transform = rigidBody->GetGameObject()->GetTransform();
 
 	b2BodyDef bodyDef;
-	bodyDef.type = RigidBodyTypeToBox2D(rigidBody->GetType());
+	bodyDef.type = static_cast<b2BodyType>(RigidBodyTypeToBox2D(static_cast<int>(rigidBody->GetType())));
 	bodyDef.position.Set(
 		transform->GetWorldPosition().x,
 		transform->GetWorldPosition().y);
@@ -174,10 +174,12 @@ void Mage::PhysicsHandler::AddBoxCollider(BoxColliderComponent* boxCollider) con
 	const auto rigidBody = boxCollider->GetGameObject()->GetComponentByType<RigidBodyComponent>();
 	assert(rigidBody != nullptr);
 
+	const auto objectScale = boxCollider->GetGameObject()->GetTransform()->GetWorldScale();
+
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(
-		boxCollider->GetSize().x / 2.f, boxCollider->GetSize().y / 2.f,
-		{ boxCollider->GetOffset().x, boxCollider->GetOffset().y },
+		boxCollider->GetSize().x / 2.f * objectScale.x, boxCollider->GetSize().y / 2.f * objectScale.y,
+		{ boxCollider->GetOffset().x * objectScale.x, boxCollider->GetOffset().y * objectScale.y },
 		boxCollider->GetAngle());
 
 	b2FixtureDef fixtureDef;

@@ -10,13 +10,14 @@ namespace Mage
 	public:
 		virtual ~Component() = default;
 
-		virtual void Awake() {};
+		virtual void Awake() {}
 		virtual void Initialize() {}
 		virtual void Update() {}
 		virtual void FixedUpdate() {}
 		virtual void DrawImGui() {}
 		virtual void DrawProperties();
 		virtual void Render() const {}
+		virtual void RenderGizmos() const {}
 
 		virtual void OnTriggerEnter(BoxColliderComponent*) {}
 		virtual void OnTriggerExit(BoxColliderComponent*) {}

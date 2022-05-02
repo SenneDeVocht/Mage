@@ -31,6 +31,11 @@ namespace Mage
 		SDLSoundManager();
 		~SDLSoundManager() override;
 
+        SDLSoundManager(const SDLSoundManager& other) = delete;
+        SDLSoundManager(SDLSoundManager&& other) noexcept = delete;
+        SDLSoundManager& operator=(const SDLSoundManager& other) = delete;
+        SDLSoundManager& operator=(SDLSoundManager&& other) noexcept = delete;
+
 		void PlaySound(SoundClip* pSoundClip, float volume = 1.0f) override;
 
 	private:

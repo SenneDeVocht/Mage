@@ -31,15 +31,15 @@ void Mage::BoxColliderComponent::Initialize()
 
 void Mage::BoxColliderComponent::RenderGizmos() const
 {
-	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition() + m_Offset * GetGameObject()->GetTransform()->GetWorldScale();
+	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition() * GetGameObject()->GetTransform()->GetWorldScale();
 	const auto wSize = GetGameObject()->GetTransform()->GetWorldScale() * m_Size;
 	const auto wRot = GetGameObject()->GetTransform()->GetWorldRotation() + m_Angle;
 
 	std::vector<glm::vec2> positions{
-		{ -wSize.x / 2, -wSize.y / 2 },
-		{ -wSize.x / 2, wSize.y / 2 },
-		{ wSize.x / 2, wSize.y / 2 },
-		{ wSize.x / 2, -wSize.y / 2 }
+		{ -wSize.x / 2 + m_Offset.x, -wSize.y / 2 + m_Offset.y },
+		{ -wSize.x / 2 + m_Offset.x, wSize.y / 2 + m_Offset.y },
+		{ wSize.x / 2 + m_Offset.x, wSize.y / 2 + m_Offset.y },
+		{ wSize.x / 2 + m_Offset.x, -wSize.y / 2 + m_Offset.y }
 	};
 
 	const float rotInRad = glm::radians(wRot);
@@ -99,8 +99,8 @@ void Mage::BoxColliderComponent::SetEnabled(bool enabled)
 
 void Mage::BoxColliderComponent::RecalculateShape()
 {
-	if (m_Size == m_PreviousSize ||
-		m_Offset == m_PreviousOffset ||
+	if (m_Size * GetGameObject()->GetTransform()->GetWorldScale() == m_PreviousSize &&
+		m_Offset == m_PreviousOffset &&
 		m_Angle == m_PreviousAngle)
 	{
 		return;

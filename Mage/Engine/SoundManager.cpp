@@ -29,14 +29,17 @@ public:
                 std::unique_lock<std::mutex> lock(m_SoundQueueMutex);
                 m_SoundQueueCV.wait(lock, [&]() { return !m_SoundQueue.empty() || m_StopThread.load(); });
 
+                // Check if thread needs to be stopped
+                if (m_StopThread.load())
+                {
+                    lock.unlock();
+                    break;
+                }
+
                 const auto soundToPlay = m_SoundQueue.front();
                 m_SoundQueue.pop();
 
                 lock.unlock();
-
-                // Check if thread needs to be stopped
-                if (m_StopThread.load())
-                    break;
 
                 // Play the sound
                 const auto clip = soundToPlay.first;

@@ -14,6 +14,13 @@ namespace Mage
     class ServiceLocator final
     {
     public:
+        ServiceLocator() = delete;
+        ~ServiceLocator() = delete;
+        ServiceLocator(const ServiceLocator& other) = delete;
+        ServiceLocator(ServiceLocator&& other) noexcept = delete;
+        ServiceLocator& operator=(const ServiceLocator& other) = delete;
+        ServiceLocator& operator=(ServiceLocator&& other) noexcept = delete;
+
         static Renderer* GetRenderer() { return m_pRenderer; }
         static void RegisterRenderer(Renderer* pRenderer);
 

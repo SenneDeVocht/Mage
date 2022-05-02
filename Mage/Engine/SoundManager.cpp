@@ -25,26 +25,28 @@ public:
         {
             while (true)
             {
-                // Wait for a sound to be played or for the thread to be stopped
+                // Wait for a sound to be played
                 std::unique_lock<std::mutex> lock(m_SoundQueueMutex);
-                m_SoundQueueCV.wait(lock, [&]() { return !m_SoundsToPlay.empty() || m_StopThread.load(); });
+                m_SoundQueueCV.wait(lock, [&]() { return !m_SoundQueue.empty() || m_StopThread.load(); });
+
+                const auto soundToPlay = m_SoundQueue.front();
+                m_SoundQueue.pop();
+
+                lock.unlock();
 
                 // Check if thread needs to be stopped
                 if (m_StopThread.load())
                     break;
 
                 // Play the sound
-                const auto clip = m_SoundsToPlay.front().first;
-                const float volume = m_SoundsToPlay.front().second;
+                const auto clip = soundToPlay.first;
+                const float volume = soundToPlay.second;
 
                 if (!clip->IsLoaded())
                     clip->Load();
 
                 clip->SetVolume(volume);
                 clip->Play();
-
-                // Remove the sound from the queue
-                m_SoundsToPlay.pop();
             }
         });
     }
@@ -64,12 +66,12 @@ public:
     void PlaySound(SoundClip* pSoundClip, float volume = 1.0f)
     {
         std::lock_guard<std::mutex> lock(m_SoundQueueMutex);
-        m_SoundsToPlay.push(std::make_pair(pSoundClip, volume));
+        m_SoundQueue.push(std::make_pair(pSoundClip, volume));
         m_SoundQueueCV.notify_all();
     }
 
 private:
-    std::queue<std::pair<SoundClip*, float>> m_SoundsToPlay;
+    std::queue<std::pair<SoundClip*, float>> m_SoundQueue;
     std::thread m_SoundThread;
     std::mutex m_SoundQueueMutex;
     std::condition_variable m_SoundQueueCV;

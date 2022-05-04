@@ -19,8 +19,9 @@
 #include "Mage/Engine/ServiceLocator.h"
 
 Mage::TextComponent::TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, float pixelsPerUnit,
-                                   const glm::vec2& pivot, TextAlignment alignment, int lineSpacing)
-    : m_Font{ font }
+                                   const glm::vec2& pivot, TextAlignment alignment, int lineSpacing, float layer)
+    : m_Layer{ layer }
+    , m_Font{ font }
 	, m_Text{ text }
 	, m_Color{ color }
 	, m_Alignment{ alignment }
@@ -114,7 +115,7 @@ void Mage::TextComponent::Render() const
 		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
-		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale);
+		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale, m_Layer);
 	}
 }
 
@@ -175,6 +176,10 @@ void Mage::TextComponent::DrawProperties()
 		// Pivot
         ImGuiHelper::ItemLabel("Pivot", ImGuiHelper::ItemLabelAlignment::Left);
 		m_NeedsUpdate |= ImGui::DragFloat2("##Pivot", &m_Pivot.x, 0.1f, 0.f, 1.f);
+
+		// Layer
+		ImGuiHelper::ItemLabel("Layer", ImGuiHelper::ItemLabelAlignment::Left);
+		ImGui::DragFloat("##Layer", &m_Layer, 0.1f);
 	});
 }
 

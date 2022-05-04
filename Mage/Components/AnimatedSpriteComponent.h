@@ -8,7 +8,7 @@ namespace Mage
 	class AnimatedSpriteComponent : public Component
 	{
 	public:
-		explicit AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame);
+		explicit AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame, float layer = 0.0f);
 
 		void Update() override;
 		void DrawProperties() override;
@@ -21,7 +21,8 @@ namespace Mage
 
 	private:
 		std::shared_ptr<Texture2D> m_pSpritesheet{};
-		
+		float m_Layer;
+
 		int m_NumFrames{};
 		float m_SecondsPerFrame{};
 

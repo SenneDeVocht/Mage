@@ -10,7 +10,12 @@
 #include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
-Mage::SpriteComponent::SpriteComponent(std::shared_ptr<Texture2D> pTexture)
+Mage::SpriteComponent::SpriteComponent(float layer)
+	: m_Layer{ layer }
+{}
+
+Mage::SpriteComponent::SpriteComponent(std::shared_ptr<Texture2D> pTexture, float layer)
+    : m_Layer{ layer }
 {
 	SetTexture(pTexture);
 }
@@ -20,15 +25,18 @@ void Mage::SpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 		// Texture Image
-		float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
-		float availableHeight = 50.f;
+		const float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+		constexpr float availableHeight = 50.f;
 
-		float scaleFactorX = availableWidth / m_pTexture->GetWidth();
-		float scaleFactorY = availableHeight / m_pTexture->GetHeight();
+		const float scaleFactorX = availableWidth / m_pTexture->GetWidth();
+		const float scaleFactorY = availableHeight / m_pTexture->GetHeight();
 
-		float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+		const float scaleFactor = std::min(scaleFactorX, scaleFactorY);
 
 		ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { m_pTexture->GetWidth() * scaleFactor, m_pTexture->GetHeight() * scaleFactor });
+
+		ImGuiHelper::ItemLabel("Layer", ImGuiHelper::ItemLabelAlignment::Left);
+		ImGui::DragFloat("##Layer", &m_Layer, 0.1f);
 	});
 }
 
@@ -40,7 +48,7 @@ void Mage::SpriteComponent::Render() const
 		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
-		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale);
+		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale, m_Layer);
 	}
 }
 

@@ -45,7 +45,7 @@ void BurgerIngredient::Initialize()
 	// LEFT
 	auto go = GetGameObject()->CreateChildObject("Left");
 	go->GetTransform()->SetLocalPosition({ -0.75f, 0 });
-	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Left.png", 16));
+	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Left.png", 16), 2.f);
 	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{0.5f, 0.5f}, glm::vec2{0, 0}, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));
@@ -53,7 +53,7 @@ void BurgerIngredient::Initialize()
 	// MID LEFT
 	go = GetGameObject()->CreateChildObject("MidLeft");
 	go->GetTransform()->SetLocalPosition({ -0.25f, 0 });
-	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Mid_Left.png", 16));
+	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Mid_Left.png", 16), 2.f);
 	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0, 0 }, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));
@@ -61,7 +61,7 @@ void BurgerIngredient::Initialize()
 	// MID RIGHT
 	go = GetGameObject()->CreateChildObject("MidRight");
 	go->GetTransform()->SetLocalPosition({ 0.25f, 0 });
-	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Mid_Right.png", 16));
+	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Mid_Right.png", 16), 2.f);
 	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0, 0 }, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));
@@ -69,7 +69,7 @@ void BurgerIngredient::Initialize()
 	// RIGHT
 	go = GetGameObject()->CreateChildObject("Right");
 	go->GetTransform()->SetLocalPosition({ 0.75f, 0 });
-	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Right.png", 16));
+	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Right.png", 16), 2.f);
 	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0, 0 }, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));

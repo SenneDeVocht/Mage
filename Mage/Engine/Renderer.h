@@ -10,27 +10,27 @@ namespace Mage
 	public:
 		virtual ~Renderer() = default;
 		
-		virtual void Render() const = 0;
+		virtual void Render() = 0;
 
 		virtual void SetCamera(CameraComponent* pCamera) = 0;
 		virtual void SetBackgroundColor(const SDL_Color& color) = 0;
 
-		virtual void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const = 0;
-		virtual void RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const = 0;
-		virtual void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const = 0;
+		virtual void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer = 0) = 0;
+		virtual void RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) = 0;
+		virtual void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) = 0;
 	};
 
 	class NullRenderer final : public Renderer
 	{
 	public:
-		void Render() const override {}
+		void Render() override {}
 
 		void SetCamera(CameraComponent*) override {}
 		void SetBackgroundColor(const SDL_Color&) override {}
 
-		void RenderPolygon(const std::vector<glm::vec2>&, const glm::vec4&) const override {}
-		void RenderTexture(const Texture2D&, const glm::vec2&, float, const glm::vec2&) const override {}
-		void RenderPartialTexture(const Texture2D&, int, int, int, int, const glm::vec2&, float, const glm::vec2&) const override {}
+		void RenderPolygon(const std::vector<glm::vec2>&, const glm::vec4&, float) override {}
+		void RenderTexture(const Texture2D&, const glm::vec2&, float, const glm::vec2&, float) override {}
+		void RenderPartialTexture(const Texture2D&, int, int, int, int, const glm::vec2&, float, const glm::vec2&, float) override {}
 	};
 
 	class GLRenderer final : public Renderer
@@ -44,20 +44,17 @@ namespace Mage
         GLRenderer& operator=(const GLRenderer& other) = delete;
         GLRenderer& operator=(GLRenderer&& other) noexcept = delete;
 
-		void Render() const override;
+		void Render() override;
 		
 		void SetCamera(CameraComponent* pCamera) override;
-		void SetBackgroundColor(const SDL_Color& color) override { m_ClearColor = color; }
+		void SetBackgroundColor(const SDL_Color& color) override;
 
-		void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const;
-		void RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const override;
-		void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const override;
+		void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer = 0) override;
+		void RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) override;
+		void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) override;
 
 	private:
-		CameraComponent* m_pCamera{};
-
-		SDL_GLContext m_Context;
-		SDL_Window* m_pWindow{};
-		SDL_Color m_ClearColor{};
+		class GLRendererImpl;
+		std::unique_ptr<GLRendererImpl> m_pImpl;
 	};
 }

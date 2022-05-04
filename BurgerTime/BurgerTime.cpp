@@ -57,24 +57,19 @@ void BurgerTime::LoadGame() const
 
 	auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/Idle.png", 16),
-		1,
-		0.f);
+		1, 0.f, 1.f);
 	auto walkFront = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkFront.png", 16),
-		4,
-		0.1f);
+		4, 0.1f, 1.f);
 	auto walkBack = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkBack.png", 16),
-		4,
-		0.1f);
+		4, 0.1f, 1.f);
 	auto walkLeft = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkLeft.png", 16),
-		4,
-		0.1f);
+		4, 0.1f, 1.f);
 	auto walkRight = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkRight.png", 16),
-		4,
-		0.1f);
+		4, 0.1f, 1.f);
 
 	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
 	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);

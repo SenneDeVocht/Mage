@@ -1,6 +1,8 @@
 #include "Mage/MagePCH.h"
 #include "Renderer.h"
 
+#include <functional>
+
 #include "Mage/Scenegraph/SceneManager.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
@@ -9,6 +11,50 @@
 #include "Mage/Components/CameraComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Scenegraph/GameObject.h"
+
+#pragma region Implementation
+
+namespace Mage {
+	class GLRenderer::GLRendererImpl final
+	{
+	public:
+		GLRendererImpl(SDL_Window* window);
+		~GLRendererImpl();
+        
+        GLRendererImpl(const GLRendererImpl& other) = delete;
+        GLRendererImpl(GLRendererImpl&& other) noexcept = delete;
+        GLRendererImpl& operator=(const GLRendererImpl& other) = delete;
+        GLRendererImpl& operator=(GLRendererImpl&& other) noexcept = delete;
+
+		void SetCamera(CameraComponent* pCamera);
+		void SetBackgroundColor(const SDL_Color& color);
+
+	    void Render();
+
+	    void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer);
+		void RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
+		void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
+
+	private:
+		void ActuallyRenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const;
+		void ActuallyRenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
+		void ActuallyRenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
+
+		struct RenderCommand
+		{
+			std::function<void()> Command;
+			float Layer;
+		};
+
+		std::vector<RenderCommand> m_RenderCommands;
+
+		Mage::CameraComponent* m_pCamera{};
+
+		SDL_GLContext m_Context;
+		SDL_Window* m_pWindow{};
+		SDL_Color m_ClearColor{};
+	};
+}
 
 int GetOpenGLDriverIndex()
 {
@@ -24,15 +70,15 @@ int GetOpenGLDriverIndex()
 	return openglIndex;
 }
 
-Mage::GLRenderer::GLRenderer(SDL_Window* window)
+Mage::GLRenderer::GLRendererImpl::GLRendererImpl(SDL_Window* window)
+    : m_pWindow{ window }
 {
-	m_pWindow = window;
-	
 	m_Context = SDL_GL_CreateContext(m_pWindow);
 
 	if (glewInit() != GLEW_OK)
 		return;
 
+	// VSync
 	SDL_GL_SetSwapInterval(1);
 
 	// Set the Projection matrix to the identity matrix
@@ -57,17 +103,22 @@ Mage::GLRenderer::GLRenderer(SDL_Window* window)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-Mage::GLRenderer::~GLRenderer()
+Mage::GLRenderer::GLRendererImpl::~GLRendererImpl()
 {
 	SDL_GL_DeleteContext(m_Context);
 }
 
-void Mage::GLRenderer::SetCamera(CameraComponent* pCamera)
+void Mage::GLRenderer::GLRendererImpl::SetCamera(CameraComponent* pCamera)
 {
 	m_pCamera = pCamera;
 }
 
-void Mage::GLRenderer::Render() const
+void Mage::GLRenderer::GLRendererImpl::SetBackgroundColor(const SDL_Color& color)
+{
+    m_ClearColor = color;
+}
+
+void Mage::GLRenderer::GLRendererImpl::Render()
 {
 	// Clear last frame
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -79,13 +130,35 @@ void Mage::GLRenderer::Render() const
 		if (m_pCamera->IsEnabled())
 		{
 			// Render game
+			m_RenderCommands.clear();
 			SceneManager::GetInstance().Render();
+			std::stable_sort(
+				m_RenderCommands.begin(), m_RenderCommands.end(),
+				[](const RenderCommand& a, const RenderCommand& b)
+				{
+					return a.Layer < b.Layer;
+				});
+
+			for (auto& renderCommand : m_RenderCommands)
+				renderCommand.Command();
 
 			// Render Gizmos
+#ifdef _DEBUG
+			m_RenderCommands.clear();
 			SceneManager::GetInstance().RenderGizmos();
+			std::stable_sort(
+				m_RenderCommands.begin(), m_RenderCommands.end(),
+				[](const RenderCommand& a, const RenderCommand& b)
+				{
+					return a.Layer < b.Layer;
+				});
+
+			for (auto& renderCommand : m_RenderCommands)
+				renderCommand.Command();
+#endif
 		}
 	}
-	
+
 	// Render ImGui
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
@@ -96,53 +169,70 @@ void Mage::GLRenderer::Render() const
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		const SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
+
 		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 	}
 }
 
-void Mage::GLRenderer::RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const
+void Mage::GLRenderer::GLRendererImpl::RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)
+{
+	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPolygon, this, positions, color), layer });
+}
+
+void Mage::GLRenderer::GLRendererImpl::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+{
+	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderTexture, this, texture, position, rotation, scale), layer });
+}
+
+void Mage::GLRenderer::GLRendererImpl::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+{
+	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPartialTexture, this, texture, srcX, srcY, srcW, srcH, position, rotation, scale), layer });
+}
+	
+void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const
 {
 	// Draw
 	glPushMatrix();
 
-		// First translate [0, 0] to the center of the screen
-		int windowWidth, windowHeight;
-		SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
-		glTranslatef((float)windowWidth / 2.f, (float)windowHeight / 2.f, 0.0f);
+	// First translate [0, 0] to the center of the screen
+	int windowWidth, windowHeight;
+	SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
+	glTranslatef((float)windowWidth / 2.f, (float)windowHeight / 2.f, 0.0f);
 
-		// Scale to camera size
-		const auto camSize = m_pCamera->GetSize() * m_pCamera->GetGameObject()->GetTransform()->GetWorldScale();
-		glScalef(windowWidth / camSize.x, windowHeight / camSize.y, 1.0f);
+	// Scale to camera size
+	const auto camSize = m_pCamera->GetSize() * m_pCamera->GetGameObject()->GetTransform()->GetWorldScale();
+	glScalef(windowWidth / camSize.x, windowHeight / camSize.y, 1.0f);
 
-		// Translate to camera position
-		const auto camPos = m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition();
-		glTranslatef(-camPos.x, -camPos.y, 0.0f);
+	// Translate to camera position
+	const auto camPos = m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition();
+	glTranslatef(-camPos.x, -camPos.y, 0.0f);
 
-		// Rotate with camera
-		glRotatef(m_pCamera->GetGameObject()->GetTransform()->GetWorldRotation(), 0.0f, 0.0f, 1.0f);
+	// Rotate with camera
+	glRotatef(m_pCamera->GetGameObject()->GetTransform()->GetWorldRotation(), 0.0f, 0.0f, 1.0f);
 
-		glBegin(GL_QUADS);
+	glBegin(GL_QUADS);
 
-			for (const auto& position : positions)
-			{
-				glColor4f(color.r, color.g, color.b, color.a);
-				glVertex2f(position.x, position.y);
-			}
+	for (const auto& position : positions)
+	{
+		glColor4f(color.r, color.g, color.b, color.a);
+		glVertex2f(position.x, position.y);
+	}
 
-		glEnd();
+	glEnd();
 
 	glPopMatrix();
 }
 
-void Mage::GLRenderer::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const
+void Mage::GLRenderer::GLRendererImpl::ActuallyRenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
-	RenderPartialTexture(texture, 0, 0, texture.GetWidth(), texture.GetHeight(), position, rotation, scale);
+	ActuallyRenderPartialTexture(texture, 0, 0, texture.GetWidth(), texture.GetHeight(), position, rotation, scale);
 }
 
-void Mage::GLRenderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const
+void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
 	// Source Rect (Part of texture)
 	SDL_FRect src{};
@@ -169,7 +259,7 @@ void Mage::GLRenderer::RenderPartialTexture(const Texture2D& texture, int srcX, 
 	const float vertexLeft{ (float)dst.x };
 	const float vertexBottom{ (float)dst.y };
 	const float vertexRight{ vertexLeft + dst.w };
-	const float vertexTop{ vertexBottom + dst.h };	
+	const float vertexTop{ vertexBottom + dst.h };
 
 	// Tell opengl which texture we will use
 	glBindTexture(GL_TEXTURE_2D, texture.GetGLTexture());
@@ -219,3 +309,43 @@ void Mage::GLRenderer::RenderPartialTexture(const Texture2D& texture, int srcX, 
 
 	glPopMatrix();
 }
+
+#pragma endregion
+
+Mage::GLRenderer::GLRenderer(SDL_Window* window)
+    : m_pImpl{ std::make_unique<GLRendererImpl>(window) }
+{}
+
+Mage::GLRenderer::~GLRenderer() = default;
+
+void Mage::GLRenderer::Render()
+{
+	m_pImpl->Render();
+}
+
+void Mage::GLRenderer::SetCamera(CameraComponent* pCamera)
+{
+	m_pImpl->SetCamera(pCamera);
+}
+
+void Mage::GLRenderer::SetBackgroundColor(const SDL_Color& color)
+{
+	m_pImpl->SetBackgroundColor(color);
+}
+
+void Mage::GLRenderer::RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)
+{
+	m_pImpl->RenderPolygon(positions, color, layer);
+}
+
+void Mage::GLRenderer::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+{
+	m_pImpl->RenderTexture(texture, position, rotation, scale, layer);
+}
+
+void Mage::GLRenderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+{
+	m_pImpl->RenderPartialTexture(texture, srcX, srcY, srcW, srcH, position, rotation, scale, layer);
+}
+
+

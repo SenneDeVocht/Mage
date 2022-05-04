@@ -11,9 +11,10 @@
 #include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
-Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame)
-	: m_NumFrames{ numFrames }
-	, m_SecondsPerFrame{ secondsPerFrame }
+Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame, float layer)
+	: m_Layer{ layer }
+	, m_NumFrames{ numFrames }
+    , m_SecondsPerFrame{ secondsPerFrame }
 {
 	SetSpritesheet(pSpritesheet);
 }
@@ -41,13 +42,13 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Animated Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 	    // Texture Image
-	    float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
-	    float availableHeight = 50.f;
+	    const float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+	    constexpr float availableHeight = 50.f;
 
-	    float scaleFactorX = availableWidth / m_pSpritesheet->GetWidth();
-	    float scaleFactorY = availableHeight / m_pSpritesheet->GetHeight();
+	    const float scaleFactorX = availableWidth / m_pSpritesheet->GetWidth();
+	    const float scaleFactorY = availableHeight / m_pSpritesheet->GetHeight();
 
-	    float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+	    const float scaleFactor = std::min(scaleFactorX, scaleFactorY);
 
 	    ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), { m_pSpritesheet->GetWidth() * scaleFactor, m_pSpritesheet->GetHeight() * scaleFactor });
 
@@ -56,6 +57,9 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 
 		ImGuiHelper::ItemLabel("Seconds Per Frame", ImGuiHelper::ItemLabelAlignment::Left);
 	    ImGui::DragFloat("##Seconds Per Frame", &m_SecondsPerFrame);
+
+		ImGuiHelper::ItemLabel("Layer", ImGuiHelper::ItemLabelAlignment::Left);
+		ImGui::DragFloat("##Layer", &m_Layer, 0.1f);
 	});
 }
 
@@ -64,10 +68,9 @@ void Mage::AnimatedSpriteComponent::Render() const
 	if (m_pSpritesheet != nullptr)
 	{
 		// Get partial texture rect
-		int srcWidth = m_pSpritesheet->GetWidth();
-		int srcHeight = m_pSpritesheet->GetHeight();
-		srcWidth /= m_NumFrames;
-		int srcX = m_CurrentFrame * srcWidth;
+		const int srcWidth = m_pSpritesheet->GetWidth() / m_NumFrames;
+		const int srcHeight = m_pSpritesheet->GetHeight();
+		const int srcX = m_CurrentFrame * srcWidth;
 
 		// Get pos rot scale
 		const auto& pos = m_pGameObject->GetTransform()->GetWorldPosition();
@@ -75,7 +78,7 @@ void Mage::AnimatedSpriteComponent::Render() const
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
 		// Render
-		ServiceLocator::GetRenderer()->RenderPartialTexture(*m_pSpritesheet, srcX, 0, srcWidth, srcHeight, pos, rot, scale);
+		ServiceLocator::GetRenderer()->RenderPartialTexture(*m_pSpritesheet, srcX, 0, srcWidth, srcHeight, pos, rot, scale, m_Layer);
 	}
 }
 

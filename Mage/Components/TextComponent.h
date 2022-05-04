@@ -17,7 +17,7 @@ namespace Mage
 		};
 
 		explicit TextComponent(const std::string& text, const std::shared_ptr<Font>& font, const SDL_Color& color, float pixelsPerUnit,
-			const glm::vec2& pivot = { 0.0f, 0.0f }, TextAlignment alignment = TextAlignment::Left, int lineSpacing = 0);
+			const glm::vec2& pivot = { 0.0f, 0.0f }, TextAlignment alignment = TextAlignment::Left, int lineSpacing = 0, float layer = 0.0f);
 
 		void Update() override;
 		void Render() const override;
@@ -28,6 +28,7 @@ namespace Mage
 
 	private:
 		std::unique_ptr<Texture2D> m_pTexture;
+		float m_Layer;
 
 		bool m_NeedsUpdate{ true };
 		std::shared_ptr<Font> m_Font;

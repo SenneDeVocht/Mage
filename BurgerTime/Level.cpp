@@ -2,6 +2,7 @@
 #include "Level.h"
 
 #include "Mage/Components/SpriteComponent.h"
+#include "Mage/Components/TilemapComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Scenegraph/GameObject.h"
@@ -23,6 +24,8 @@ void Level::LoadLevel()
 		TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,     TileType::Both,     TileType::Both
 	};
 
+	auto tilemap = GetGameObject()->GetComponentByType<Mage::TilemapComponent>();
+
 	// Spawn sprites
 	for (int tileY = 0; tileY < m_NumRows; tileY++)
 	{
@@ -30,7 +33,8 @@ void Level::LoadLevel()
 		{
 			const int index = tileY * m_NumCols + tileX;
 
-			Mage::GameObject* tile{ nullptr };
+			const int posX = tileX - m_NumCols / 2;
+			const int posY = m_NumRows / 2 - tileY;
 
 			// Narrow
 			if (tileX % 2 == 0)
@@ -39,20 +43,17 @@ void Level::LoadLevel()
 				{
 					case TileType::Platform:
 					{
-						tile = GetGameObject()->CreateChildObject("Platform");
-						tile->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Platform_Narrow.png", 16));
+						tilemap->SetTile(glm::ivec2{ posX, posY }, 0);
 						break;
 					}
 					case TileType::Ladder:
 					{
-						tile = GetGameObject()->CreateChildObject("Ladder");
-						tile->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Ladder_Narrow.png", 16));
+						tilemap->SetTile(glm::ivec2{ posX, posY }, 1);
 						break;
 					}
 					case TileType::Both:
 					{
-						tile = GetGameObject()->CreateChildObject("LadderAndPlatform");
-						tile->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Ladder_And_Platform_Narrow.png", 16));
+						tilemap->SetTile(glm::ivec2{ posX, posY }, 2);
 						break;
 					}
 					default:
@@ -68,20 +69,17 @@ void Level::LoadLevel()
 				{
 					case TileType::Platform:
 					{
-						tile = GetGameObject()->CreateChildObject("Platform");
-						tile->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Platform_Wide.png", 16));
+						tilemap->SetTile(glm::ivec2{ posX, posY }, 3);
 						break;
 					}
 					case TileType::Ladder:
 					{
-						tile = GetGameObject()->CreateChildObject("Ladder");
-						tile->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Ladder_Wide.png", 16));
+						tilemap->SetTile(glm::ivec2{ posX, posY }, 4);
 						break;
 					}
 					case TileType::Both:
 					{
-						tile = GetGameObject()->CreateChildObject("LadderAndPlatform");
-						tile->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/Ladder_And_Platform_Wide.png", 16));
+						tilemap->SetTile(glm::ivec2{ posX, posY }, 5);
 						break;
 					}
 					default:
@@ -90,9 +88,6 @@ void Level::LoadLevel()
 					}
 				}
 			}
-
-			if (tile != nullptr)
-				tile->GetTransform()->SetLocalPosition(IndexToPosition(index));
 		}
 	}
 }
@@ -258,20 +253,18 @@ glm::vec2 Level::IndexToPosition(int index) const
 
 int Level::PositionToIndex(const glm::vec2 & position) const
 {
-	const glm::vec2 localPos = position - GetGameObject()->GetTransform()->GetWorldPosition();
-
 	// Outside of level
-	if (abs(localPos.x) >= m_NumCols * 1.5f / 2 ||
-		abs(localPos.y) >= m_NumRows / 2.f)
+	if (abs(position.x) >= m_NumCols * 1.5f / 2 ||
+		abs(position.y) >= m_NumRows / 2.f)
 	{
 		return -1;
 	}
 	
-	const int smallIndexX = int(localPos.x + m_EquivalentNumSmallCols / 2.f);
+	const int smallIndexX = int(position.x + m_EquivalentNumSmallCols / 2.f);
 	constexpr int smallToNormalLookup[]{ 0, 1, 1, 2, 3, 3, 4, 5, 5, 6, 7, 7, 8 };
 
 	const int indexX = smallToNormalLookup[smallIndexX];
-	const int indexY = int(m_NumRows / 2.f - localPos.y);
+	const int indexY = int(m_NumRows / 2.f - position.y);
 
 	return indexX + indexY * m_NumCols;
 }

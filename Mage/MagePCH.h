@@ -12,6 +12,8 @@
 
 #pragma warning(push, 0)
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/hash.hpp"
 
 #include <SDL.h>
 

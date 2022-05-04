@@ -13,6 +13,7 @@
 #include "Mage/Components/TextComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
+#include "Mage/Components/TilemapComponent.h"
 
 #include "PeterPepper.h"
 #include "Level.h"
@@ -26,7 +27,9 @@
 
 void BurgerTime::LoadGame() const
 {
-	const auto scene = Mage::SceneManager::GetInstance().CreateScene("DemoScene");
+	const auto& resourceManager = Mage::ResourceManager::GetInstance();
+
+    const auto scene = Mage::SceneManager::GetInstance().CreateScene("DemoScene");
 
 	// Camera
 	//-------
@@ -42,8 +45,19 @@ void BurgerTime::LoadGame() const
 	//------
 	#pragma region Level
 
-	const auto levelParent = scene->CreateObject("Level");
-	const auto level = levelParent->CreateComponent<Level>();
+	const auto levelObject = scene->CreateObject("Level");
+	levelObject->GetTransform()->SetWorldPosition({ 0.f, -0.5f });
+	const auto level = levelObject->CreateComponent<Level>();
+	levelObject->CreateComponent<Mage::TilemapComponent>(
+		std::vector <std::shared_ptr<Mage::Texture2D>>{
+		    resourceManager.LoadTexture("Level/Platform_Narrow.png", 16),
+			resourceManager.LoadTexture("Level/Ladder_Narrow.png", 16),
+			resourceManager.LoadTexture("Level/Ladder_And_Platform_Narrow.png", 16),
+			resourceManager.LoadTexture("Level/Platform_Wide.png", 16),
+			resourceManager.LoadTexture("Level/Ladder_Wide.png", 16),
+			resourceManager.LoadTexture("Level/Ladder_And_Platform_Wide.png", 16)
+		},
+		glm::vec2{1.5f, 1.f});
 	level->LoadLevel();
 
 	#pragma endregion
@@ -56,19 +70,19 @@ void BurgerTime::LoadGame() const
 	peterPepperObject->GetTransform()->SetLocalPosition({ 0, -4.3125f });
 
 	auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
-		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/Idle.png", 16),
+		resourceManager.LoadTexture("PeterPepper/Idle.png", 16),
 		1, 0.f, 1.f);
 	auto walkFront = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
-		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkFront.png", 16),
+		resourceManager.LoadTexture("PeterPepper/WalkFront.png", 16),
 		4, 0.1f, 1.f);
 	auto walkBack = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
-		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkBack.png", 16),
+		resourceManager.LoadTexture("PeterPepper/WalkBack.png", 16),
 		4, 0.1f, 1.f);
 	auto walkLeft = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
-		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkLeft.png", 16),
+		resourceManager.LoadTexture("PeterPepper/WalkLeft.png", 16),
 		4, 0.1f, 1.f);
 	auto walkRight = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
-		Mage::ResourceManager::GetInstance().LoadTexture("PeterPepper/WalkRight.png", 16),
+		resourceManager.LoadTexture("PeterPepper/WalkRight.png", 16),
 		4, 0.1f, 1.f);
 
 	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
@@ -104,7 +118,7 @@ void BurgerTime::LoadGame() const
 	// TEXT
 	//-----
 	const auto textObject = scene->CreateObject("Text");
-	textObject->CreateComponent<Mage::TextComponent>("TEST", Mage::ResourceManager::GetInstance().LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f);
+	textObject->CreateComponent<Mage::TextComponent>("TEST", resourceManager.LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f);
 
 	// SOUND
 	//------

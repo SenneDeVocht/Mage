@@ -126,6 +126,9 @@
     <ClCompile Include="ResourceManagement\SoundClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Components\TilemapComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MagePCH.h">
@@ -225,6 +228,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManagement\SoundClip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\TilemapComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

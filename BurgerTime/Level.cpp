@@ -56,10 +56,6 @@ void Level::LoadLevel()
 						tilemap->SetTile(glm::ivec2{ posX, posY }, 2);
 						break;
 					}
-					default:
-					{
-						break;
-					}
 				}
 			}
 			// Wide
@@ -80,10 +76,6 @@ void Level::LoadLevel()
 					case TileType::Both:
 					{
 						tilemap->SetTile(glm::ivec2{ posX, posY }, 5);
-						break;
-					}
-					default:
-					{
 						break;
 					}
 				}

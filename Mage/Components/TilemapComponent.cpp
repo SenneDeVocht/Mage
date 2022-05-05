@@ -55,7 +55,7 @@ void Mage::TilemapComponent::DrawProperties()
 
 void Mage::TilemapComponent::SetTile(const glm::ivec2& position, int tileIndex)
 {
-    if (tileIndex >= m_TileTextures.size() || tileIndex < 0)
+    if (tileIndex >= (int)m_TileTextures.size() || tileIndex < 0)
         std::cout << "Tile index out of range" << std::endl;
     
     else

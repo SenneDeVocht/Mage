@@ -5,6 +5,7 @@
 #include "backends/imgui_impl_opengl2.h"
 #include "backends/imgui_impl_sdl.h"
 #include "IconsFontAwesome.h"
+#include "Mage/ResourceManagement/Texture2D.h"
 
 void Mage::ImGuiHelper::InitImGui(SDL_Window* pWindow)
 {
@@ -153,6 +154,25 @@ void Mage::ImGuiHelper::Component(const char* name, void const* id, bool* enable
 		extraUIFunction();
 
 	ImGui::PopID();
+}
+
+void Mage::ImGuiHelper::Texture(const Texture2D& texture)
+{
+	const float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+	constexpr float availableHeight = 50.f;
+
+	const float scaleFactorX = availableWidth / texture.GetWidth();
+	const float scaleFactorY = availableHeight / texture.GetHeight();
+
+	const float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+
+	const auto borderCol = ImGui::GetStyle().Colors[ImGuiCol_Border];
+	ImGui::Image(
+		(void*)(intptr_t)texture.GetGLTexture(), 
+		{ texture.GetWidth() * scaleFactor, texture.GetHeight() * scaleFactor },
+		{ 0, 0 }, { 1, 1 },
+		{ 1, 1, 1, 1 },
+		borderCol);
 }
 
 void Mage::ImGuiHelper::SetCustomStyle()

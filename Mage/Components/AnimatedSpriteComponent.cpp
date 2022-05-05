@@ -42,15 +42,7 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Animated Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 	    // Texture Image
-	    const float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
-	    constexpr float availableHeight = 50.f;
-
-	    const float scaleFactorX = availableWidth / m_pSpritesheet->GetWidth();
-	    const float scaleFactorY = availableHeight / m_pSpritesheet->GetHeight();
-
-	    const float scaleFactor = std::min(scaleFactorX, scaleFactorY);
-
-	    ImGui::Image((void*)(intptr_t)m_pSpritesheet->GetGLTexture(), { m_pSpritesheet->GetWidth() * scaleFactor, m_pSpritesheet->GetHeight() * scaleFactor });
+	    ImGuiHelper::Texture(*m_pSpritesheet);
 
 		ImGuiHelper::ItemLabel("Number Of Frames", ImGuiHelper::ItemLabelAlignment::Left);
 	    ImGui::DragInt("##Number Of Frames", &m_NumFrames);

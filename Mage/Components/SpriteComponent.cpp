@@ -25,15 +25,7 @@ void Mage::SpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 		// Texture Image
-		const float availableWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
-		constexpr float availableHeight = 50.f;
-
-		const float scaleFactorX = availableWidth / m_pTexture->GetWidth();
-		const float scaleFactorY = availableHeight / m_pTexture->GetHeight();
-
-		const float scaleFactor = std::min(scaleFactorX, scaleFactorY);
-
-		ImGui::Image((void*)(intptr_t)m_pTexture->GetGLTexture(), { m_pTexture->GetWidth() * scaleFactor, m_pTexture->GetHeight() * scaleFactor });
+	    ImGuiHelper::Texture(*m_pTexture);
 
 		ImGuiHelper::ItemLabel("Layer", ImGuiHelper::ItemLabelAlignment::Left);
 		ImGui::DragFloat("##Layer", &m_Layer, 0.1f);

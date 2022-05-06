@@ -32,13 +32,13 @@ namespace Mage {
 	    void Render();
 
 	    void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer);
-		void RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
-		void RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
+		void RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
+		void RenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
 
 	private:
 		void ActuallyRenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const;
-		void ActuallyRenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
-		void ActuallyRenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
+		void ActuallyRenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
+		void ActuallyRenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
 
 		struct RenderCommand
 		{
@@ -183,12 +183,12 @@ void Mage::GLRenderer::GLRendererImpl::RenderPolygon(const std::vector<glm::vec2
 	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPolygon, this, positions, color), layer });
 }
 
-void Mage::GLRenderer::GLRendererImpl::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+void Mage::GLRenderer::GLRendererImpl::RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
 {
 	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderTexture, this, texture, position, rotation, scale), layer });
 }
 
-void Mage::GLRenderer::GLRendererImpl::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+void Mage::GLRenderer::GLRendererImpl::RenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
 {
 	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPartialTexture, this, texture, srcX, srcY, srcW, srcH, position, rotation, scale), layer });
 }
@@ -227,12 +227,12 @@ void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPolygon(const std::vector<g
 	glPopMatrix();
 }
 
-void Mage::GLRenderer::GLRendererImpl::ActuallyRenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const
+void Mage::GLRenderer::GLRendererImpl::ActuallyRenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
-	ActuallyRenderPartialTexture(texture, 0, 0, texture.GetWidth(), texture.GetHeight(), position, rotation, scale);
+	ActuallyRenderPartialTexture(texture, 0, 0, texture->GetWidth(), texture->GetHeight(), position, rotation, scale);
 }
 
-void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const
+void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const
 {
 	// Source Rect (Part of texture)
 	SDL_FRect src{};
@@ -243,17 +243,17 @@ void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPartialTexture(const Textur
 
 	// Destination Rect (Part of world)
 	SDL_FRect dst{};
-	dst.x = -texture.GetPivot().x * srcW / texture.GetPixelsPerUnit();
-	dst.y = -texture.GetPivot().y * srcH / texture.GetPixelsPerUnit();
-	dst.w = srcW / (float)texture.GetPixelsPerUnit();
-	dst.h = srcH / (float)texture.GetPixelsPerUnit();
+	dst.x = -texture->GetPivot().x * srcW / texture->GetPixelsPerUnit();
+	dst.y = -texture->GetPivot().y * srcH / texture->GetPixelsPerUnit();
+	dst.w = srcW / (float)texture->GetPixelsPerUnit();
+	dst.h = srcH / (float)texture->GetPixelsPerUnit();
 
 	// Render
 	// Determine texture coordinates
-	const float uvLeft = src.x / texture.GetWidth();
-	const float uvRight = (src.x + src.w) / texture.GetWidth();
-	const float uvTop = (src.y - src.h) / texture.GetHeight();
-	const float uvBottom = src.y / texture.GetHeight();
+	const float uvLeft = src.x / texture->GetWidth();
+	const float uvRight = (src.x + src.w) / texture->GetWidth();
+	const float uvTop = (src.y - src.h) / texture->GetHeight();
+	const float uvBottom = src.y / texture->GetHeight();
 
 	// Determine vertex coordinates
 	const float vertexLeft{ (float)dst.x };
@@ -262,7 +262,7 @@ void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPartialTexture(const Textur
 	const float vertexTop{ vertexBottom + dst.h };
 
 	// Tell opengl which texture we will use
-	glBindTexture(GL_TEXTURE_2D, texture.GetGLTexture());
+	glBindTexture(GL_TEXTURE_2D, texture->GetGLTexture());
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	// Draw
@@ -338,12 +338,12 @@ void Mage::GLRenderer::RenderPolygon(const std::vector<glm::vec2>& positions, co
 	m_pImpl->RenderPolygon(positions, color, layer);
 }
 
-void Mage::GLRenderer::RenderTexture(const Texture2D& texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+void Mage::GLRenderer::RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
 {
 	m_pImpl->RenderTexture(texture, position, rotation, scale, layer);
 }
 
-void Mage::GLRenderer::RenderPartialTexture(const Texture2D& texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
+void Mage::GLRenderer::RenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
 {
 	m_pImpl->RenderPartialTexture(texture, srcX, srcY, srcW, srcH, position, rotation, scale, layer);
 }

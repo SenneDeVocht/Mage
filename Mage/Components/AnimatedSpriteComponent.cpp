@@ -42,7 +42,7 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Animated Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 	    // Texture Image
-	    ImGuiHelper::Texture(*m_pSpritesheet);
+	    ImGuiHelper::Texture(m_pSpritesheet.get());
 
 		ImGuiHelper::ItemLabel("Number Of Frames", ImGuiHelper::ItemLabelAlignment::Left);
 	    ImGui::DragInt("##Number Of Frames", &m_NumFrames);
@@ -70,7 +70,7 @@ void Mage::AnimatedSpriteComponent::Render() const
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
 		// Render
-		ServiceLocator::GetRenderer()->RenderPartialTexture(*m_pSpritesheet, srcX, 0, srcWidth, srcHeight, pos, rot, scale, m_Layer);
+		ServiceLocator::GetRenderer()->RenderPartialTexture(m_pSpritesheet.get(), srcX, 0, srcWidth, srcHeight, pos, rot, scale, m_Layer);
 	}
 }
 

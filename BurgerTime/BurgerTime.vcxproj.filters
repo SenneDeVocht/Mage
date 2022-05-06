@@ -8,6 +8,7 @@
     <ClInclude Include="BurgerIngredient.h" />
     <ClInclude Include="BurgerIngredientPart.h" />
     <ClInclude Include="SoundTester.h" />
+    <ClInclude Include="InputTester.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -18,5 +19,6 @@
     <ClCompile Include="BurgerIngredient.cpp" />
     <ClCompile Include="BurgerIngredientPart.cpp" />
     <ClCompile Include="SoundTester.cpp" />
+    <ClCompile Include="InputTester.cpp" />
   </ItemGroup>
 </Project>

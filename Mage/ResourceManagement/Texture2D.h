@@ -11,6 +11,7 @@ namespace Mage
     public:
         Texture2D(GLuint texture, int width, int height, float pixelsPerUnit, const glm::vec2& pivot = { 0.5, 0.5f });
         Texture2D(SDL_Surface* pSurface, int width, int height, float pixelsPerUnit, const glm::vec2& pivot = { 0.5, 0.5f });
+        ~Texture2D();
 
         GLuint GetGLTexture() const { return m_Texture; }
         const glm::vec2& GetPivot() const { return m_Pivot; }

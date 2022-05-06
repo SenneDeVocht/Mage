@@ -25,7 +25,7 @@ void Mage::SpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 		// Texture Image
-	    ImGuiHelper::Texture(*m_pTexture);
+	    ImGuiHelper::Texture(m_pTexture.get());
 
 		ImGuiHelper::ItemLabel("Layer", ImGuiHelper::ItemLabelAlignment::Left);
 		ImGui::DragFloat("##Layer", &m_Layer, 0.1f);
@@ -40,7 +40,7 @@ void Mage::SpriteComponent::Render() const
 		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
-		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale, m_Layer);
+		ServiceLocator::GetRenderer()->RenderTexture(m_pTexture.get(), pos, rot, scale, m_Layer);
 	}
 }
 

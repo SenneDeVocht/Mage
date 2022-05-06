@@ -34,7 +34,7 @@ void Mage::TilemapComponent::Render() const
         position += wPos;
 
         // Render
-        ServiceLocator::GetRenderer()->RenderTexture(*m_TileTextures[tile.second], position, wRot, wScale);
+        ServiceLocator::GetRenderer()->RenderTexture(m_TileTextures[tile.second].get(), position, wRot, wScale);
     }
 }
 
@@ -48,7 +48,7 @@ void Mage::TilemapComponent::DrawProperties()
 
         for (const auto& texture : m_TileTextures)
         {
-            ImGuiHelper::Texture(*texture);
+            ImGuiHelper::Texture(texture.get());
         }
     });
 }

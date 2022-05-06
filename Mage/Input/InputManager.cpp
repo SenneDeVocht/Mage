@@ -43,7 +43,7 @@ public:
         {
 	        if (action->ControllerIndex >= 0)
 	        {
-                if (CheckGamepadButton(action->ControllerIndex, action->Button, action->State))
+                if (CheckControllerButton(action->ControllerIndex, action->Button, action->State))
                 {
                     action->Command->Execute();
                 }
@@ -84,7 +84,12 @@ public:
         m_InputActions.erase(newEnd, m_InputActions.end());
     }
 
-    bool CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const
+    bool IsControllerConnected(int controllerIndex) const
+	{
+		return m_CurrentControllerStates[controllerIndex].dwPacketNumber != 0;
+	}
+
+    bool CheckControllerButton(int controllerIndex, ControllerButton button, InputState state) const
     {
         switch (state)
         {
@@ -99,6 +104,28 @@ public:
         }
 
         return false;
+    }
+
+    float GetControllerAxis(int controllerIndex, ControllerAxis axis) const
+    {
+        switch (axis)
+        {
+            case ControllerAxis::LeftStickX:
+				return m_CurrentControllerStates[controllerIndex].Gamepad.sThumbLX / 32767.0f;
+            case ControllerAxis::LeftStickY:
+				return m_CurrentControllerStates[controllerIndex].Gamepad.sThumbLY / 32767.0f;
+            case ControllerAxis::RightStickX:
+				return m_CurrentControllerStates[controllerIndex].Gamepad.sThumbRX / 32767.0f;
+            case ControllerAxis::RightStickY:
+				return m_CurrentControllerStates[controllerIndex].Gamepad.sThumbRY / 32767.0f;
+
+            case ControllerAxis::LeftTrigger:
+				return m_CurrentControllerStates[controllerIndex].Gamepad.bLeftTrigger / 255.0f;
+            case ControllerAxis::RightTrigger:
+				return m_CurrentControllerStates[controllerIndex].Gamepad.bRightTrigger / 255.0f;
+        }
+
+        return 0.0f;
     }
 
     bool CheckKeyboardKey(int keyboardKey, InputState state) const
@@ -124,16 +151,16 @@ private:
     {
         switch (button)
         {
-        case ControllerButton::ButtonA:
+        case ControllerButton::A:
             return XINPUT_GAMEPAD_A;
 
-        case ControllerButton::ButtonB:
+        case ControllerButton::B:
             return XINPUT_GAMEPAD_B;
 
-        case ControllerButton::ButtonX:
+        case ControllerButton::X:
             return XINPUT_GAMEPAD_X;
 
-        case ControllerButton::ButtonY:
+        case ControllerButton::Y:
             return XINPUT_GAMEPAD_Y;
 
         case ControllerButton::DPadUp:
@@ -154,10 +181,10 @@ private:
         case ControllerButton::RightShoulder:
             return XINPUT_GAMEPAD_RIGHT_SHOULDER;
 
-        case ControllerButton::RightThumb:
+        case ControllerButton::RightStick:
             return XINPUT_GAMEPAD_RIGHT_THUMB;
 
-        case ControllerButton::LeftThumb:
+        case ControllerButton::LeftStick:
             return XINPUT_GAMEPAD_LEFT_THUMB;
 
         case ControllerButton::Start:
@@ -238,9 +265,19 @@ void Mage::XInputInputManager::RemoveInputAction(InputAction* action) const
     m_pImpl->RemoveInputAction(action);
 }
 
-bool Mage::XInputInputManager::CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const
+bool Mage::XInputInputManager::IsControllerConnected(int controllerIndex) const
 {
-    return m_pImpl->CheckGamepadButton(controllerIndex, button, state);
+	return m_pImpl->IsControllerConnected(controllerIndex);
+}
+
+bool Mage::XInputInputManager::CheckControllerButton(int controllerIndex, ControllerButton button, InputState state) const
+{
+    return m_pImpl->CheckControllerButton(controllerIndex, button, state);
+}
+
+float Mage::XInputInputManager::GetControllerAxis(int controllerIndex, ControllerAxis axis) const
+{
+	return m_pImpl->GetControllerAxis(controllerIndex, axis);
 }
 
 bool Mage::XInputInputManager::CheckKeyboardKey(int keyboardKey, InputState state) const

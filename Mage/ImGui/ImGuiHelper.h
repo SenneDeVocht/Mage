@@ -27,7 +27,7 @@ namespace Mage
 
 		static void Component(const char* name, void const* id, bool* enabled, const std::function<void()>& extraUIFunction);
 
-		static void Texture(const Texture2D& texture);
+		static void Texture(const Texture2D* texture);
 
 	private:
 		static void SetCustomStyle();

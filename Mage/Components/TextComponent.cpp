@@ -115,7 +115,7 @@ void Mage::TextComponent::Render() const
 		const auto& rot = m_pGameObject->GetTransform()->GetWorldRotation();
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
-		ServiceLocator::GetRenderer()->RenderTexture(*m_pTexture, pos, rot, scale, m_Layer);
+		ServiceLocator::GetRenderer()->RenderTexture(m_pTexture.get(), pos, rot, scale, m_Layer);
 	}
 }
 
@@ -125,7 +125,7 @@ void Mage::TextComponent::DrawProperties()
 	{
 		// Texture Image
         if (!m_Text.empty())
-			ImGuiHelper::Texture(*m_pTexture);
+			ImGuiHelper::Texture(m_pTexture.get());
 
 		// Text
 	    ImGuiHelper::ItemLabel("Text", ImGuiHelper::ItemLabelAlignment::Left);

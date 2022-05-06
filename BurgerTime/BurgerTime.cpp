@@ -21,6 +21,7 @@
 #include "SoundTester.h"
 
 // Other
+#include "InputTester.h"
 #include "Mage/Engine/ServiceLocator.h"
 #include "Mage/Engine/Renderer.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
@@ -115,15 +116,22 @@ void BurgerTime::LoadGame() const
 	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
 	burger->SetTag("Ingredient", true);
 
-	// TEXT
-	//-----
+	// TEXT TEST
+	//----------
 	const auto textObject = scene->CreateObject("Text");
 	textObject->CreateComponent<Mage::TextComponent>("TEST", resourceManager.LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f);
 
-	// SOUND
-	//------
+	// SOUND TEST
+	//-----------
 	const auto sound = scene->CreateObject("Sound");
 	sound->CreateComponent<SoundTester>();
+
+	// INPUT TEST
+	//-----------
+	const auto inputTesterObject = scene->CreateObject("InputTester");
+	const auto inputTesterText = inputTesterObject->CreateComponent<Mage::TextComponent>("", resourceManager.LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f, glm::vec2{0, 1});
+	inputTesterObject->CreateComponent<InputTester>(inputTesterText);
+	inputTesterObject->GetTransform()->SetWorldPosition({ -7.f, 7.f });
 
 	// DONE
 	//-----

@@ -13,20 +13,30 @@ namespace Mage
 
 	enum class ControllerButton
 	{
-		ButtonA,
-		ButtonB,
-		ButtonX,
-		ButtonY,
+		A,
+		B,
+		X,
+		Y,
 		DPadUp,
 		DPadDown,
 		DPadLeft,
 		DPadRight,
 		LeftShoulder,
 		RightShoulder,
-		RightThumb,
-		LeftThumb,
+		RightStick,
+		LeftStick,
 		Start,
 		Back
+	};
+
+	enum class ControllerAxis
+	{
+		LeftStickX,
+		LeftStickY,
+		RightStickX,
+		RightStickY,
+		LeftTrigger,
+		RightTrigger
 	};
 
 	struct InputAction
@@ -49,7 +59,10 @@ namespace Mage
 		virtual void AddInputAction(InputAction* action) const = 0;
 		virtual void RemoveInputAction(InputAction* action) const = 0;
 
-	    virtual bool CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const = 0;
+		virtual bool IsControllerConnected(int controllerIndex) const = 0;
+	    virtual bool CheckControllerButton(int controllerIndex, ControllerButton button, InputState state) const = 0;
+		virtual float GetControllerAxis(int controllerIndex, ControllerAxis axis) const = 0;
+
 		virtual bool CheckKeyboardKey(int keyboardKey, InputState state) const = 0;
 	};
 
@@ -60,7 +73,10 @@ namespace Mage
 		void AddInputAction(InputAction*) const override {}
 		void RemoveInputAction(InputAction*) const override {}
 
-		bool CheckGamepadButton(int, ControllerButton, InputState) const override { return false; }
+		bool IsControllerConnected(int) const override { return false; }
+		bool CheckControllerButton(int, ControllerButton, InputState) const override { return false; }
+		float GetControllerAxis(int, ControllerAxis) const override { return 0.0f; }
+
 		bool CheckKeyboardKey(int, InputState) const override { return false; }
 	};
 
@@ -79,7 +95,10 @@ namespace Mage
 		void AddInputAction(InputAction* action) const override;
 		void RemoveInputAction(InputAction* action) const override;
 
-		bool CheckGamepadButton(int controllerIndex, ControllerButton button, InputState state) const override;
+		bool IsControllerConnected(int controllerIndex) const override;
+		bool CheckControllerButton(int controllerIndex, ControllerButton button, InputState state) const override;
+		float GetControllerAxis(int controllerIndex, ControllerAxis axis) const override;
+
 		bool CheckKeyboardKey(int keyboardKey, InputState state) const override;
 
 	private:

@@ -5,6 +5,8 @@
 #include "Mage/Input/InputManager.h"
 #include "Mage/Engine/SoundManager.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
+#include "Mage/Scenegraph/GameObject.h"
+#include "Mage/Scenegraph/Scene.h"
 
 SoundTester::SoundTester()
 {

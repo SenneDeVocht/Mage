@@ -3,6 +3,8 @@
 
 #pragma warning(push, 0)
 #include <b2_body.h>
+#include <b2_polygon_shape.h>
+#include <b2_fixture.h>
 #pragma warning(pop)
 
 #include "imgui.h"
@@ -12,11 +14,12 @@
 #include "Mage/Scenegraph/Scene.h"
 #include "Mage/Engine/PhysicsHandler.h"
 #include "Mage/ImGui/ImGuiHelper.h"
+#include "Mage/Components/BoxColliderComponent.h"
 
 Mage::RigidBodyComponent::RigidBodyComponent(BodyType type, bool fixedRotation, float gravityScale)
-	: m_Type{ type }
-	, m_FixedRotation{ fixedRotation }
-	, m_GravityScale{ gravityScale }
+	: m_InitialType{ type }
+    , m_InitialFixedRotation{ fixedRotation }
+    , m_InitialGravityScale{ gravityScale }
 {}
 
 Mage::RigidBodyComponent::~RigidBodyComponent()
@@ -26,7 +29,7 @@ Mage::RigidBodyComponent::~RigidBodyComponent()
 
 void Mage::RigidBodyComponent::Awake()
 {
-	GetGameObject()->GetScene()->GetPhysicsHandler()->AddRigidBody(this);
+	GetGameObject()->GetScene()->GetPhysicsHandler()->AddRigidBody(this, static_cast<int>(m_InitialType), m_InitialFixedRotation, m_InitialGravityScale);
 	TransformChanged();
 }
 
@@ -34,17 +37,20 @@ void Mage::RigidBodyComponent::DrawProperties()
 {
 	ImGuiHelper::Component("Rigidbody Component", this, &m_ShouldBeEnabled, [&]()
 	{
+	    int type = static_cast<int>(GetType());
 		ImGuiHelper::ItemLabel("Type", ImGuiHelper::ItemLabelAlignment::Left);
-		if(ImGui::Combo("##Type", reinterpret_cast<int*>(&m_Type), "Static\0Kinematic\0Dynamic\0"))
-			m_RunTimeBody->SetType(static_cast<b2BodyType>(PhysicsHandler::RigidBodyTypeToBox2D(static_cast<int>(m_Type))));
+		if(ImGui::Combo("##Type", &type, "Static\0Kinematic\0Dynamic\0"))
+			SetType(static_cast<BodyType>(type));
 
+		bool fixedRotation = GetFixedRotation();
 		ImGuiHelper::ItemLabel("Fix Rotation", ImGuiHelper::ItemLabelAlignment::Left);
-		if(ImGui::Checkbox("##FixRotation", &m_FixedRotation))
-			m_RunTimeBody->SetFixedRotation(m_FixedRotation);
+		if(ImGui::Checkbox("##FixRotation", &fixedRotation))
+			SetFixedRotation(fixedRotation);
 
+		float gravityScale = GetGravityScale();
 		ImGuiHelper::ItemLabel("Gravity Scale", ImGuiHelper::ItemLabelAlignment::Left);
-		if(ImGui::DragFloat("##GravityScale", &m_GravityScale, 0.1f))
-			m_RunTimeBody->SetGravityScale(m_GravityScale);
+		if(ImGui::DragFloat("##GravityScale", &gravityScale, 0.1f))
+			SetGravityScale(gravityScale);
 
 		ImGui::BeginDisabled();
 
@@ -56,7 +62,41 @@ void Mage::RigidBodyComponent::DrawProperties()
 	});
 }
 
-void Mage::RigidBodyComponent::TransformChanged()
+void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider, bool isTrigger) const
+{
+	const auto objectScale = boxCollider->GetGameObject()->GetTransform()->GetWorldScale();
+	const auto objectOffset = boxCollider->GetGameObject()->GetTransform()->GetWorldPosition() - GetGameObject()->GetTransform()->GetWorldPosition();
+	const auto objectRotationOffset = boxCollider->GetGameObject()->GetTransform()->GetWorldRotation() - GetGameObject()->GetTransform()->GetWorldRotation();
+
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(
+		boxCollider->GetSize().x / 2.f * objectScale.x, boxCollider->GetSize().y / 2.f * objectScale.y,
+		{ objectOffset.x + boxCollider->GetOffset().x * objectScale.x, objectOffset.y + boxCollider->GetOffset().y * objectScale.y },
+		boxCollider->GetRotation() + objectRotationOffset);
+
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &boxShape;
+	fixtureDef.isSensor = isTrigger;
+	fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(boxCollider);
+
+	// TODO: Physics Material
+	fixtureDef.density = 1.f;
+	fixtureDef.friction = 0.5f;
+	fixtureDef.restitution = 0.5f;
+	fixtureDef.restitutionThreshold = 0.5f;
+
+	const auto fixture = m_RunTimeBody->CreateFixture(&fixtureDef);
+
+	boxCollider->SetRunTimeFixture(fixture);
+}
+
+void Mage::RigidBodyComponent::RemoveBoxCollider(BoxColliderComponent* boxCollider) const
+{
+	m_RunTimeBody->DestroyFixture(boxCollider->GetRunTimeFixture());
+}
+
+void Mage::RigidBodyComponent::TransformChanged() const
 {
 	const auto transform = GetGameObject()->GetTransform();
 	m_RunTimeBody->SetTransform(
@@ -70,6 +110,39 @@ void Mage::RigidBodyComponent::UpdateTransform() const
 {
 	GetGameObject()->GetTransform()->SetWorldPositionWithoutUpdatingRigidBody({ m_RunTimeBody->GetPosition().x, m_RunTimeBody->GetPosition().y });
 	GetGameObject()->GetTransform()->SetWorldRotationWithoutUpdatingRigidBody(glm::degrees(m_RunTimeBody->GetAngle()));
+}
+
+Mage::RigidBodyComponent::BodyType Mage::RigidBodyComponent::GetType() const
+{
+    return static_cast<BodyType>(m_RunTimeBody->GetType());
+}
+
+void Mage::RigidBodyComponent::SetType(BodyType type) const
+{
+    m_RunTimeBody->SetType(static_cast<b2BodyType>(type));
+	m_RunTimeBody->SetAwake(true);
+}
+
+bool Mage::RigidBodyComponent::GetFixedRotation() const
+{
+    return m_RunTimeBody->IsFixedRotation();
+}
+
+void Mage::RigidBodyComponent::SetFixedRotation(bool fixedRotation) const
+{
+    m_RunTimeBody->SetFixedRotation(fixedRotation);
+	m_RunTimeBody->SetAwake(true);
+}
+
+float Mage::RigidBodyComponent::GetGravityScale() const
+{
+	return m_RunTimeBody->GetGravityScale();
+}
+
+void Mage::RigidBodyComponent::SetGravityScale(float gravityScale) const
+{
+    m_RunTimeBody->SetGravityScale(gravityScale);
+	m_RunTimeBody->SetAwake(true);
 }
 
 void Mage::RigidBodyComponent::SetVelocity(const glm::vec2& velocity) const

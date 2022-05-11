@@ -224,6 +224,7 @@ glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
 		if (indexToCheck >= m_Tiles.size())
 			break;
 
+		// return if platform
 		if (m_Tiles[indexToCheck] == TileType::Platform ||
 			m_Tiles[indexToCheck] == TileType::Both)
 		{
@@ -231,7 +232,7 @@ glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
 		}
 	}
 
-	return IndexToPosition((int)currentIndex);
+	return position;
 }
 
 glm::vec2 Level::IndexToPosition(int index) const

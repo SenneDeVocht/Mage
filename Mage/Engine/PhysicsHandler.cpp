@@ -10,7 +10,6 @@
 #pragma warning(push, 0)        
 #include <b2_world.h>
 #include <b2_body.h>
-#include <b2_polygon_shape.h>
 #include <b2_fixture.h>
 #include <b2_contact.h>
 #pragma warning(pop)
@@ -120,24 +119,7 @@ void Mage::PhysicsHandler::UpdatePhysics() const
 	}
 }
 
-int Mage::PhysicsHandler::RigidBodyTypeToBox2D(int type)
-{
-	switch (static_cast<RigidBodyComponent::BodyType>(type))
-	{
-	case Mage::RigidBodyComponent::BodyType::Static:
-		return b2_staticBody;
-
-	case Mage::RigidBodyComponent::BodyType::Dynamic:
-		return b2_dynamicBody;
-
-	case Mage::RigidBodyComponent::BodyType::Kinematic:
-		return b2_kinematicBody;
-	}
-
-	return b2_staticBody;
-}
-
-void Mage::PhysicsHandler::AddRigidBody(RigidBodyComponent* rigidBody)
+void Mage::PhysicsHandler::AddRigidBody(RigidBodyComponent* rigidBody, int type, bool fixedRotation, float gravityScale)
 {
 	// Store pointer
 	m_pRigidBodies.push_back(rigidBody);
@@ -146,15 +128,15 @@ void Mage::PhysicsHandler::AddRigidBody(RigidBodyComponent* rigidBody)
 	const auto transform = rigidBody->GetGameObject()->GetTransform();
 
 	b2BodyDef bodyDef;
-	bodyDef.type = static_cast<b2BodyType>(RigidBodyTypeToBox2D(static_cast<int>(rigidBody->GetType())));
+	bodyDef.type = static_cast<b2BodyType>(type);
 	bodyDef.position.Set(
 		transform->GetWorldPosition().x,
 		transform->GetWorldPosition().y);
-	bodyDef.gravityScale = rigidBody->GetGravityScale();
+	bodyDef.gravityScale = gravityScale;
 	bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(rigidBody);
 
 	const auto body = m_pPhysicsWorld->CreateBody(&bodyDef);
-	body->SetFixedRotation(rigidBody->GetFixedRotation());
+	body->SetFixedRotation(fixedRotation);
 
 	rigidBody->SetRunTimeBody(body);
 }
@@ -167,31 +149,4 @@ void Mage::PhysicsHandler::RemoveRigidBody(RigidBodyComponent* rigidBody)
 	// Remove from component vector
 	const auto pos = std::remove(m_pRigidBodies.begin(), m_pRigidBodies.end(), rigidBody);
 	m_pRigidBodies.erase(pos, m_pRigidBodies.end());
-}
-
-void Mage::PhysicsHandler::AddBoxCollider(BoxColliderComponent* boxCollider) const
-{
-	const auto rigidBody = boxCollider->GetGameObject()->GetComponentByType<RigidBodyComponent>();
-	assert(rigidBody != nullptr);
-
-	const auto objectScale = boxCollider->GetGameObject()->GetTransform()->GetWorldScale();
-
-	b2PolygonShape boxShape;
-	boxShape.SetAsBox(
-		boxCollider->GetSize().x / 2.f * objectScale.x, boxCollider->GetSize().y / 2.f * objectScale.y,
-		{ boxCollider->GetOffset().x * objectScale.x, boxCollider->GetOffset().y * objectScale.y },
-		boxCollider->GetAngle());
-
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &boxShape;
-	fixtureDef.density = boxCollider->GetDensity();
-	fixtureDef.friction = boxCollider->GetFriction();
-	fixtureDef.restitution = boxCollider->GetRestitution();
-	fixtureDef.restitutionThreshold = boxCollider->GetRestitutionThreshold();
-	fixtureDef.isSensor = boxCollider->IsTrigger();
-	fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(boxCollider);
-
-	const auto fixture = rigidBody->GetRunTimeBody()->CreateFixture(&fixtureDef);
-
-	boxCollider->SetRunTimeFixture(fixture);
 }

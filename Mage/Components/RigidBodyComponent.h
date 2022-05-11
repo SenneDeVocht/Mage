@@ -27,29 +27,36 @@ namespace Mage
 		void Awake() override;
 		void DrawProperties() override;
 
-		void TransformChanged();
-		void UpdateTransform() const;
+		void AddBoxCollider(BoxColliderComponent* boxCollider, bool isTrigger) const;
+		void RemoveBoxCollider(BoxColliderComponent* boxCollider) const;
 
-		BodyType GetType() const { return m_Type; }
-		bool GetFixedRotation() const { return m_FixedRotation; }
-		float GetGravityScale() const { return m_GravityScale; }
+		void TransformChanged() const;
+		void UpdateTransform() const;
 
 		void SetRunTimeBody(b2Body* body) { m_RunTimeBody = body; }
 		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
 
-		// Interaction
-		void SetVelocity(const glm::vec2& velocity) const;
+
+		BodyType GetType() const;
+		void SetType(BodyType type) const;
+
+		bool GetFixedRotation() const;
+		void SetFixedRotation(bool fixedRotation) const;
+
+		float GetGravityScale() const;
+		void SetGravityScale(float gravityScale) const;
+
 		glm::vec2 GetVelocity() const;
+		void SetVelocity(const glm::vec2& velocity) const;
 
 		void ApplyForce(const glm::vec2& force, bool wake = true) const;
 		void ApplyImpulse(const glm::vec2& impulse, bool wake = true) const;
 
 	private:
-		BodyType m_Type = BodyType::Static;
-		bool m_FixedRotation = true;
-		float m_GravityScale = 1.0f;
+		BodyType m_InitialType;
+		bool m_InitialFixedRotation;
+		float m_InitialGravityScale;
 
-		// storage for runtime
 		b2Body* m_RunTimeBody = nullptr;
 	};
 }

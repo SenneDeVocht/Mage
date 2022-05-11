@@ -1,6 +1,11 @@
 #pragma once
 #include "Mage\Components\Component.h"
 
+namespace Mage
+{
+    class RigidBodyComponent;
+}
+
 class Level;
 class BurgerIngredientPart;
 
@@ -23,6 +28,7 @@ public:
 	void Update() override;
 
 	void PartSteppedOn();
+	bool IsFalling() const { return m_Falling; }
 
 private:
 	Level* m_pLevel;
@@ -31,9 +37,10 @@ private:
 	int m_PartsSteppedOn{ 0 };
 	std::vector<BurgerIngredientPart*> m_Parts;
 
-	bool m_Falling;
+	Mage::RigidBodyComponent* m_pRigidBody;
+
+	bool m_Falling{ false };
+	bool m_KeepFalling{ false };
 	float m_FallDestination;
-	glm::vec2 m_FallVelocity{ 0, 0 };
-	const glm::vec2 m_FallAcceleration{ 0, -9.81f };
 };
 

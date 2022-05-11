@@ -1,7 +1,6 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "BurgerIngredient.h"
 
-#include "Mage/Engine/Timer.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/Transform.h"
@@ -10,7 +9,7 @@
 #include "Mage/Components/BoxColliderComponent.h"
 
 #include "BurgerIngredientPart.h"
-#include "Level.h"
+#include "BurgerTime/Level.h"
 
 BurgerIngredient::BurgerIngredient(Level* level, IngredientType type)
 	: m_pLevel{ level }
@@ -19,6 +18,8 @@ BurgerIngredient::BurgerIngredient(Level* level, IngredientType type)
 
 void BurgerIngredient::Initialize()
 {
+	m_pRigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
+
 	std::string name;
 	switch (m_Type)
 	{
@@ -44,68 +45,57 @@ void BurgerIngredient::Initialize()
 
 	// LEFT
 	auto go = GetGameObject()->CreateChildObject("Left");
+	go->SetTag("IngredientPart");
 	go->GetTransform()->SetLocalPosition({ -0.75f, 0 });
 	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Left.png", 16), 2.f);
-	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{0.5f, 0.5f}, glm::vec2{0, 0}, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));
 
 	// MID LEFT
 	go = GetGameObject()->CreateChildObject("MidLeft");
+	go->SetTag("IngredientPart");
 	go->GetTransform()->SetLocalPosition({ -0.25f, 0 });
 	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Mid_Left.png", 16), 2.f);
-	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0, 0 }, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));
 	
 	// MID RIGHT
 	go = GetGameObject()->CreateChildObject("MidRight");
+	go->SetTag("IngredientPart");
 	go->GetTransform()->SetLocalPosition({ 0.25f, 0 });
 	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Mid_Right.png", 16), 2.f);
-	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0, 0 }, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));
     
 	// RIGHT
 	go = GetGameObject()->CreateChildObject("Right");
+	go->SetTag("IngredientPart");
 	go->GetTransform()->SetLocalPosition({ 0.75f, 0 });
 	go->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Ingredients/" + name + "/Right.png", 16), 2.f);
-	go->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Kinematic);
 	go->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0, 0 }, 0.f, true);
 	m_Parts.push_back(go->CreateComponent<BurgerIngredientPart>(this));
 }
 
 void BurgerIngredient::Update()
 {
-	if (m_Falling)
+	const auto transform = GetGameObject()->GetTransform();
+	if (m_Falling && transform->GetWorldPosition().y <= m_FallDestination && !m_KeepFalling)
 	{
-		const float deltaTime = Mage::Timer::GetInstance().GetDeltaTime();
-		m_FallVelocity += m_FallAcceleration * deltaTime;
-
-		const auto rigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
-		rigidBody->SetVelocity(m_FallVelocity);
-
 		// Destination reached
-		const auto transform = GetGameObject()->GetTransform();
-		if (transform->GetWorldPosition().y <= m_FallDestination)
+		m_pRigidBody->SetGravityScale(0.f);
+		m_pRigidBody->SetVelocity({ 0, 0 });
+
+		transform->SetLocalPosition({ transform->GetWorldPosition().x, m_FallDestination });
+		m_Falling = false;
+
+		// Reset parts
+		m_PartsSteppedOn = 0;
+		for (const auto part : m_Parts)
 		{
-			rigidBody->SetVelocity({ 0, 0 });
-
-			transform->SetLocalPosition({ transform->GetWorldPosition().x, m_FallDestination });
-			m_FallVelocity = {0, 0};
-			m_Falling = false;
-
-			// Reset parts
-			m_PartsSteppedOn = 0;
-
-			for (auto part : m_Parts)
-			{
-				part->DoneFalling();
-			}
+			part->DoneFalling();
 		}
 	}
 }
-
 
 void BurgerIngredient::PartSteppedOn()
 {
@@ -114,13 +104,23 @@ void BurgerIngredient::PartSteppedOn()
 	// Start falling
 	if (m_PartsSteppedOn >= (int)m_Parts.size())
 	{
-		for (auto part : m_Parts)
+		for (const auto part : m_Parts)
 		{
 			part->ReadyForFall();
 		}
 
-		const auto transform = GetGameObject()->GetTransform();
-		m_FallDestination = m_pLevel->GetNextPlatformDown(transform->GetWorldPosition()).y - 3 / 16.f;
+		const auto pos = GetGameObject()->GetTransform()->GetWorldPosition();
+		m_FallDestination = m_pLevel->GetNextPlatformDown(pos).y;
+
+        if (m_FallDestination == pos.y)
+        {
+			GetGameObject()->GetComponentByType<Mage::BoxColliderComponent>()->SetTrigger(false);
+			m_KeepFalling = true;
+        }
+
+		m_FallDestination -= 3 / 16.f;
+
+		m_pRigidBody->SetGravityScale(1.f);
 		m_Falling = true;
 	}
 }

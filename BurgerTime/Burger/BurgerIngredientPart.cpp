@@ -16,10 +16,12 @@ void BurgerIngredientPart::OnTriggerEnter(Mage::BoxColliderComponent* other)
 	if (!m_IsSteppedOn && !m_IsFalling)
 	{
 		if (other->GetGameObject()->GetTag() == "PeterPepper" ||
-			other->GetGameObject()->GetTag() == "Ingredient" &&
-			other->GetGameObject() != m_pIngredientItsAPartOf->GetGameObject() &&
-			other->GetGameObject()->GetParent() != m_pIngredientItsAPartOf->GetGameObject())
+			other->GetGameObject()->GetTag() == "Ingredient")
 		{
+			const auto ingredient = other->GetGameObject()->GetComponentByType<BurgerIngredient>();
+			if (ingredient != nullptr && ingredient->IsFalling())
+				return;
+
 			m_IsSteppedOn = true;
 			GetGameObject()->GetTransform()->Translate({ 0, -m_StepOnDistance });
 

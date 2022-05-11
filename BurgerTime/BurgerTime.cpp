@@ -9,19 +9,17 @@
 // Components
 #include "Mage/Components/CameraComponent.h"
 #include "Mage/Components/Transform.h"
+#include "Mage/Components/SpriteComponent.h"
 #include "Mage/Components/AnimatedSpriteComponent.h"
-#include "Mage/Components/TextComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Components/TilemapComponent.h"
 
 #include "PeterPepper.h"
 #include "Level.h"
-#include "BurgerIngredient.h"
-#include "SoundTester.h"
+#include "Burger/BurgerIngredient.h"
 
 // Other
-#include "InputTester.h"
 #include "Mage/Engine/ServiceLocator.h"
 #include "Mage/Engine/Renderer.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
@@ -116,22 +114,11 @@ void BurgerTime::LoadGame() const
 	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
 	burger->SetTag("Ingredient", true);
 
-	// TEXT TEST
-	//----------
-	const auto textObject = scene->CreateObject("Text");
-	textObject->CreateComponent<Mage::TextComponent>("TEST", resourceManager.LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f);
-
-	// SOUND TEST
-	//-----------
-	const auto sound = scene->CreateObject("Sound");
-	sound->CreateComponent<SoundTester>();
-
-	// INPUT TEST
-	//-----------
-	const auto inputTesterObject = scene->CreateObject("InputTester");
-	const auto inputTesterText = inputTesterObject->CreateComponent<Mage::TextComponent>("", resourceManager.LoadFont("Cyber11.ttf", 11), SDL_Color{255, 255, 255, 255}, 16.f, glm::vec2{0, 1});
-	inputTesterObject->CreateComponent<InputTester>(inputTesterText);
-	inputTesterObject->GetTransform()->SetWorldPosition({ -7.f, 7.f });
+	const auto burgerCatcher = scene->CreateObject("BurgerCatcher");
+	burgerCatcher->GetTransform()->SetLocalPosition({ -1.5f, -6.85f });
+	burgerCatcher->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
+	burgerCatcher->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.375f, 0.125f }, glm::vec2{ 0.f, -0.09375f }, 0.f);
+	burgerCatcher->CreateComponent<Mage::SpriteComponent>(resourceManager.LoadTexture("Level/BurgerCatcher.png", 16));
 
 	// DONE
 	//-----

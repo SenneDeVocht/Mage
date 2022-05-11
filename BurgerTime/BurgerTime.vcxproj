@@ -107,6 +107,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +127,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +147,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,6 +167,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,8 +178,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BurgerIngredient.cpp" />
-    <ClCompile Include="BurgerIngredientPart.cpp" />
+    <ClCompile Include="Burger\BurgerIngredient.cpp" />
+    <ClCompile Include="Burger\BurgerIngredientPart.cpp" />
     <ClCompile Include="BurgerTime.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -185,11 +189,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="InputTester.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PeterPepper.cpp" />
     <ClCompile Include="Level.cpp" />
-    <ClCompile Include="SoundTester.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mage\Mage.vcxproj">
@@ -197,14 +199,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BurgerIngredient.h" />
-    <ClInclude Include="BurgerIngredientPart.h" />
+    <ClInclude Include="Burger\BurgerIngredient.h" />
+    <ClInclude Include="Burger\BurgerIngredientPart.h" />
     <ClInclude Include="BurgerTime.h" />
     <ClInclude Include="BurgerTimePCH.h" />
-    <ClInclude Include="InputTester.h" />
     <ClInclude Include="PeterPepper.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="SoundTester.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

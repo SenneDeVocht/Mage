@@ -21,12 +21,8 @@ namespace Mage
 
 		void UpdatePhysics() const;
 
-		void AddRigidBody(RigidBodyComponent* rigidBody);
+		void AddRigidBody(RigidBodyComponent* rigidBody, int type, bool fixedRotation, float gravityScale);
 		void RemoveRigidBody(RigidBodyComponent* rigidBody);
-
-		void AddBoxCollider(BoxColliderComponent* boxCollider) const;
-
-		static int RigidBodyTypeToBox2D(int type);
 
 	private:
 		std::unique_ptr<b2World> m_pPhysicsWorld;

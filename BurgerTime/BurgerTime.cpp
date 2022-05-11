@@ -16,8 +16,8 @@
 #include "Mage/Components/TilemapComponent.h"
 
 #include "PeterPepper.h"
+#include "MrHotDog.h"
 #include "Level.h"
-#include "Burger/BurgerIngredient.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -68,35 +68,58 @@ void BurgerTime::LoadGame() const
 	const auto peterPepperObject = scene->CreateObject("PeterPepper");
 	peterPepperObject->GetTransform()->SetLocalPosition({ 0, -4.3125f });
 
-	auto idle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+	auto ppIdle = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		resourceManager.LoadTexture("PeterPepper/Idle.png", 16),
 		1, 0.f, 1.f);
-	auto walkFront = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+	auto ppWalkFront = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		resourceManager.LoadTexture("PeterPepper/WalkFront.png", 16),
 		4, 0.1f, 1.f);
-	auto walkBack = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+	auto ppWalkBack = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		resourceManager.LoadTexture("PeterPepper/WalkBack.png", 16),
 		4, 0.1f, 1.f);
-	auto walkLeft = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+	auto ppWalkLeft = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		resourceManager.LoadTexture("PeterPepper/WalkLeft.png", 16),
 		4, 0.1f, 1.f);
-	auto walkRight = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+	auto ppWalkRight = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
 		resourceManager.LoadTexture("PeterPepper/WalkRight.png", 16),
 		4, 0.1f, 1.f);
-	auto victory = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+	auto ppVictory = peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>(
         resourceManager.LoadTexture("PeterPepper/Victory.png", 16),
         2, 0.3f, 1.f);
 
 	peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
 	peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);
-	peterPepperObject->CreateComponent<PeterPepper>(level, idle, walkFront, walkBack, walkLeft, walkRight, victory);
+	peterPepperObject->CreateComponent<PeterPepper>(level, ppIdle, ppWalkFront, ppWalkBack, ppWalkLeft, ppWalkRight, ppVictory);
 	peterPepperObject->SetTag("PeterPepper");
 	
 	#pragma endregion
 
-	// BURGER TEST
-	//------------
+	// MR HOT DOG
+	//-----------
+#pragma region MrHotDog
+
+	const auto mrHotDogObject = scene->CreateObject("MrHotDog");
+	mrHotDogObject->GetTransform()->SetLocalPosition({ -6, 4.6875f });
 	
+	auto hdWalkFront = mrHotDogObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+		resourceManager.LoadTexture("MrHotDog/WalkFront.png", 16),
+		2, 0.1f, 1.f);
+	auto hdWalkBack = mrHotDogObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+		resourceManager.LoadTexture("MrHotDog/WalkBack.png", 16),
+		2, 0.1f, 1.f);
+	auto hdWalkLeft = mrHotDogObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+		resourceManager.LoadTexture("MrHotDog/WalkLeft.png", 16),
+		2, 0.1f, 1.f);
+	auto hdWalkRight = mrHotDogObject->CreateComponent<Mage::AnimatedSpriteComponent>(
+		resourceManager.LoadTexture("MrHotDog/WalkRight.png", 16),
+		2, 0.1f, 1.f);
+
+	mrHotDogObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	mrHotDogObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);
+	mrHotDogObject->CreateComponent<MrHotDog>(level, peterPepperObject->GetTransform(), hdWalkFront, hdWalkBack, hdWalkLeft, hdWalkRight);
+	mrHotDogObject->SetTag("Enemy");
+
+#pragma endregion
 
 	// DONE
 	//-----

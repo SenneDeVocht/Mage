@@ -131,10 +131,10 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 			if (position.y > m_NumRows / 2.f - 0.5f + m_PlatformHeight)
 				return false;
 
-			int idx = PositionToIndex(position);
+			int idx = PositionToTileIndex(position);
 
 			// Can only go up if horizontally on ladder
-			const float xRelToTile = position.x - IndexToPosition(idx).x;
+			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
 			if (abs(xRelToTile) > m_LadderWidth / 2.f)
 				return false;
 
@@ -145,7 +145,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 			// On platform can't go up if past the top of the platform
 			if (m_Tiles[idx] == TileType::Platform)
 			{
-				const float yRelToTile = position.y - IndexToPosition(idx).y;
+				const float yRelToTile = position.y - TileIndexToPosition(idx).y;
 				if (yRelToTile >= m_PlatformHeight)
 					return false;
 			}
@@ -158,15 +158,15 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 			if (position.y < -m_NumRows / 2.f + 0.5f)
 				return false;
 
-			const int idx = PositionToIndex(position);
+			const int idx = PositionToTileIndex(position);
 
 			// Can only go down if horizontally on ladder
-			const float xRelToTile = position.x - IndexToPosition(idx).x;
+			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
 			if (abs(xRelToTile) > m_LadderWidth / 2.f)
 				return false;
 
 			// Can't go down if not ladder or both underneath
-			const float yRelToTile = position.y - IndexToPosition(idx).y;
+			const float yRelToTile = position.y - TileIndexToPosition(idx).y;
 			if (yRelToTile <= 0 ||
 				(m_Tiles[idx] == TileType::Platform || m_Tiles[idx] == TileType::Both) && yRelToTile <= m_PlatformHeight)
 			{
@@ -186,10 +186,10 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 			if (position.x < -m_NumCols * 1.5f / 2.f + 0.75)
 				return false;
 
-			const int idx = PositionToIndex(position);
+			const int idx = PositionToTileIndex(position);
 
 			// Needs to be aligned with platform
-			const float yRelToTile = position.y - IndexToPosition(idx).y;
+			const float yRelToTile = position.y - TileIndexToPosition(idx).y;
 			if (yRelToTile > m_MaxAbovePlatform || yRelToTile < -m_MaxBelowPlatform)
 				return false;
 
@@ -198,7 +198,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 				return false;
 
 			// Tile left needs to be platform or both
-			const float xRelToTile = position.x - IndexToPosition(idx).x;
+			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
 			if (xRelToTile < 0)
 			{
 				const int idxLeft = idx - 1;
@@ -214,10 +214,10 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 			if (position.x > m_NumCols * 1.5f / 2.f - 0.75)
 				return false;
 
-			const int idx = PositionToIndex(position);
+			const int idx = PositionToTileIndex(position);
 
 			// Needs to be aligned with platform
-			const float yRelToTile = position.y - IndexToPosition(idx).y;
+			const float yRelToTile = position.y - TileIndexToPosition(idx).y;
 			if (yRelToTile > m_MaxAbovePlatform || yRelToTile < -m_MaxBelowPlatform)
 				return false;
 
@@ -226,7 +226,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 				return false;
 
 			// Tile right needs to be platform or both
-			const float xRelToTile = position.x - IndexToPosition(idx).x;
+			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
 			if (xRelToTile > 0)
 			{
 				const int idxRight = idx + 1;
@@ -243,15 +243,15 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 
 glm::vec2 Level::SnapToPlatform(const glm::vec2& position) const
 {
-	const int idx = PositionToIndex(position);
+	const int idx = PositionToTileIndex(position);
 
-	const float newYPos = IndexToPosition(idx).y + m_PlatformHeight;
+	const float newYPos = TileIndexToPosition(idx).y + m_PlatformHeight;
 	return { position.x, newYPos };
 }
 
 glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
 {
-	const size_t currentIndex = PositionToIndex(position);
+	const size_t currentIndex = PositionToTileIndex(position);
 
 	for (size_t i = 1; i < m_Tiles.size(); i++)
 	{
@@ -265,7 +265,7 @@ glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
 		if (m_Tiles[indexToCheck] == TileType::Platform ||
 			m_Tiles[indexToCheck] == TileType::Both)
 		{
-			return IndexToPosition((int)indexToCheck);
+			return TileIndexToPosition((int)indexToCheck);
 		}
 	}
 
@@ -281,7 +281,7 @@ bool Level::IsCompleted()
 		});
 }
 
-glm::vec2 Level::IndexToPosition(int index) const
+glm::vec2 Level::TileIndexToPosition(int index) const
 {
 	const int tileX = index % m_NumCols;
 	const int tileY = index / m_NumCols;
@@ -290,7 +290,7 @@ glm::vec2 Level::IndexToPosition(int index) const
 	return { tileX * 1.5f - offset.x, -(tileY - offset.y) };
 }
 
-int Level::PositionToIndex(const glm::vec2 & position) const
+int Level::PositionToTileIndex(const glm::vec2 & position) const
 {
 	// Outside of level
 	if (abs(position.x) >= m_NumCols * 1.5f / 2 ||

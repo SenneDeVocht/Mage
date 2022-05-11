@@ -24,11 +24,11 @@ public:
 	bool CanMoveInDirection(const glm::vec2& position, Direction direction) const;
 	glm::vec2 SnapToPlatform(const glm::vec2& position) const;
 	glm::vec2 GetNextPlatformDown(const glm::vec2& position) const;
+	int PositionToTileIndex(const glm::vec2& position) const;
+	glm::vec2 TileIndexToPosition(int index) const;
 	bool IsCompleted();
 
 private:
-	int PositionToIndex(const glm::vec2& position) const;
-	glm::vec2 IndexToPosition(int index) const;
 
 	std::vector<TileType> m_Tiles;
 	const int m_NumCols{ 9 };

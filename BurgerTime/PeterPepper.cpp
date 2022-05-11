@@ -9,14 +9,15 @@
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Engine/ServiceLocator.h"
 
-PeterPepper::PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront,
-                         Mage::AnimatedSpriteComponent* pWalkBack, Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight)
+PeterPepper::PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront, Mage::AnimatedSpriteComponent* pWalkBack,
+	Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight, Mage::AnimatedSpriteComponent* pVictory)
     : m_pLevel{ level }
 	, m_pIdle{ pIdle }
 	, m_pWalkFront{ pWalkfront }
 	, m_pWalkBack{ pWalkBack }
 	, m_pWalkLeft{ pWalkLeft }
 	, m_pWalkRight{ pWalkRight }
+    , m_pVictory{ pVictory }
 {
 	std::cout << "[PeterPepper] Arrow keys to move" << std::endl;
 }
@@ -35,48 +36,48 @@ void PeterPepper::Update()
 	// INPUT
 	//------
 	m_Input = { 0, 0 };
-
-	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x26, Mage::InputState::Hold))
-		++m_Input.y;
-	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x28, Mage::InputState::Hold))
-		--m_Input.y;
-
-	if (m_Input.y == 0)
-	{
-		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x25, Mage::InputState::Hold))
-			--m_Input.x;
-		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x27, Mage::InputState::Hold))
-			++m_Input.x;
-	}
-
-	// ANIMATIONS
-	//-----------
 	m_pIdle->SetEnabled(false);
 	m_pWalkFront->SetEnabled(false);
 	m_pWalkBack->SetEnabled(false);
 	m_pWalkLeft->SetEnabled(false);
 	m_pWalkRight->SetEnabled(false);
+	m_pVictory->SetEnabled(false);
 
-	if (m_Input.x == 0 && m_Input.y == 0)
-	{
-		m_pIdle->SetEnabled(true);
+	if (!m_pLevel->IsCompleted()) {
+		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x26, Mage::InputState::Hold))
+			++m_Input.y;
+		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x28, Mage::InputState::Hold))
+			--m_Input.y;
+
+		if (m_Input.y == 0)
+		{
+			if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x25, Mage::InputState::Hold))
+				--m_Input.x;
+			if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x27, Mage::InputState::Hold))
+				++m_Input.x;
+		}
+
+		// ANIMATIONS
+		//-----------
+		if (m_Input.x == 0 && m_Input.y == 0)
+			m_pIdle->SetEnabled(true);
+        
+		else if (m_Input.x > 0)
+			m_pWalkRight->SetEnabled(true);
+        
+		else if (m_Input.x < 0)
+			m_pWalkLeft->SetEnabled(true);
+        
+		else if (m_Input.y > 0)
+			m_pWalkBack->SetEnabled(true);
+        
+		else if (m_Input.y < 0)
+			m_pWalkFront->SetEnabled(true);
 	}
-	else if (m_Input.x > 0)
-	{
-		m_pWalkRight->SetEnabled(true);
-	}
-	else if (m_Input.x < 0)
-	{
-		m_pWalkLeft->SetEnabled(true);
-	}
-	else if (m_Input.y > 0)
-	{
-		m_pWalkBack->SetEnabled(true);
-	}
-	else if (m_Input.y < 0)
-	{
-		m_pWalkFront->SetEnabled(true);
-	}
+    else
+    {
+        m_pVictory->SetEnabled(true);
+    }
 }
 
 void PeterPepper::FixedUpdate()

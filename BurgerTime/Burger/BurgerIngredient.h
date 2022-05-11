@@ -29,6 +29,7 @@ public:
 
 	void PartSteppedOn();
 	bool IsFalling() const { return m_Falling; }
+	bool IsCollected() const { return m_KeepFalling; }
 
 private:
 	Level* m_pLevel;
@@ -37,10 +38,10 @@ private:
 	int m_PartsSteppedOn{ 0 };
 	std::vector<BurgerIngredientPart*> m_Parts;
 
-	Mage::RigidBodyComponent* m_pRigidBody;
+	Mage::RigidBodyComponent* m_pRigidBody{ nullptr };
 
 	bool m_Falling{ false };
 	bool m_KeepFalling{ false };
-	float m_FallDestination;
+	float m_FallDestination{ 0 };
 };
 

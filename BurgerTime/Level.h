@@ -2,6 +2,8 @@
 
 #include "Mage/Components/Component.h"
 
+class BurgerIngredient;
+
 class Level : public Mage::Component
 {
 public:
@@ -22,6 +24,7 @@ public:
 	bool CanMoveInDirection(const glm::vec2& position, Direction direction) const;
 	glm::vec2 SnapToPlatform(const glm::vec2& position) const;
 	glm::vec2 GetNextPlatformDown(const glm::vec2& position) const;
+	bool IsCompleted();
 
 private:
 	int PositionToIndex(const glm::vec2& position) const;
@@ -37,5 +40,7 @@ private:
 
 	const float m_MaxAbovePlatform{ 0.4f };
 	const float m_MaxBelowPlatform{ 0.f };
+
+	std::vector<BurgerIngredient*> m_Ingredients;
 };
 

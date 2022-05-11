@@ -27,15 +27,6 @@ namespace Mage
 		void Awake() override;
 		void DrawProperties() override;
 
-		void AddBoxCollider(BoxColliderComponent* boxCollider, bool isTrigger) const;
-		void RemoveBoxCollider(BoxColliderComponent* boxCollider) const;
-
-		void TransformChanged() const;
-		void UpdateTransform() const;
-
-		void SetRunTimeBody(b2Body* body) { m_RunTimeBody = body; }
-		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
-
 
 		BodyType GetType() const;
 		void SetType(BodyType type) const;
@@ -53,6 +44,19 @@ namespace Mage
 		void ApplyImpulse(const glm::vec2& impulse, bool wake = true) const;
 
 	private:
+		friend class PhysicsHandler;
+		friend class BoxColliderComponent;
+		friend class Transform;
+
+		void TransformChanged() const;
+		void UpdateTransform() const;
+
+		void SetRunTimeBody(b2Body* body) { m_RunTimeBody = body; }
+		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
+
+		void AddBoxCollider(BoxColliderComponent* boxCollider, bool isTrigger) const;
+		void RemoveBoxCollider(BoxColliderComponent* boxCollider) const;
+
 		BodyType m_InitialType;
 		bool m_InitialFixedRotation;
 		float m_InitialGravityScale;

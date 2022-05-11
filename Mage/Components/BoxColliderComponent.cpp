@@ -27,7 +27,7 @@ void Mage::BoxColliderComponent::Initialize()
 
 void Mage::BoxColliderComponent::RenderGizmos() const
 {
-	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition() * GetGameObject()->GetTransform()->GetWorldScale();
+	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition()/* * GetGameObject()->GetTransform()->GetWorldScale()*/;
 	const auto wSize = GetGameObject()->GetTransform()->GetWorldScale() * m_Size;
 	const auto wRot = GetGameObject()->GetTransform()->GetWorldRotation() + m_Rotation;
 

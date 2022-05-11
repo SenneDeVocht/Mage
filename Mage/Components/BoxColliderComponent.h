@@ -35,17 +35,21 @@ namespace Mage
 		bool IsTrigger() const;
 		void SetTrigger(bool isTrigger) const;
 
-		b2Fixture* GetRunTimeFixture() const { return m_RunTimeFixture; }
-		void SetRunTimeFixture(b2Fixture* fixture){ m_RunTimeFixture = fixture; }
+	private:
+		friend class PhysicsHandler;
+		friend class RigidBodyComponent;
+		friend class Transform;
 
-	    void RecalculateShape();
+		b2Fixture* GetRunTimeFixture() const { return m_RunTimeFixture; }
+		void SetRunTimeFixture(b2Fixture* fixture) { m_RunTimeFixture = fixture; }
+
+		void RecalculateShape();
 
 		void NotifyGameObjectOnTriggerEnter(BoxColliderComponent* other) const;
 		void NotifyGameObjectOnTriggerExit(BoxColliderComponent* other) const;
 		void NotifyGameObjectOnCollisionEnter(BoxColliderComponent* other) const;
 		void NotifyGameObjectOnCollisionExit(BoxColliderComponent* other) const;
 
-	private:
 		void AttachToRigidbody(GameObject* gameObject);
 
 		// Collider shape

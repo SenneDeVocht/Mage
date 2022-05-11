@@ -1,15 +1,20 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "Level.h"
 
+#include "Burger/BurgerIngredient.h"
 #include "Mage/Components/SpriteComponent.h"
 #include "Mage/Components/TilemapComponent.h"
 #include "Mage/Components/Transform.h"
-#include "Mage/ResourceManagement/ResourceManager.h"
+#include "Mage/Components/RigidBodyComponent.h"
+#include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Scenegraph/GameObject.h"
+#include "Mage/ResourceManagement/ResourceManager.h"
 
 void Level::LoadLevel()
 {
-
+	// TILES
+	//------
+#pragma region tiles
 	// Init the stage
 	m_Tiles = {
 		TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform,
@@ -82,6 +87,38 @@ void Level::LoadLevel()
 			}
 		}
 	}
+#pragma endregion
+
+	// BURGER INGREDIENTS
+	//-------------------
+#pragma region burgerIngredients
+	auto burger = GetGameObject()->CreateChildObject("Burger");
+	burger->GetTransform()->SetLocalPosition({ -1.5f, 1.8125f });
+	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, BurgerIngredient::IngredientType::BunTop));
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
+	burger->SetTag("Ingredient", true);
+
+	burger = GetGameObject()->CreateChildObject("Burger");
+	burger->GetTransform()->SetLocalPosition({ -1.5f, -0.1875f });
+	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, BurgerIngredient::IngredientType::Patty));
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
+	burger->SetTag("Ingredient", true);
+
+	burger = GetGameObject()->CreateChildObject("Burger");
+	burger->GetTransform()->SetLocalPosition({ -1.5f, -2.1875f });
+	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, BurgerIngredient::IngredientType::BunBottom));
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
+	burger->SetTag("Ingredient", true);
+
+	const auto burgerCatcher = GetGameObject()->CreateChildObject("BurgerCatcher");
+	burgerCatcher->GetTransform()->SetLocalPosition({ -1.5f, -6.85f });
+	burgerCatcher->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
+	burgerCatcher->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.375f, 0.125f }, glm::vec2{ 0.f, -0.09375f }, 0.f);
+	burgerCatcher->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/BurgerCatcher.png", 16));
+#pragma endregion
 }
 
 bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) const
@@ -233,6 +270,15 @@ glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
 	}
 
 	return position;
+}
+
+bool Level::IsCompleted()
+{
+	return std::all_of(
+		m_Ingredients.begin(), m_Ingredients.end(),
+		[](BurgerIngredient* ingredient) {
+		    return ingredient->IsCollected();
+		});
 }
 
 glm::vec2 Level::IndexToPosition(int index) const

@@ -12,8 +12,8 @@ namespace Mage
 class PeterPepper final : public Mage::Component
 {
 public:
-	explicit PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront, Mage::AnimatedSpriteComponent* pWalkBack,
-		Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight);
+	PeterPepper(Level* level, Mage::AnimatedSpriteComponent* pIdle, Mage::AnimatedSpriteComponent* pWalkfront, Mage::AnimatedSpriteComponent* pWalkBack,
+		Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight, Mage::AnimatedSpriteComponent* pVictory);
 	~PeterPepper() override;
 
 	PeterPepper(const PeterPepper& other) = delete;
@@ -35,6 +35,7 @@ private:
 	Mage::AnimatedSpriteComponent* m_pWalkBack{};
 	Mage::AnimatedSpriteComponent* m_pWalkLeft{};
 	Mage::AnimatedSpriteComponent* m_pWalkRight{};
+	Mage::AnimatedSpriteComponent* m_pVictory{};
 
 	glm::vec2 m_Input{ 0, 0 };
 	float m_Speed{ 2 };

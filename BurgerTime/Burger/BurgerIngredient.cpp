@@ -118,7 +118,7 @@ void BurgerIngredient::PartSteppedOn()
 			m_KeepFalling = true;
         }
 
-		m_FallDestination -= 3 / 16.f;
+		m_FallDestination += 5 / 16.f;
 
 		m_pRigidBody->SetGravityScale(1.f);
 		m_Falling = true;

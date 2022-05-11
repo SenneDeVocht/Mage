@@ -74,7 +74,6 @@ void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider,
 		{ objectOffset.x + boxCollider->GetOffset().x * objectScale.x, objectOffset.y + boxCollider->GetOffset().y * objectScale.y },
 		boxCollider->GetRotation() + objectRotationOffset);
 
-
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
 	fixtureDef.isSensor = isTrigger;

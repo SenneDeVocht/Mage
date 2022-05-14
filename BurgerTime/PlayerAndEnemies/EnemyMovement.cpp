@@ -105,12 +105,15 @@ void EnemyMovement::FixedUpdate()
 
 	// ANIMATION
 	//----------
-	if (m_CurrentDirection.x == 1)
+	if (m_CurrentDirection.x == 1 && m_pAnimatedSprite->GetAnimation() != m_pWalkRight.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkRight);
-	else if (m_CurrentDirection.x == -1)
+
+	else if (m_CurrentDirection.x == -1 && m_pAnimatedSprite->GetAnimation() != m_pWalkLeft.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkLeft);
-	else if (m_CurrentDirection.y == 1)
+
+	else if (m_CurrentDirection.y == 1 && m_pAnimatedSprite->GetAnimation() != m_pWalkBack.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkBack);
-	else if (m_CurrentDirection.y == -1)
+
+	else if (m_CurrentDirection.y == -1 && m_pAnimatedSprite->GetAnimation() != m_pWalkFront.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkFront);
 }

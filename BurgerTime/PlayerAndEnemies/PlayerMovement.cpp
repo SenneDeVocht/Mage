@@ -49,19 +49,19 @@ void PlayerMovement::Update()
 
 	// ANIMATIONS
 	//-----------
-	if (m_Input.x == 0 && m_Input.y == 0)
+	if (m_Input.x == 0 && m_Input.y == 0 && m_pAnimatedSprite->GetAnimation() != m_pIdle.get())
 		m_pAnimatedSprite->SetAnimation(m_pIdle);
     
-	else if (m_Input.x > 0)
+	else if (m_Input.x > 0 && m_pAnimatedSprite->GetAnimation() != m_pWalkRight.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkRight);
     
-	else if (m_Input.x < 0)
+	else if (m_Input.x < 0 && m_pAnimatedSprite->GetAnimation() != m_pWalkLeft.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkLeft);
     
-	else if (m_Input.y > 0)
+	else if (m_Input.y > 0 && m_pAnimatedSprite->GetAnimation() != m_pWalkBack.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkBack);
     
-	else if (m_Input.y < 0)
+	else if (m_Input.y < 0 && m_pAnimatedSprite->GetAnimation() != m_pWalkFront.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkFront);
 }
 

@@ -17,21 +17,24 @@ Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(float renderLayer)
 
 void Mage::AnimatedSpriteComponent::Update()
 {
-	if (m_pAnimation != nullptr)
+	if (m_pAnimation == nullptr)
+		return;
+
+	if (m_pAnimation->NumFrames < 1)
+		return;
+
+	if (m_CurrentFrame == m_pAnimation->NumFrames - 1 && !m_pAnimation->Loop)
+		return;
+
+	m_Timer += Timer::GetInstance().GetDeltaTime();
+
+	if (m_Timer >= m_pAnimation->SecondsPerFrame)
 	{
-		if (m_pAnimation->NumFrames < 1)
-			return;
+		m_Timer = 0;
 
-		m_Timer += Timer::GetInstance().GetDeltaTime();
-
-		if (m_Timer >= m_pAnimation->SecondsPerFrame)
-		{
-			m_Timer = 0;
-
-			// Next frame and loop
-			++m_CurrentFrame;
-			m_CurrentFrame %= m_pAnimation->NumFrames;
-		}
+		// Next frame and loop
+		++m_CurrentFrame;
+		m_CurrentFrame %= m_pAnimation->NumFrames;
 	}
 }
 
@@ -49,7 +52,7 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 
 void Mage::AnimatedSpriteComponent::Render() const
 {
-	if (m_pAnimation != nullptr && m_pAnimation->pSpritesheet != nullptr)
+	if (m_pAnimation != nullptr && m_pAnimation->pSpritesheet != nullptr && m_pAnimation->NumFrames > 0)
 	{
 		// Get partial texture rect
 		const int srcWidth = m_pAnimation->pSpritesheet->GetWidth() / m_pAnimation->NumFrames;
@@ -64,4 +67,12 @@ void Mage::AnimatedSpriteComponent::Render() const
 		// Render
 		ServiceLocator::GetRenderer()->RenderPartialTexture(m_pAnimation->pSpritesheet.get(), srcX, 0, srcWidth, srcHeight, pos, rot, scale, m_RenderLayer);
 	}
+}
+
+void Mage::AnimatedSpriteComponent::SetAnimation(const std::shared_ptr<SpriteAnimation>& animation)
+{
+	m_pAnimation = animation;
+
+	m_CurrentFrame = 0;
+	m_Timer = 0;
 }

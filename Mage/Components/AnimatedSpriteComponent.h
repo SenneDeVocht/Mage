@@ -7,15 +7,17 @@ namespace Mage
 
 	struct SpriteAnimation
 	{
-		SpriteAnimation(const std::shared_ptr<Texture2D>& pSpritesheet, int numFrames, float secondsPerFrame)
+		SpriteAnimation(const std::shared_ptr<Texture2D>& pSpritesheet, int numFrames, float secondsPerFrame, bool loop = true)
 			: pSpritesheet{ pSpritesheet }
 			, NumFrames{ numFrames }
 			, SecondsPerFrame{ secondsPerFrame }
+			, Loop{ loop }
 		{}
 
-		std::shared_ptr<Texture2D> pSpritesheet{};
-		int NumFrames{};
-		float SecondsPerFrame{};
+		std::shared_ptr<Texture2D> pSpritesheet;
+		int NumFrames;
+		float SecondsPerFrame;
+		bool Loop;
 	};
 
 	class AnimatedSpriteComponent : public Component
@@ -27,7 +29,8 @@ namespace Mage
 		void DrawProperties() override;
 		void Render() const override;
 
-		void SetAnimation(const std::shared_ptr<SpriteAnimation>& animation) { m_pAnimation = animation; }
+		void SetAnimation(const std::shared_ptr<SpriteAnimation>& animation);
+		SpriteAnimation* GetAnimation() const { return m_pAnimation.get(); }
 
 	private:
 		std::shared_ptr<SpriteAnimation> m_pAnimation{};

@@ -15,8 +15,9 @@
 #include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Components/TilemapComponent.h"
 
-#include "BurgerTime/Player/PlayerMovement.h"
-#include "BurgerTime/EnemyMovement.h"
+#include "BurgerTime/PlayerAndEnemies/PlayerMovement.h"
+#include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
+#include "BurgerTime/PlayerAndEnemies/EnemyMovement.h"
 #include "BurgerTime/Level.h"
 
 // Other
@@ -78,6 +79,9 @@ void BurgerTime::LoadGame() const
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkBack.png",  16), 4, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkLeft.png",  16), 4, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkRight.png", 16), 4, 0.1f));
+	peterPepperObject->CreateComponent<PeterPepper>(level,
+		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Victory.png", 16), 2, 0.2f),
+		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Death.png",   16), 6, 0.1f, false));
 	
 	#pragma endregion
 

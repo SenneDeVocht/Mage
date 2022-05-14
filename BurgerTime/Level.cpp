@@ -183,7 +183,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 		case Direction::Left:
 		{
 			// Cant go out of map
-			if (position.x < -m_NumCols * 1.5f / 2.f + 0.75)
+			if (position.x < -m_NumCols * 1.5f / 2.f + 0.75 || isAI && position.x < -m_NumCols * 1.5f / 2.f + 0.75 + m_LadderWidth / 2.f)
 				return false;
 
 			const int idx = PositionToTileIndex(position);
@@ -199,7 +199,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 
 			// Tile left needs to be platform or both
 			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
-			if (xRelToTile < 0 || isAI && xRelToTile < -m_LadderWidth / 2.f)
+			if (xRelToTile < 0 || isAI && xRelToTile < m_LadderWidth / 2.f)
 			{
 				const int idxLeft = idx - 1;
 				if (m_Tiles[idxLeft] != TileType::Platform && m_Tiles[idxLeft] != TileType::Both)
@@ -211,7 +211,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 		case Direction::Right:
 		{
 			// Cant go out of map
-			if (position.x > m_NumCols * 1.5f / 2.f - 0.75)
+			if (position.x > m_NumCols * 1.5f / 2.f - 0.75 || isAI && position.x > m_NumCols * 1.5f / 2.f - 0.75 - m_LadderWidth / 2.f)
 				return false;
 
 			const int idx = PositionToTileIndex(position);
@@ -227,7 +227,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 
 			// Tile right needs to be platform or both
 			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
-			if (xRelToTile > 0 || isAI && xRelToTile > m_LadderWidth / 2.f)
+			if (xRelToTile > 0 || isAI && xRelToTile > -m_LadderWidth / 2.f)
 			{
 				const int idxRight = idx + 1;
 				if (m_Tiles[idxRight] != TileType::Platform && m_Tiles[idxRight] != TileType::Both)

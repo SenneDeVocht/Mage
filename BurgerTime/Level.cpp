@@ -121,7 +121,7 @@ void Level::LoadLevel()
 #pragma endregion
 }
 
-bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) const
+bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, bool isAI) const
 {
 	switch (direction)
 	{
@@ -199,7 +199,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 
 			// Tile left needs to be platform or both
 			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
-			if (xRelToTile < 0)
+			if (xRelToTile < 0 || isAI && xRelToTile < -m_LadderWidth / 2.f)
 			{
 				const int idxLeft = idx - 1;
 				if (m_Tiles[idxLeft] != TileType::Platform && m_Tiles[idxLeft] != TileType::Both)
@@ -227,7 +227,7 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction) c
 
 			// Tile right needs to be platform or both
 			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
-			if (xRelToTile > 0)
+			if (xRelToTile > 0 || isAI && xRelToTile > m_LadderWidth / 2.f)
 			{
 				const int idxRight = idx + 1;
 				if (m_Tiles[idxRight] != TileType::Platform && m_Tiles[idxRight] != TileType::Both)

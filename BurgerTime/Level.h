@@ -21,7 +21,7 @@ public:
 	};
 
 	void LoadLevel();
-	bool CanMoveInDirection(const glm::vec2& position, Direction direction) const;
+	bool CanMoveInDirection(const glm::vec2& position, Direction direction, bool isAI = false) const;
 	glm::vec2 SnapToPlatform(const glm::vec2& position) const;
 	glm::vec2 GetNextPlatformDown(const glm::vec2& position) const;
 	int PositionToTileIndex(const glm::vec2& position) const;

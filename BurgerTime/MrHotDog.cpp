@@ -31,48 +31,51 @@ void MrHotDog::FixedUpdate()
 	const int currentTile = m_pLevel->PositionToTileIndex(ownPos);
 	const auto currentTilePos = m_pLevel->TileIndexToPosition(currentTile);
 
-	const bool cantKeepMovingInCurrentDirection = m_CurrentDirection.x == 1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right)
-		|| m_CurrentDirection.x == -1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left)
-		|| m_CurrentDirection.y == 1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Up)
-		|| m_CurrentDirection.y == -1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Down);
+	const bool cantKeepMovingInCurrentDirection = m_CurrentDirection.x == 1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right, true)
+		|| m_CurrentDirection.x == -1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left, true)
+		|| m_CurrentDirection.y == 1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Up, true)
+		|| m_CurrentDirection.y == -1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Down, true);
 
 	// MOVE
 	//-----
-    if (currentTile != m_LastIntersection)
+    if (currentTile != m_LastIntersection || cantKeepMovingInCurrentDirection)
     {
 	    glm::ivec2 wantedDirection{ 0, 0 };
-	    if (targetPos.x > ownPos.x && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right))
+	    if (targetPos.x > ownPos.x && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right, true))
 		    wantedDirection.x = 1;
-        if (targetPos.x < ownPos.x && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left))
+        if (targetPos.x < ownPos.x && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left, true))
 		    wantedDirection.x = -1;
-        if (targetPos.y > ownPos.y && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Up))
+        if (targetPos.y > ownPos.y && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Up, true))
 		    wantedDirection.y = 1;
-	    if (targetPos.y < ownPos.y && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Down))
+	    if (targetPos.y < ownPos.y && m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Down, true))
 		    wantedDirection.y = -1;
 
-	    if (wantedDirection.y != 0 && m_CurrentDirection.y == 0)
+	    if (wantedDirection.y != 0 && m_CurrentDirection.y != -wantedDirection.y)
 	    {
+			if (wantedDirection.y != m_CurrentDirection.y)
+				m_LastIntersection = currentTile;
+
 		    m_CurrentDirection = { 0, wantedDirection.y};
-			m_LastIntersection = currentTile;
 	    }
-        else if (wantedDirection.x != 0 && m_CurrentDirection.x == 0)
+        else if (wantedDirection.x != 0 && m_CurrentDirection.x != -wantedDirection.x)
         {
+			if (wantedDirection.x != m_CurrentDirection.x)
+				m_LastIntersection = currentTile;
+
 		    m_CurrentDirection = { wantedDirection.x, 0 };
 			GetGameObject()->GetTransform()->SetLocalPosition(m_pLevel->SnapToPlatform(ownPos));
-			m_LastIntersection = currentTile;
         }
 	    else if (cantKeepMovingInCurrentDirection) // Cant move in current direction and also not in wanted direction
 	    {
 			// Try to find any possible direction
-
-		    if (m_CurrentDirection.x == 1)
+		    if (m_CurrentDirection.x != 0)
 		    {
-			    if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Up))
+			    if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Up, true))
 			    {
 				    m_CurrentDirection = { 0, 1 };
 					m_LastIntersection = currentTile;
 			    }
-				else if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Down))
+				else if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Down, true))
 				{
 					m_CurrentDirection = { 0, -1 };
 					m_LastIntersection = currentTile;
@@ -81,49 +84,14 @@ void MrHotDog::FixedUpdate()
 				else
 					assert(false); // got stuck
 		    }
-			else if (m_CurrentDirection.x == -1)
+			else if (m_CurrentDirection.y != 0)
 			{
-				if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Up))
-				{
-					m_CurrentDirection = { 0, 1 };
-					m_LastIntersection = currentTile;
-				}
-
-				else if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Down))
-				{
-					m_CurrentDirection = { 0, -1 };
-					m_LastIntersection = currentTile;
-				}
-
-				else
-					assert(false); // got stuck
-			}
-			else if (m_CurrentDirection.y == 1)
-			{
-				if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left))
+				if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left, true))
 				{
 					m_CurrentDirection = { -1, 0 };
 					m_LastIntersection = currentTile;
 				}
-
-				else if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right))
-				{
-					m_CurrentDirection = { 1, 0 };
-					m_LastIntersection = currentTile;
-				}
-
-				else
-					assert(false); // got stuck
-			}
-			else if (m_CurrentDirection.y == -1)
-			{
-				if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left))
-				{
-					m_CurrentDirection = { -1, 0 };
-					m_LastIntersection = currentTile;
-				}
-
-				else if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right))
+				else if (m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right, true))
 				{
 					m_CurrentDirection = { 1, 0 };
 					m_LastIntersection = currentTile;

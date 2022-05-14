@@ -15,9 +15,6 @@ Mage::GameObject::GameObject(const std::string& name, Mage::GameObject* parent, 
 		m_Tag = m_pParentGameObject->GetTag();
 }
 
-// this is necessary to use unique pointers of incomplete types
-Mage::GameObject::~GameObject() = default;
-
 void Mage::GameObject::Initialize() const
 {
 	// Update components
@@ -161,6 +158,24 @@ void Mage::GameObject::OnCollisionExit(Mage::BoxColliderComponent* other) const
 
 void Mage::GameObject::ChangeSceneGraph()
 {
+	// Add Children
+	for (const auto& pChild : m_ChildrenToAdd)
+		m_Children.push_back(pChild);
+
+	for (const auto& pChild : m_ChildrenToAdd)
+		pChild->Initialize();
+
+	m_ChildrenToAdd.clear();
+
+	// Add Components
+	for (const auto& pComponent : m_ComponentsToAdd)
+		m_Components.push_back(pComponent);
+
+	for (const auto& pComponent : m_ComponentsToAdd)
+		pComponent->Initialize();
+
+	m_ComponentsToAdd.clear();
+
 	// Destroy marked objects
 	const auto pos = std::remove_if(m_Children.begin(), m_Children.end(),
 		[](const auto& o) { return o->IsMarkedForDestroy(); });
@@ -222,10 +237,10 @@ Mage::Transform* Mage::GameObject::GetTransform() const
 
 Mage::GameObject* Mage::GameObject::CreateChildObject(const std::string& name)
 {
-	auto child = std::make_unique<GameObject>(name, this, m_Scene);
+	auto child = std::make_shared<GameObject>(name, this, m_Scene);
 	const auto pChild = child.get();
 
-	m_Children.push_back(std::move(child));
+	m_ChildrenToAdd.push_back(child);
 
 	return pChild;
 }

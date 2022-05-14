@@ -36,7 +36,7 @@ void BurgerTime::LoadGame() const
 	//-------
 	#pragma region Camera
 	
-	const auto cameraObject = scene->CreateObject("Camera");
+	const auto cameraObject = scene->CreateChildObject("Camera");
 	const auto camera = cameraObject->CreateComponent<Mage::CameraComponent>(glm::vec2{ 15.f, 15.f });
     Mage::ServiceLocator::GetRenderer()->SetCamera(camera);
 	
@@ -46,7 +46,7 @@ void BurgerTime::LoadGame() const
 	//------
 	#pragma region Level
 
-	const auto levelObject = scene->CreateObject("Level");
+	const auto levelObject = scene->CreateChildObject("Level");
 	levelObject->GetTransform()->SetWorldPosition({ 0.f, -0.5f });
 	const auto level = levelObject->CreateComponent<Level>();
 	levelObject->CreateComponent<Mage::TilemapComponent>(
@@ -59,7 +59,6 @@ void BurgerTime::LoadGame() const
 			resourceManager.LoadTexture("Level/Ladder_And_Platform_Wide.png", 16)
 		},
 		glm::vec2{1.5f, 1.f});
-	level->LoadLevel();
 
 	#pragma endregion
 
@@ -67,7 +66,7 @@ void BurgerTime::LoadGame() const
 	//-------------
 	#pragma region PeterPepper
 	
-	const auto peterPepperObject = scene->CreateObject("PeterPepper");
+	const auto peterPepperObject = scene->CreateChildObject("PeterPepper");
 	peterPepperObject->SetTag("PeterPepper");
 	peterPepperObject->GetTransform()->SetLocalPosition({ 0, -4.3125f });
 
@@ -90,7 +89,7 @@ void BurgerTime::LoadGame() const
 	//-----------
 #pragma region MrHotDog
 
-	const auto mrHotDogObject = scene->CreateObject("MrHotDog");
+	const auto mrHotDogObject = scene->CreateChildObject("MrHotDog");
 	mrHotDogObject->SetTag("Enemy");
 	mrHotDogObject->GetTransform()->SetLocalPosition({ -6, 4.6875f });
 	
@@ -103,11 +102,8 @@ void BurgerTime::LoadGame() const
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkLeft.png",  16), 2, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkRight.png", 16), 2, 0.1f));
 	mrHotDogObject->CreateComponent<Enemy>(mrHotDogMovement,
+		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/Stunned.png", 16), 2, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/Death.png", 16), 4, 0.1f, false));
 
 #pragma endregion
-
-	// DONE
-	//-----
-	scene->Initialize();
 }

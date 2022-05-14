@@ -14,7 +14,7 @@ class BurgerIngredient;
 class Enemy final : public Mage::Component
 {
 public:
-	Enemy(Component* movement, const std::shared_ptr<Mage::SpriteAnimation>& pDeath);
+	Enemy(Component* movement, const std::shared_ptr<Mage::SpriteAnimation>& pStunned, const std::shared_ptr<Mage::SpriteAnimation>& pDeath);
 
 	void Initialize() override;
 	void Update() override;
@@ -28,7 +28,12 @@ private:
 	Mage::RigidBodyComponent* m_pRigidBody{};
 	Mage::AnimatedSpriteComponent* m_pAnimatedSprite{};
 	
+	std::shared_ptr<Mage::SpriteAnimation> m_pStunned{};
 	std::shared_ptr<Mage::SpriteAnimation> m_pDeath{};
+
+	bool m_IsStunned{ false };
+	const float m_StunnedDuration{ 2.0f };
+	float m_StunnedTimer{ 0.0f };
 
 	BurgerIngredient* m_pLastTouchedIngredient{};
 	bool m_TouchingIngredient{ false };

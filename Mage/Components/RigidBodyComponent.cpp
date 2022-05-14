@@ -27,7 +27,7 @@ Mage::RigidBodyComponent::~RigidBodyComponent()
 	GetGameObject()->GetScene()->GetPhysicsHandler()->RemoveRigidBody(this);
 }
 
-void Mage::RigidBodyComponent::Awake()
+void Mage::RigidBodyComponent::Initialize()
 {
 	GetGameObject()->GetScene()->GetPhysicsHandler()->AddRigidBody(this, static_cast<int>(m_InitialType), m_InitialFixedRotation, m_InitialGravityScale);
 	TransformChanged();

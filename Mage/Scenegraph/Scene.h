@@ -26,7 +26,7 @@ namespace Mage
 		void RenderGizmos() const;
 		void ChangeSceneGraph();
 
-		GameObject* CreateObject(const std::string& name);
+		GameObject* CreateChildObject(const std::string& name);
 		std::vector<GameObject*> GetObjects() const;
 
 		PhysicsHandler* GetPhysicsHandler() const {	return m_pPhysicsHandler.get(); }
@@ -40,7 +40,8 @@ namespace Mage
 
 		std::unique_ptr<PhysicsHandler> m_pPhysicsHandler{};
 
-		std::vector<std::unique_ptr<GameObject>> m_Objects{};
+		std::vector<std::shared_ptr<GameObject>> m_Objects{};
+		std::vector<std::shared_ptr<GameObject>> m_ObjectsToAdd{};
 
 		static unsigned int m_IdCounter;
 	};

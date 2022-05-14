@@ -21,12 +21,12 @@ const std::string& Mage::Scene::GetName() const
 	return m_Name;
 }
 
-Mage::GameObject* Mage::Scene::CreateObject(const std::string& name)
+Mage::GameObject* Mage::Scene::CreateChildObject(const std::string& name)
 {
-	auto object = std::make_unique<GameObject>(name, nullptr, this);
+	const auto object = std::make_shared<GameObject>(name, nullptr, this);
 	const auto pObject = object.get();
-
-	m_Objects.push_back(std::move(object));
+	
+	m_ObjectsToAdd.push_back(object);
 
 	return pObject;
 }
@@ -101,6 +101,15 @@ void Mage::Scene::RenderGizmos() const
 
 void Mage::Scene::ChangeSceneGraph()
 {
+	// Add Objects
+	for (const auto& object : m_ObjectsToAdd)
+		m_Objects.push_back(object);
+
+	for (const auto& object : m_ObjectsToAdd)
+		object->Initialize();
+
+	m_ObjectsToAdd.clear();
+
 	// Destroy marked root objects
 	const auto pos = std::remove_if(m_Objects.begin(), m_Objects.end(),
 		[](const auto& o) { return o->IsMarkedForDestroy(); });

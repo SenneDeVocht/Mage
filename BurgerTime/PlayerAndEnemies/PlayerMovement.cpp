@@ -77,6 +77,7 @@ void PlayerMovement::FixedUpdate()
 		m_Input.y < 0 && m_pLevel->CanMoveInDirection(position, Level::Direction::Down))
 	{
 		velocity.y = m_Input.y * m_Speed;
+		m_LastDirection = { 0, m_Input.y };
 	}
 
 	// Left - Right
@@ -84,6 +85,7 @@ void PlayerMovement::FixedUpdate()
 		m_Input.x > 0 && m_pLevel->CanMoveInDirection(position, Level::Direction::Right))
 	{
 		velocity.x = m_Input.x * m_Speed;
+		m_LastDirection = { m_Input.x, 0 };
 		GetGameObject()->GetTransform()->SetLocalPosition(m_pLevel->SnapToPlatform(position));
 	}
 

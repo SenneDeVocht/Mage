@@ -10,7 +10,7 @@
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
-void Level::LoadLevel()
+void Level::Initialize()
 {
 	// TILES
 	//------

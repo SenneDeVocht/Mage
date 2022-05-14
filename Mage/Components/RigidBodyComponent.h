@@ -24,7 +24,7 @@ namespace Mage
 		RigidBodyComponent& operator=(const RigidBodyComponent& other) = delete;
 		RigidBodyComponent& operator=(RigidBodyComponent&& other) = delete;
 
-		void Awake() override;
+		void Initialize() override;
 		void DrawProperties() override;
 
 

@@ -15,12 +15,6 @@ namespace Mage
 	{
 	public:
 		GameObject(const std::string& name, GameObject* parent, Scene* scene);
-		~GameObject();
-
-		GameObject(const GameObject& other) = delete;
-		GameObject(GameObject&& other) = delete;
-		GameObject& operator=(const GameObject& other) = delete;
-		GameObject& operator=(GameObject&& other) = delete;
 
 		void Initialize() const;
 		void Update() const;
@@ -71,10 +65,12 @@ namespace Mage
 		std::string m_Tag{ "Default" };
 
 		//Transform* m_pTransform;
-		std::vector<std::unique_ptr<Component>> m_Components;
+		std::vector<std::shared_ptr<Component>> m_Components;
+		std::vector<std::shared_ptr<Component>> m_ComponentsToAdd;
 		Transform* m_pTransform;
 
-		std::vector<std::unique_ptr<GameObject>> m_Children;
+		std::vector<std::shared_ptr<GameObject>> m_Children;
+		std::vector<std::shared_ptr<GameObject>> m_ChildrenToAdd;
 		GameObject* m_pParentGameObject = nullptr;
 
 		Scene* m_Scene;
@@ -90,12 +86,11 @@ namespace Mage
 			return nullptr;
 
 		// Create component and add it
-		auto component = std::unique_ptr<componentType>(new componentType(args...));
+		auto component = std::shared_ptr<componentType>(new componentType(args...));
 		component->SetGameObject(this);
-		component->Awake();
 		const auto pComponent = component.get();
 
-		m_Components.push_back(std::move(component));
+		m_ComponentsToAdd.push_back(component);
 
 		return pComponent;
 	}
@@ -106,7 +101,7 @@ namespace Mage
 		auto it = std::find_if(
 			m_Components.begin(),
 			m_Components.end(),
-			[](const std::unique_ptr<Component>& component)
+			[](const std::shared_ptr<Component>& component)
 			{
 				return typeid(typeToFind) == typeid(*component);
 			});

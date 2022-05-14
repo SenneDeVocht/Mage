@@ -21,6 +21,8 @@ public:
 	void FixedUpdate() override;
 	void OnDisable() override;
 
+	const glm::ivec2& GetDirection() const { return m_LastDirection; }
+
 private:
 	Level* m_pLevel{};
 
@@ -35,5 +37,7 @@ private:
 
 	glm::vec2 m_Input{ 0, 0 };
 	float m_Speed{ 2 };
+
+	glm::ivec2 m_LastDirection{ 0, 0 };
 };
 

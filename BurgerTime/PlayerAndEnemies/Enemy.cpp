@@ -9,8 +9,9 @@
 #include "Mage/Engine/Timer.h"
 #include "Mage/Scenegraph/GameObject.h"
 
-Enemy::Enemy(Component* movement, const std::shared_ptr<Mage::SpriteAnimation>& pDeath)
+Enemy::Enemy(Component* movement, const std::shared_ptr<Mage::SpriteAnimation>& pStunned, const std::shared_ptr<Mage::SpriteAnimation>& pDeath)
 	: m_pMovement{ movement }
+	, m_pStunned{ pStunned }
 	, m_pDeath{ pDeath }
 {}
 
@@ -28,8 +29,23 @@ void Enemy::Update()
 
 		if (m_DeadTimer >= m_pDeath->NumFrames * m_pDeath->SecondsPerFrame)
 			GetGameObject()->Destroy();
-
 		return;
+	}
+
+	if (m_IsStunned)
+	{
+		m_StunnedTimer += Mage::Timer::GetInstance().GetDeltaTime();
+
+		if (m_StunnedTimer >= m_StunnedDuration)
+		{
+			m_IsStunned = false;
+			m_pMovement->SetEnabled(true);
+			m_StunnedTimer = 0.0f;
+		}
+		else
+		{
+			return;
+		}
 	}
 	
 	if (m_pLastTouchedIngredient != nullptr && m_TouchingIngredient && m_pLastTouchedIngredient->IsFalling() && !m_IsFalling && !m_IsDead &&
@@ -51,13 +67,15 @@ void Enemy::Update()
 
 void Enemy::OnTriggerEnter(Mage::BoxColliderComponent* other)
 {
+	if (m_IsDead)
+		return;
+
 	const auto otherGameObject = other->GetGameObject();
 
-	if (!m_IsDead && otherGameObject->GetTag() == "Ingredient")
+	if (otherGameObject->GetTag() == "Ingredient")
 	{
 		m_pLastTouchedIngredient = otherGameObject->GetComponentByType<BurgerIngredient>();
 		m_TouchingIngredient = true;
-		std::cout << "Enemy touched ingredient" << std::endl;
 
 		const bool isHigher = otherGameObject->GetTransform()->GetWorldPosition().y > GetGameObject()->GetTransform()->GetWorldPosition().y;
 		if (m_pLastTouchedIngredient->IsFalling() && isHigher)
@@ -65,15 +83,18 @@ void Enemy::OnTriggerEnter(Mage::BoxColliderComponent* other)
 			Die();
 		}
 	}
+	else if (otherGameObject->GetTag() == "PepperSpray")
+	{
+		m_IsStunned = true;
+		m_pMovement->SetEnabled(false);
+		m_pAnimatedSprite->SetAnimation(m_pStunned);
+	}
 }
 
 void Enemy::OnTriggerExit(Mage::BoxColliderComponent* other)
 {
 	if (other->GetGameObject()->GetTag() == "Ingredient")
-	{
 		m_TouchingIngredient = false;
-		std::cout << "Enemy left ingredient" << std::endl;
-	}
 }
 
 void Enemy::Die()

@@ -118,6 +118,9 @@ void Mage::MageGame::Run()
 		// Game Loop
 		while (!quit)
 		{
+			// Add, Remove, Enable, Disable, ...
+			sceneManager.ChangeSceneGraph();
+
 			// Time calculations
 			timer.CalculateTime();
 			lag += timer.GetDeltaTime();
@@ -146,9 +149,6 @@ void Mage::MageGame::Run()
 
 			// Render
 			renderer->Render();
-
-			// Destroy Objects
-			sceneManager.ChangeSceneGraph();
 		}
 
 		Cleanup();

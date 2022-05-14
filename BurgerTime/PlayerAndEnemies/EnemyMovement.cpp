@@ -122,3 +122,9 @@ void EnemyMovement::OnDisable()
 {
 	m_pRigidBody->SetVelocity({ 0, 0 });
 }
+
+void EnemyMovement::OnEnable()
+{
+	m_pRigidBody->SetVelocity({ m_CurrentDirection.x * m_Speed, m_CurrentDirection.y * m_Speed });
+}
+

@@ -20,6 +20,9 @@ public:
 	void OnTriggerEnter(Mage::BoxColliderComponent* other) override;
 
 private:
+	void SprayPepper();
+	void StopSprayingPepper();
+
 	bool m_IsDead{ false };
 
 	Level* m_pLevel{};
@@ -29,4 +32,16 @@ private:
 
 	std::shared_ptr<Mage::SpriteAnimation> m_pVictory{};
 	std::shared_ptr<Mage::SpriteAnimation> m_pDeath{};
+
+	// PepperSpray
+	bool m_SprayingPepper{ false };
+
+	Mage::GameObject* m_pPepperSpray{};
+	const float m_PepperSprayDuration{ 0.4f };
+	float m_PepperSprayTimer{ 0 };
+
+	std::shared_ptr<Mage::SpriteAnimation> m_pPepperSprayRightAnimation{};
+	std::shared_ptr<Mage::SpriteAnimation> m_pPepperSprayLeftAnimation{};
+	std::shared_ptr<Mage::SpriteAnimation> m_pPepperSprayUpAnimation{};
+	std::shared_ptr<Mage::SpriteAnimation> m_pPepperSprayDownAnimation{};
 };

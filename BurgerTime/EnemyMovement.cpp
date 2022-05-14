@@ -1,5 +1,5 @@
 #include "BurgerTime/BurgerTimePCH.h"
-#include "MrHotDog.h"
+#include "EnemyMovement.h"
 
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/Transform.h"
@@ -7,8 +7,8 @@
 #include "Mage/Components/RigidBodyComponent.h"
 #include "BurgerTime/Level.h"
 
-MrHotDog::MrHotDog(Level* level, Mage::Transform* target, Mage::AnimatedSpriteComponent* pWalkfront, Mage::AnimatedSpriteComponent* pWalkBack,
-                   Mage::AnimatedSpriteComponent* pWalkLeft, Mage::AnimatedSpriteComponent* pWalkRight)
+EnemyMovement::EnemyMovement(Level* level, Mage::Transform* target, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
+	const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack, const std::shared_ptr<Mage::SpriteAnimation>& pWalkLeft, const std::shared_ptr<Mage::SpriteAnimation>& pWalkRight)
 	: m_pLevel{ level }
     , m_pTarget{ target }
 	, m_pWalkFront{ pWalkfront }
@@ -17,19 +17,17 @@ MrHotDog::MrHotDog(Level* level, Mage::Transform* target, Mage::AnimatedSpriteCo
 	, m_pWalkRight{ pWalkRight }
 {}
 
-MrHotDog::~MrHotDog() = default;
-
-void MrHotDog::Initialize()
+void EnemyMovement::Initialize()
 {
 	m_pRigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
+	m_pAnimatedSprite = GetGameObject()->GetComponentByType<Mage::AnimatedSpriteComponent>();
 }
 
-void MrHotDog::FixedUpdate()
+void EnemyMovement::FixedUpdate()
 {
 	const auto ownPos = GetGameObject()->GetTransform()->GetWorldPosition();
 	const auto targetPos = m_pTarget->GetWorldPosition();
 	const int currentTile = m_pLevel->PositionToTileIndex(ownPos);
-	const auto currentTilePos = m_pLevel->TileIndexToPosition(currentTile);
 
 	const bool cantKeepMovingInCurrentDirection = m_CurrentDirection.x == 1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right, true)
 		|| m_CurrentDirection.x == -1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left, true)
@@ -107,17 +105,12 @@ void MrHotDog::FixedUpdate()
 
 	// ANIMATION
 	//----------
-	m_pWalkFront->SetEnabled(false);
-	m_pWalkBack->SetEnabled(false);
-	m_pWalkLeft->SetEnabled(false);
-	m_pWalkRight->SetEnabled(false);
-
 	if (m_CurrentDirection.x == 1)
-		m_pWalkRight->SetEnabled(true);
-	if (m_CurrentDirection.x == -1)
-		m_pWalkLeft->SetEnabled(true);
-	if (m_CurrentDirection.y == 1)
-		m_pWalkBack->SetEnabled(true);
-	if (m_CurrentDirection.y == -1)
-		m_pWalkFront->SetEnabled(true);
+		m_pAnimatedSprite->SetAnimation(m_pWalkRight);
+	else if (m_CurrentDirection.x == -1)
+		m_pAnimatedSprite->SetAnimation(m_pWalkLeft);
+	else if (m_CurrentDirection.y == 1)
+		m_pAnimatedSprite->SetAnimation(m_pWalkBack);
+	else if (m_CurrentDirection.y == -1)
+		m_pAnimatedSprite->SetAnimation(m_pWalkFront);
 }

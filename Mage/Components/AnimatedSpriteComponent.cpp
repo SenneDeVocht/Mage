@@ -11,29 +11,27 @@
 #include "Mage/ImGui/ImGuiHelper.h"
 #include "Mage/ResourceManagement/Texture2D.h"
 
-Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(std::shared_ptr<Texture2D> pSpritesheet, int numFrames, float secondsPerFrame, float layer)
-	: m_Layer{ layer }
-	, m_NumFrames{ numFrames }
-    , m_SecondsPerFrame{ secondsPerFrame }
-{
-	SetSpritesheet(pSpritesheet);
-}
+Mage::AnimatedSpriteComponent::AnimatedSpriteComponent(float renderLayer)
+	: m_RenderLayer{ renderLayer }
+{}
 
 void Mage::AnimatedSpriteComponent::Update()
 {
-	if (m_NumFrames < 1)
-		return;
-
-
-	m_Timer += Mage::Timer::GetInstance().GetDeltaTime();
-
-	if (m_Timer >= m_SecondsPerFrame)
+	if (m_pAnimation != nullptr)
 	{
-		m_Timer -= m_SecondsPerFrame;
+		if (m_pAnimation->NumFrames < 1)
+			return;
 
-		// Next frame and loop
-		++m_CurrentFrame;
-		m_CurrentFrame %= m_NumFrames;
+		m_Timer += Timer::GetInstance().GetDeltaTime();
+
+		if (m_Timer >= m_pAnimation->SecondsPerFrame)
+		{
+			m_Timer = 0;
+
+			// Next frame and loop
+			++m_CurrentFrame;
+			m_CurrentFrame %= m_pAnimation->NumFrames;
+		}
 	}
 }
 
@@ -42,26 +40,20 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Animated Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 	    // Texture Image
-	    ImGuiHelper::Texture(m_pSpritesheet.get());
-
-		ImGuiHelper::ItemLabel("Number Of Frames", ImGuiHelper::ItemLabelAlignment::Left);
-	    ImGui::DragInt("##Number Of Frames", &m_NumFrames);
-
-		ImGuiHelper::ItemLabel("Seconds Per Frame", ImGuiHelper::ItemLabelAlignment::Left);
-	    ImGui::DragFloat("##Seconds Per Frame", &m_SecondsPerFrame);
-
+	    ImGuiHelper::Texture(m_pAnimation->pSpritesheet.get());
+		
 		ImGuiHelper::ItemLabel("Layer", ImGuiHelper::ItemLabelAlignment::Left);
-		ImGui::DragFloat("##Layer", &m_Layer, 0.1f);
+		ImGui::DragFloat("##Layer", &m_RenderLayer, 0.1f);
 	});
 }
 
 void Mage::AnimatedSpriteComponent::Render() const
 {
-	if (m_pSpritesheet != nullptr)
+	if (m_pAnimation != nullptr && m_pAnimation->pSpritesheet != nullptr)
 	{
 		// Get partial texture rect
-		const int srcWidth = m_pSpritesheet->GetWidth() / m_NumFrames;
-		const int srcHeight = m_pSpritesheet->GetHeight();
+		const int srcWidth = m_pAnimation->pSpritesheet->GetWidth() / m_pAnimation->NumFrames;
+		const int srcHeight = m_pAnimation->pSpritesheet->GetHeight();
 		const int srcX = m_CurrentFrame * srcWidth;
 
 		// Get pos rot scale
@@ -70,11 +62,6 @@ void Mage::AnimatedSpriteComponent::Render() const
 		const auto& scale = m_pGameObject->GetTransform()->GetWorldScale();
 
 		// Render
-		ServiceLocator::GetRenderer()->RenderPartialTexture(m_pSpritesheet.get(), srcX, 0, srcWidth, srcHeight, pos, rot, scale, m_Layer);
+		ServiceLocator::GetRenderer()->RenderPartialTexture(m_pAnimation->pSpritesheet.get(), srcX, 0, srcWidth, srcHeight, pos, rot, scale, m_RenderLayer);
 	}
-}
-
-void Mage::AnimatedSpriteComponent::SetSpritesheet(std::shared_ptr<Texture2D> pTexture)
-{
-	m_pSpritesheet = pTexture;
 }

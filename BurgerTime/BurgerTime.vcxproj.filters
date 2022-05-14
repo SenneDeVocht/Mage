@@ -2,21 +2,21 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="BurgerTime.h" />
-    <ClInclude Include="PeterPepper.h" />
+    <ClInclude Include="Player\PlayerMovement.h" />
     <ClInclude Include="BurgerTimePCH.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Burger\BurgerIngredient.h" />
     <ClInclude Include="Burger\BurgerIngredientPart.h" />
-    <ClInclude Include="MrHotDog.h" />
+    <ClInclude Include="EnemyMovement.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="PeterPepper.cpp" />
+    <ClCompile Include="Player\PlayerMovement.cpp" />
     <ClCompile Include="BurgerTimePCH.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Burger\BurgerIngredient.cpp" />
     <ClCompile Include="Burger\BurgerIngredientPart.cpp" />
-    <ClCompile Include="MrHotDog.cpp" />
+    <ClCompile Include="EnemyMovement.cpp" />
   </ItemGroup>
 </Project>

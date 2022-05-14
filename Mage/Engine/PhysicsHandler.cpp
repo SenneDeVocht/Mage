@@ -51,7 +51,7 @@ namespace Mage
 			m_Contacts.emplace_back(Contact{ colliderA, colliderB, ContacType::End });
 		}
 		
-		const std::vector<Contact>& GetContacts() const { return m_Contacts; }
+		const std::vector<Contact> GetContacts() const { return m_Contacts; }
 		void ResetContacts() { m_Contacts.clear(); }
 
 	private:

@@ -26,12 +26,15 @@ public:
 
 	void Initialize() override;
 	void Update() override;
+	void OnTriggerEnter(Mage::BoxColliderComponent* other) override;
 
 	void PartSteppedOn();
 	bool IsFalling() const { return m_Falling; }
 	bool IsCollected() const { return m_KeepFalling; }
 
 private:
+	void StartFalling();
+
 	Level* m_pLevel;
 	IngredientType m_Type;
 

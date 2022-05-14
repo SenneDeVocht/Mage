@@ -9,6 +9,7 @@
     <ClInclude Include="Burger\BurgerIngredientPart.h" />
     <ClInclude Include="PlayerAndEnemies\EnemyMovement.h" />
     <ClInclude Include="PlayerAndEnemies\PeterPepper.h" />
+    <ClInclude Include="PlayerAndEnemies\Enemy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -20,5 +21,6 @@
     <ClCompile Include="Burger\BurgerIngredientPart.cpp" />
     <ClCompile Include="PlayerAndEnemies\EnemyMovement.cpp" />
     <ClCompile Include="PlayerAndEnemies\PeterPepper.cpp" />
+    <ClCompile Include="PlayerAndEnemies\Enemy.cpp" />
   </ItemGroup>
 </Project>

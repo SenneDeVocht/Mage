@@ -18,6 +18,7 @@
 #include "BurgerTime/PlayerAndEnemies/PlayerMovement.h"
 #include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyMovement.h"
+#include "BurgerTime/PlayerAndEnemies/Enemy.h"
 #include "BurgerTime/Level.h"
 
 // Other
@@ -96,11 +97,13 @@ void BurgerTime::LoadGame() const
 	mrHotDogObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
 	mrHotDogObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);
 	mrHotDogObject->CreateComponent<Mage::AnimatedSpriteComponent>();
-	mrHotDogObject->CreateComponent<EnemyMovement>(level, peterPepperObject->GetTransform(),
+	const auto mrHotDogMovement = mrHotDogObject->CreateComponent<EnemyMovement>(level, peterPepperObject->GetTransform(),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkFront.png", 16), 2, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkBack.png",  16), 2, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkLeft.png",  16), 2, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkRight.png", 16), 2, 0.1f));
+	mrHotDogObject->CreateComponent<Enemy>(mrHotDogMovement,
+		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/Death.png", 16), 4, 0.1f, false));
 
 #pragma endregion
 

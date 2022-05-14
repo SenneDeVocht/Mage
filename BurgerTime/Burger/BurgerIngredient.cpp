@@ -97,6 +97,19 @@ void BurgerIngredient::Update()
 	}
 }
 
+void BurgerIngredient::OnTriggerEnter(Mage::BoxColliderComponent* other)
+{
+	if (other->GetGameObject()->GetTag() == "Ingredient")
+	{
+		const auto otherIngredient = other->GetGameObject()->GetComponentByType<BurgerIngredient>();
+		if (otherIngredient->IsFalling() && !m_Falling)
+		{
+			StartFalling();
+		}
+	}
+}
+
+
 void BurgerIngredient::PartSteppedOn()
 {
 	++m_PartsSteppedOn;
@@ -104,23 +117,28 @@ void BurgerIngredient::PartSteppedOn()
 	// Start falling
 	if (m_PartsSteppedOn >= (int)m_Parts.size())
 	{
-		for (const auto part : m_Parts)
-		{
-			part->ReadyForFall();
-		}
-
-		const auto pos = GetGameObject()->GetTransform()->GetWorldPosition();
-		m_FallDestination = m_pLevel->GetNextPlatformDown(pos).y;
-
-        if (m_FallDestination == pos.y)
-        {
-			GetGameObject()->GetComponentByType<Mage::BoxColliderComponent>()->SetTrigger(false);
-			m_KeepFalling = true;
-        }
-
-		m_FallDestination += 5 / 16.f;
-
-		m_pRigidBody->SetGravityScale(1.f);
-		m_Falling = true;
+		StartFalling();
 	}
+}
+
+void BurgerIngredient::StartFalling()
+{
+	for (const auto part : m_Parts)
+	{
+		part->ReadyForFall();
+	}
+
+	const auto pos = GetGameObject()->GetTransform()->GetWorldPosition();
+	m_FallDestination = m_pLevel->GetNextPlatformDown(pos).y;
+
+	if (m_FallDestination == pos.y)
+	{
+		GetGameObject()->GetComponentByType<Mage::BoxColliderComponent>()->SetTrigger(false);
+		m_KeepFalling = true;
+	}
+
+	m_FallDestination += 5 / 16.f;
+
+	m_pRigidBody->SetGravityScale(1.f);
+	m_Falling = true;
 }

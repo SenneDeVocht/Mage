@@ -62,16 +62,16 @@ void Mage::Transform::TransformChanged(bool updateRigidBody)
 		const auto rb = GetGameObject()->GetComponentByType<RigidBodyComponent>();
 		if (rb != nullptr)
 			rb->TransformChanged();
-    }
 
-	const auto col = GetGameObject()->GetComponentByType<BoxColliderComponent>();
-	if (col != nullptr)
-		col->RecalculateShape();
+		const auto boxCollider = GetGameObject()->GetComponentByType<BoxColliderComponent>();
+		if (boxCollider != nullptr && rb == nullptr)
+			boxCollider->RecalculateShape();
+    }
 
 	// Update children
 	for (const auto child : GetGameObject()->GetChildren())
 	{
-		child->GetTransform()->TransformChanged(true);
+		child->GetTransform()->TransformChanged(updateRigidBody);
 	}
 }
 

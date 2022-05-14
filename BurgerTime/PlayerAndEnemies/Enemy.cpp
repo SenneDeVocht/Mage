@@ -82,5 +82,6 @@ void Enemy::Die()
 
 	m_pMovement->SetEnabled(false);
 	m_pRigidBody->SetGravityScale(0);
+	m_pRigidBody->SetVelocity({ 0, 0 });
 	m_pAnimatedSprite->SetAnimation(m_pDeath);
 }

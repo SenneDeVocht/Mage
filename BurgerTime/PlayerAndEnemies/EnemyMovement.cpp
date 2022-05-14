@@ -117,3 +117,8 @@ void EnemyMovement::FixedUpdate()
 	else if (m_CurrentDirection.y == -1 && m_pAnimatedSprite->GetAnimation() != m_pWalkFront.get())
 		m_pAnimatedSprite->SetAnimation(m_pWalkFront);
 }
+
+void EnemyMovement::OnDisable()
+{
+	m_pRigidBody->SetVelocity({ 0, 0 });
+}

@@ -89,3 +89,8 @@ void PlayerMovement::FixedUpdate()
 
 	m_pRigidBody->SetVelocity(velocity);
 }
+
+void PlayerMovement::OnDisable()
+{
+	m_pRigidBody->SetVelocity({ 0, 0 });
+}

@@ -25,6 +25,8 @@ namespace Mage
 		virtual void OnCollisionExit(BoxColliderComponent*) {}
 
 		void ChangeSceneGraph();
+		virtual void OnEnable() {};
+		virtual void OnDisable() {};
 
 		void SetGameObject(GameObject* pGameObject);
 		GameObject* GetGameObject() const;

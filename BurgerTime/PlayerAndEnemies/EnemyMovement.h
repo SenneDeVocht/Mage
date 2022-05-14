@@ -19,6 +19,7 @@ public:
 
 	void Initialize() override;
 	void FixedUpdate() override;
+	void OnDisable() override;
 
 private:
 	Mage::RigidBodyComponent* m_pRigidBody{};

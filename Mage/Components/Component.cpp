@@ -35,6 +35,12 @@ void Mage::Component::SetGameObject(GameObject* pGameObject)
 
 void Mage::Component::ChangeSceneGraph()
 {
+	if (m_ShouldBeEnabled && !m_IsEnabled)
+		OnEnable();
+
+    if (!m_ShouldBeEnabled && m_IsEnabled)
+		OnDisable();
+
     m_IsEnabled = m_ShouldBeEnabled;
 }
 

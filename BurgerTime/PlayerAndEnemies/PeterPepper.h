@@ -25,7 +25,6 @@ private:
 	Level* m_pLevel{};
 
 	PlayerMovement* m_pMovement{};
-	Mage::RigidBodyComponent* m_pRigidBody{};
 	Mage::AnimatedSpriteComponent* m_pAnimatedSprite{};
 
 	std::shared_ptr<Mage::SpriteAnimation> m_pVictory{};

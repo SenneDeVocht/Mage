@@ -8,6 +8,7 @@
 
 #include "imgui.h"
 #include "backends/imgui_impl_opengl2.h"
+#include "backends/imgui_impl_sdl.h"
 #include "Mage/Components/CameraComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Scenegraph/GameObject.h"
@@ -120,11 +121,14 @@ void Mage::GLRenderer::GLRendererImpl::SetBackgroundColor(const SDL_Color& color
 
 void Mage::GLRenderer::GLRendererImpl::Render()
 {
-	// Clear last frame
+	// CLEAR
+	//------
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Render Gane Window
+	// GAME WINDOW
+	//------------
+#pragma region GameWindow
 	if (m_pCamera != nullptr)
 	{
 		if (m_pCamera->IsEnabled())
@@ -158,11 +162,22 @@ void Mage::GLRenderer::GLRendererImpl::Render()
 #endif
 		}
 	}
+#pragma endregion
 
-	// Render ImGui
-	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+	// IMGUI
+	//------
+#pragma region ImGui
+	// Render
+	ImGui_ImplOpenGL2_NewFrame();
+	ImGui_ImplSDL2_NewFrame(m_pWindow);
+	ImGui::NewFrame();
+
+	SceneManager::GetInstance().DrawImGui();
+
+	ImGui::Render();
 
 	// Display
+	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 	SDL_GL_SwapWindow(m_pWindow);
 
 	// Additional ImGui viewports
@@ -176,6 +191,7 @@ void Mage::GLRenderer::GLRendererImpl::Render()
 
 		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 	}
+#pragma endregion
 }
 
 void Mage::GLRenderer::GLRendererImpl::RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)

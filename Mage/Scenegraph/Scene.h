@@ -10,13 +10,19 @@ namespace Mage
 
 	class Scene final
 	{
-		friend Scene* SceneManager::CreateScene(const std::string& name);
-
 	public:
-		explicit Scene(const std::string& name);
 		~Scene();
 
 		const std::string& GetName() const;
+
+		GameObject* CreateChildObject(const std::string& name);
+		std::vector<GameObject*> GetObjects() const;
+
+		PhysicsHandler* GetPhysicsHandler() const {	return m_pPhysicsHandler.get(); }
+
+	private:
+		friend class SceneManager;
+		explicit Scene(const std::string& name);
 
 		void Initialize() const;
 		void DrawImGui();
@@ -26,14 +32,9 @@ namespace Mage
 		void RenderGizmos() const;
 		void ChangeSceneGraph();
 
-		GameObject* CreateChildObject(const std::string& name);
-		std::vector<GameObject*> GetObjects() const;
-
-		PhysicsHandler* GetPhysicsHandler() const {	return m_pPhysicsHandler.get(); }
-
-	private:
 		void DisplaySceneGraph();
 		void DisplayObjectInSceneGraph(GameObject* pObject);
+
 		GameObject* m_pSelectedObjectInHierarchy{};
 
 		std::string m_Name;

@@ -13,8 +13,7 @@ Mage::Scene::Scene(const std::string& name)
 	, m_pPhysicsHandler(std::make_unique<PhysicsHandler>())
 {}
 
-Mage::Scene::~Scene()
-{}
+Mage::Scene::~Scene() = default;
 
 const std::string& Mage::Scene::GetName() const
 {
@@ -23,7 +22,7 @@ const std::string& Mage::Scene::GetName() const
 
 Mage::GameObject* Mage::Scene::CreateChildObject(const std::string& name)
 {
-	const auto object = std::make_shared<GameObject>(name, nullptr, this);
+	const auto object = std::shared_ptr<GameObject>(new GameObject(name, nullptr, this)); // Cant use make_shared because of private constructor
 	const auto pObject = object.get();
 	
 	m_ObjectsToAdd.push_back(object);

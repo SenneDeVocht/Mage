@@ -138,15 +138,7 @@ void Mage::MageGame::Run()
 				lag -= timer.GetFixedTimeStep();
 			}
 
-			// ImGui
-			ImGui_ImplOpenGL2_NewFrame();
-			ImGui_ImplSDL2_NewFrame(m_pWindow);
-			ImGui::NewFrame();
-
-			sceneManager.DrawImGui();
-
-			ImGui::Render();
-
+			
 			// Render
 			renderer->Render();
 		}

@@ -237,7 +237,7 @@ Mage::Transform* Mage::GameObject::GetTransform() const
 
 Mage::GameObject* Mage::GameObject::CreateChildObject(const std::string& name)
 {
-	auto child = std::make_shared<GameObject>(name, this, m_Scene);
+	const auto child = std::shared_ptr<GameObject>(new GameObject(name, this, m_Scene)); // Can't use make_shared because of private constructor
 	const auto pChild = child.get();
 
 	m_ChildrenToAdd.push_back(child);

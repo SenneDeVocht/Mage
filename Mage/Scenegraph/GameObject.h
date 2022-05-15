@@ -14,23 +14,6 @@ namespace Mage
 	class GameObject final
 	{
 	public:
-		GameObject(const std::string& name, GameObject* parent, Scene* scene);
-
-		void Initialize() const;
-		void Update() const;
-		void FixedUpdate() const;
-		void DrawImGui() const;
-		void DrawProperties() const;
-		void Render() const;
-		void RenderGizmos() const;
-
-		void OnTriggerEnter(BoxColliderComponent* other) const;
-		void OnTriggerExit(BoxColliderComponent* other) const;
-		void OnCollisionEnter(BoxColliderComponent* other) const;
-		void OnCollisionExit(BoxColliderComponent* other) const;
-
-		void ChangeSceneGraph();
-
 		// Name
 		const std::string& GetName() const;
 		void SetName(const std::string& name);
@@ -61,6 +44,26 @@ namespace Mage
 		bool IsMarkedForDestroy() const;
 
 	private:
+		friend class Scene;
+		friend class BoxColliderComponent;
+		GameObject(const std::string& name, GameObject* parent, Scene* scene);
+
+		void Initialize() const;
+		void Update() const;
+		void FixedUpdate() const;
+		void DrawImGui() const;
+		void DrawProperties() const;
+		void Render() const;
+		void RenderGizmos() const;
+
+		void OnTriggerEnter(BoxColliderComponent* other) const;
+		void OnTriggerExit(BoxColliderComponent* other) const;
+		void OnCollisionEnter(BoxColliderComponent* other) const;
+		void OnCollisionExit(BoxColliderComponent* other) const;
+
+		void ChangeSceneGraph();
+
+
 		std::string m_Name;
 		std::string m_Tag{ "Default" };
 

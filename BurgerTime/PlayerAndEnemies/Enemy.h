@@ -27,6 +27,7 @@ private:
 	Component* m_pMovement{};
 	Mage::RigidBodyComponent* m_pRigidBody{};
 	Mage::AnimatedSpriteComponent* m_pAnimatedSprite{};
+	Mage::BoxColliderComponent* m_pCollider{};
 	
 	std::shared_ptr<Mage::SpriteAnimation> m_pStunned{};
 	std::shared_ptr<Mage::SpriteAnimation> m_pDeath{};

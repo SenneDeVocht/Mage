@@ -11,7 +11,7 @@ namespace Mage
 	{
 	public:
 		BoxColliderComponent(const glm::vec2& size, const glm::vec2& offset, float angle, bool isTrigger = false);
-		~BoxColliderComponent() override = default;
+		~BoxColliderComponent() override;
 
 		BoxColliderComponent(const BoxColliderComponent& other) = delete;
 		BoxColliderComponent(BoxColliderComponent&& other) = delete;
@@ -21,7 +21,9 @@ namespace Mage
 		void Initialize() override;
 		void RenderGizmos() const override;
 		void DrawProperties() override;
-		void SetEnabled(bool enabled) override;
+		void OnEnable() override;
+		void OnDisable() override;
+		void OnDestroy() override;
 
 		const glm::vec2& GetSize() const;
 		void SetSize(const glm::vec2& size);
@@ -33,7 +35,7 @@ namespace Mage
 		void SetRotation(float angle);
 
 		bool IsTrigger() const;
-		void SetTrigger(bool isTrigger) const;
+		void SetTrigger(bool isTrigger);
 
 	private:
 		friend class PhysicsHandler;
@@ -57,7 +59,7 @@ namespace Mage
 		glm::vec2 m_Offset = { 0.f, 0.f };
 		float m_Rotation = 0.f;
 
-		bool m_InitialIsTrigger = false;
+		bool m_IsTrigger = false;
 
 		RigidBodyComponent* m_pRigidbody = nullptr;
 

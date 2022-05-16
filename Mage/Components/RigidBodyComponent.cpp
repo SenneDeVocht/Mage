@@ -62,7 +62,7 @@ void Mage::RigidBodyComponent::DrawProperties()
 	});
 }
 
-void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider, bool isTrigger) const
+void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider) const
 {
 	const auto objectScale = boxCollider->GetGameObject()->GetTransform()->GetWorldScale();
 	const auto objectOffset = boxCollider->GetGameObject()->GetTransform()->GetWorldPosition() - GetGameObject()->GetTransform()->GetWorldPosition();
@@ -76,7 +76,7 @@ void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider,
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
-	fixtureDef.isSensor = isTrigger;
+	fixtureDef.isSensor = boxCollider->IsTrigger();
 	fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(boxCollider);
 
 	// TODO: Physics Material

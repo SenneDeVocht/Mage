@@ -17,8 +17,12 @@ Mage::BoxColliderComponent::BoxColliderComponent(const glm::vec2& size, const gl
 	: m_Size(size)
 	, m_Offset(offset)
     , m_Rotation(angle)
-	, m_InitialIsTrigger{ isTrigger }
+	, m_IsTrigger{ isTrigger }
 {}
+
+Mage::BoxColliderComponent::~BoxColliderComponent()
+{
+}
 
 void Mage::BoxColliderComponent::Initialize()
 {
@@ -54,7 +58,7 @@ void Mage::BoxColliderComponent::RenderGizmos() const
 
 void Mage::BoxColliderComponent::DrawProperties()
 {
-	ImGuiHelper::Component("Box Collider Component", this, nullptr, [&]()
+	ImGuiHelper::Component("Box Collider Component", this, &m_ShouldBeEnabled, [&]()
 	{
 		bool isTrigger = IsTrigger();
 		ImGuiHelper::ItemLabel("Is Trigger", ImGuiHelper::ItemLabelAlignment::Left);
@@ -78,22 +82,19 @@ void Mage::BoxColliderComponent::DrawProperties()
 	});
 }
 
-void Mage::BoxColliderComponent::SetEnabled(bool enabled)
+void Mage::BoxColliderComponent::OnEnable()
 {
-	Component::SetEnabled(enabled);
+	m_pRigidbody->AddBoxCollider(this);
+}
 
-	if (!enabled)
-	{
-		b2Filter filter;
-		filter.maskBits = 0;
-		m_RunTimeFixture->SetFilterData(filter);
-	}
-	else
-	{
-		b2Filter filter;
-		filter.maskBits = 1;
-		m_RunTimeFixture->SetFilterData(filter);
-	}
+void Mage::BoxColliderComponent::OnDisable()
+{
+	m_pRigidbody->RemoveBoxCollider(this);
+}
+
+void Mage::BoxColliderComponent::OnDestroy()
+{
+	m_pRigidbody->RemoveBoxCollider(this);
 }
 
 const glm::vec2& Mage::BoxColliderComponent::GetSize() const
@@ -131,20 +132,22 @@ void Mage::BoxColliderComponent::SetRotation(float angle)
 
 bool Mage::BoxColliderComponent::IsTrigger() const
 {
-    return m_RunTimeFixture->IsSensor();
+    return m_IsTrigger;
 }
 
-void Mage::BoxColliderComponent::SetTrigger(bool isTrigger) const
+void Mage::BoxColliderComponent::SetTrigger(bool isTrigger)
 {
     m_RunTimeFixture->SetSensor(isTrigger);
+	m_IsTrigger = isTrigger;
 }
 
 void Mage::BoxColliderComponent::RecalculateShape()
 {
-	m_InitialIsTrigger = IsTrigger();
-
-	m_pRigidbody->RemoveBoxCollider(this);
-	m_pRigidbody->AddBoxCollider(this, m_InitialIsTrigger);
+    if (IsEnabled())
+    {
+    	m_pRigidbody->RemoveBoxCollider(this);
+	    m_pRigidbody->AddBoxCollider(this);
+    }
 }
 
 void Mage::BoxColliderComponent::NotifyGameObjectOnTriggerEnter(BoxColliderComponent* other) const
@@ -173,7 +176,7 @@ void Mage::BoxColliderComponent::AttachToRigidbody(GameObject* gameObject)
 
     if (rb != nullptr)
     {
-        rb->AddBoxCollider(this, m_InitialIsTrigger);
+        rb->AddBoxCollider(this);
 		m_pRigidbody = rb;
     }
     else

@@ -54,7 +54,7 @@ namespace Mage
 		void SetRunTimeBody(b2Body* body) { m_RunTimeBody = body; }
 		b2Body* GetRunTimeBody() const { return m_RunTimeBody; }
 
-		void AddBoxCollider(BoxColliderComponent* boxCollider, bool isTrigger) const;
+		void AddBoxCollider(BoxColliderComponent* boxCollider) const;
 		void RemoveBoxCollider(BoxColliderComponent* boxCollider) const;
 
 		BodyType m_InitialType;

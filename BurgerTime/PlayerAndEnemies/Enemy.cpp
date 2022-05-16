@@ -19,6 +19,7 @@ void Enemy::Initialize()
 {
 	m_pRigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
 	m_pAnimatedSprite = GetGameObject()->GetComponentByType<Mage::AnimatedSpriteComponent>();
+	m_pCollider = GetGameObject()->GetComponentByType<Mage::BoxColliderComponent>();
 }
 
 void Enemy::Update()
@@ -40,6 +41,7 @@ void Enemy::Update()
 		{
 			m_IsStunned = false;
 			m_pMovement->SetEnabled(true);
+			m_pCollider->SetEnabled(true);
 			m_StunnedTimer = 0.0f;
 		}
 		else
@@ -87,6 +89,7 @@ void Enemy::OnTriggerEnter(Mage::BoxColliderComponent* other)
 	{
 		m_IsStunned = true;
 		m_pMovement->SetEnabled(false);
+		m_pCollider->SetEnabled(false);
 		m_pAnimatedSprite->SetAnimation(m_pStunned);
 	}
 }

@@ -183,6 +183,12 @@ void Mage::GameObject::ChangeSceneGraph()
 	m_Children.erase(pos, m_Children.end());
 
 	// Destroy marked components
+	for (const auto& comp : m_Components)
+	{
+        if (comp->IsMarkedForDestroy())
+            comp->OnDestroy();
+	}
+
 	const auto pos2 = std::remove_if(m_Components.begin(), m_Components.end(),
 		[](const auto& c) { return c->IsMarkedForDestroy(); });
 

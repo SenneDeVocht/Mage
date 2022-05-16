@@ -24,8 +24,9 @@ namespace Mage
 		virtual void OnCollisionExit(BoxColliderComponent*) {}
 
 		void ChangeSceneGraph();
-		virtual void OnEnable() {};
-		virtual void OnDisable() {};
+		virtual void OnEnable() {}
+		virtual void OnDisable() {}
+		virtual void OnDestroy() {}
 
 		void SetGameObject(GameObject* pGameObject);
 		GameObject* GetGameObject() const;
@@ -34,7 +35,7 @@ namespace Mage
 		bool IsMarkedForDestroy() const;
 
 		bool IsEnabled() const;
-		virtual void SetEnabled(bool enabled);
+		void SetEnabled(bool enabled);
 		
 	protected:
 		GameObject* m_pGameObject = nullptr;

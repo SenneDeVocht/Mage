@@ -10,7 +10,7 @@ namespace Mage
 	class Scene;
 	class Component;
 	class Transform;
-
+	
 	class GameObject final
 	{
 	public:
@@ -27,7 +27,10 @@ namespace Mage
 		componentType* CreateComponent(argTypes&&... args);
 
 		template<typename typeToFind>
-		typeToFind* GetComponentByType() const;
+		typeToFind* GetComponent() const;
+
+		template<typename typeToFind>
+		std::vector<typeToFind*> GetComponents() const;
 
 		Transform* GetTransform() const;
 
@@ -61,8 +64,9 @@ namespace Mage
 		void OnCollisionEnter(BoxColliderComponent* other) const;
 		void OnCollisionExit(BoxColliderComponent* other) const;
 
-		void ChangeSceneGraph();
+		void OnDestroy() const;
 
+		void ChangeSceneGraph();
 
 		std::string m_Name;
 		std::string m_Tag{ "Default" };
@@ -85,7 +89,7 @@ namespace Mage
 	componentType* GameObject::CreateComponent(argTypes&&... args)
 	{
 		// Can't create more than 1 transform
-		if (typeid(componentType) == typeid(Transform) && GetComponentByType<Transform>() != nullptr)
+		if (typeid(componentType) == typeid(Transform) && GetComponent<Transform>() != nullptr)
 			return nullptr;
 
 		// Create component and add it
@@ -99,7 +103,7 @@ namespace Mage
 	}
 
 	template<typename typeToFind>
-	typeToFind* GameObject::GetComponentByType() const
+	typeToFind* GameObject::GetComponent() const
 	{
 		auto it = std::find_if(
 			m_Components.begin(),
@@ -113,5 +117,19 @@ namespace Mage
 			return nullptr;
 
 		return dynamic_cast<typeToFind*>((*it).get());
+	}
+
+	template<typename typeToFind>
+	std::vector<typeToFind*> GameObject::GetComponents() const
+	{
+		std::vector<typeToFind*> returnVector{};
+
+        for (const auto& component : m_Components)
+        {
+            if (typeid(typeToFind) == typeid(*component))
+                returnVector.push_back(dynamic_cast<typeToFind*>(component.get()));
+        }
+
+		return returnVector;
 	}
 }

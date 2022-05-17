@@ -22,21 +22,17 @@ Mage::RigidBodyComponent::RigidBodyComponent(BodyType type, bool fixedRotation, 
     , m_InitialGravityScale{ gravityScale }
 {}
 
-Mage::RigidBodyComponent::~RigidBodyComponent()
-{
-	GetGameObject()->GetScene()->GetPhysicsHandler()->RemoveRigidBody(this);
-}
-
 void Mage::RigidBodyComponent::Initialize()
 {
 	GetGameObject()->GetScene()->GetPhysicsHandler()->AddRigidBody(this, static_cast<int>(m_InitialType), m_InitialFixedRotation, m_InitialGravityScale);
 	TransformChanged();
+	NotifyBoxCollidersOfChange(GetGameObject());
 }
 
 void Mage::RigidBodyComponent::DrawProperties()
 {
 	ImGuiHelper::Component("Rigidbody Component", this, &m_ShouldBeEnabled, [&]()
-	{
+	{  
 	    int type = static_cast<int>(GetType());
 		ImGuiHelper::ItemLabel("Type", ImGuiHelper::ItemLabelAlignment::Left);
 		if(ImGui::Combo("##Type", &type, "Static\0Kinematic\0Dynamic\0"))
@@ -60,6 +56,26 @@ void Mage::RigidBodyComponent::DrawProperties()
 
 		ImGui::EndDisabled();
 	});
+}
+
+void Mage::RigidBodyComponent::OnDestroy()
+{
+	GetGameObject()->GetScene()->GetPhysicsHandler()->RemoveRigidBody(this);
+	NotifyBoxCollidersOfChange(GetGameObject());
+}
+
+void Mage::RigidBodyComponent::NotifyBoxCollidersOfChange(const GameObject* gameObject) const
+{
+	for (const auto& col : gameObject->GetComponents<BoxColliderComponent>())
+	{
+		col->RigidBodyChanged();
+	}
+
+	for (const auto& child : gameObject->GetChildren())
+    {
+		if (child->GetComponent<RigidBodyComponent>() != nullptr)
+           NotifyBoxCollidersOfChange(child);
+    }
 }
 
 void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider) const
@@ -92,7 +108,7 @@ void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider)
 
 void Mage::RigidBodyComponent::RemoveBoxCollider(BoxColliderComponent* boxCollider) const
 {
-	m_RunTimeBody->DestroyFixture(boxCollider->GetRunTimeFixture());
+    m_RunTimeBody->DestroyFixture(boxCollider->GetRunTimeFixture());
 }
 
 void Mage::RigidBodyComponent::TransformChanged() const

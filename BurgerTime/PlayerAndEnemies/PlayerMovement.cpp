@@ -24,8 +24,8 @@ PlayerMovement::PlayerMovement(Level* level, const std::shared_ptr<Mage::SpriteA
 
 void PlayerMovement::Initialize()
 {
-	m_pRigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
-	m_pAnimatedSprite = GetGameObject()->GetComponentByType<Mage::AnimatedSpriteComponent>();
+	m_pRigidBody = GetGameObject()->GetComponent<Mage::RigidBodyComponent>();
+	m_pAnimatedSprite = GetGameObject()->GetComponent<Mage::AnimatedSpriteComponent>();
 }
 
 void PlayerMovement::Update()

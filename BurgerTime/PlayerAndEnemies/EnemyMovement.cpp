@@ -8,7 +8,7 @@
 #include "BurgerTime/Level.h"
 
 EnemyMovement::EnemyMovement(Level* level, Mage::Transform* target, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
-	const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack, const std::shared_ptr<Mage::SpriteAnimation>& pWalkLeft, const std::shared_ptr<Mage::SpriteAnimation>& pWalkRight)
+                             const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack, const std::shared_ptr<Mage::SpriteAnimation>& pWalkLeft, const std::shared_ptr<Mage::SpriteAnimation>& pWalkRight)
 	: m_pLevel{ level }
     , m_pTarget{ target }
 	, m_pWalkFront{ pWalkfront }
@@ -19,8 +19,8 @@ EnemyMovement::EnemyMovement(Level* level, Mage::Transform* target, const std::s
 
 void EnemyMovement::Initialize()
 {
-	m_pRigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
-	m_pAnimatedSprite = GetGameObject()->GetComponentByType<Mage::AnimatedSpriteComponent>();
+	m_pRigidBody = GetGameObject()->GetComponent<Mage::RigidBodyComponent>();
+	m_pAnimatedSprite = GetGameObject()->GetComponent<Mage::AnimatedSpriteComponent>();
 }
 
 void EnemyMovement::FixedUpdate()

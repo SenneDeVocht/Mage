@@ -29,7 +29,7 @@ void Level::Initialize()
 		TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,     TileType::Both,     TileType::Both
 	};
 
-	auto tilemap = GetGameObject()->GetComponentByType<Mage::TilemapComponent>();
+	auto tilemap = GetGameObject()->GetComponent<Mage::TilemapComponent>();
 
 	// Spawn sprites
 	for (int tileY = 0; tileY < m_NumRows; tileY++)

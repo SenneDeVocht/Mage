@@ -23,8 +23,8 @@ PeterPepper::PeterPepper(Level* pLevel, const std::shared_ptr<Mage::SpriteAnimat
 
 void PeterPepper::Initialize()
 {
-	m_pMovement = GetGameObject()->GetComponentByType<PlayerMovement>();
-	m_pAnimatedSprite = GetGameObject()->GetComponentByType<Mage::AnimatedSpriteComponent>();
+	m_pMovement = GetGameObject()->GetComponent<PlayerMovement>();
+	m_pAnimatedSprite = GetGameObject()->GetComponent<Mage::AnimatedSpriteComponent>();
 
 	const auto& resourceManager = Mage::ResourceManager::GetInstance();
 	m_pPepperSprayRightAnimation = std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/PepperRight.png", 16), 4, 0.1f, false);

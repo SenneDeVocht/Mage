@@ -20,13 +20,18 @@ Mage::BoxColliderComponent::BoxColliderComponent(const glm::vec2& size, const gl
 	, m_IsTrigger{ isTrigger }
 {}
 
-Mage::BoxColliderComponent::~BoxColliderComponent()
-{
-}
-
 void Mage::BoxColliderComponent::Initialize()
 {
 	AttachToRigidbody(GetGameObject());
+}
+
+void Mage::BoxColliderComponent::Update()
+{
+    if (m_RigidbodyChanged)
+    {
+		AttachToRigidbody(GetGameObject());
+		m_RigidbodyChanged = false;
+    }
 }
 
 void Mage::BoxColliderComponent::RenderGizmos() const
@@ -53,7 +58,16 @@ void Mage::BoxColliderComponent::RenderGizmos() const
 		pos += wPos;
 	}
 
-	ServiceLocator::GetRenderer()->RenderPolygon(positions, glm::vec4(1.0f, 0.0f, 0.0f, 0.3f));
+    if (m_RunTimeFixture != nullptr)
+    {
+    	ServiceLocator::GetRenderer()->RenderPolygonFilled(positions, glm::vec4(0.0f, 1.0f, 0.0f, 0.3f));
+		ServiceLocator::GetRenderer()->RenderPolygonOutline(positions, true, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    }
+    else
+    {
+		ServiceLocator::GetRenderer()->RenderPolygonFilled(positions, glm::vec4(1.0f, 0.0f, 0.0f, 0.3f));
+		ServiceLocator::GetRenderer()->RenderPolygonOutline(positions, true, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    }
 }
 
 void Mage::BoxColliderComponent::DrawProperties()
@@ -84,17 +98,20 @@ void Mage::BoxColliderComponent::DrawProperties()
 
 void Mage::BoxColliderComponent::OnEnable()
 {
-	m_pRigidbody->AddBoxCollider(this);
+	if (m_pRigidbody != nullptr)
+    	m_pRigidbody->AddBoxCollider(this);
 }
 
 void Mage::BoxColliderComponent::OnDisable()
 {
-	m_pRigidbody->RemoveBoxCollider(this);
+    if (m_pRigidbody != nullptr)
+        m_pRigidbody->RemoveBoxCollider(this);
 }
 
 void Mage::BoxColliderComponent::OnDestroy()
 {
-	m_pRigidbody->RemoveBoxCollider(this);
+	if (m_pRigidbody != nullptr)
+	    m_pRigidbody->RemoveBoxCollider(this);
 }
 
 const glm::vec2& Mage::BoxColliderComponent::GetSize() const
@@ -141,12 +158,19 @@ void Mage::BoxColliderComponent::SetTrigger(bool isTrigger)
 	m_IsTrigger = isTrigger;
 }
 
+void Mage::BoxColliderComponent::RigidBodyChanged()
+{
+	m_RigidbodyChanged = true;
+    m_pRigidbody = nullptr;
+	m_RunTimeFixture = nullptr;
+}
+
 void Mage::BoxColliderComponent::RecalculateShape()
 {
-    if (IsEnabled())
+    if (IsEnabled() && m_pRigidbody != nullptr)
     {
-    	m_pRigidbody->RemoveBoxCollider(this);
-	    m_pRigidbody->AddBoxCollider(this);
+        m_pRigidbody->RemoveBoxCollider(this);
+        m_pRigidbody->AddBoxCollider(this);
     }
 }
 
@@ -170,9 +194,9 @@ void Mage::BoxColliderComponent::NotifyGameObjectOnCollisionExit(BoxColliderComp
 	GetGameObject()->OnCollisionExit(other);
 }
 
-void Mage::BoxColliderComponent::AttachToRigidbody(GameObject* gameObject)
+void Mage::BoxColliderComponent::AttachToRigidbody(const GameObject* gameObject)
 {
-    const auto rb = gameObject->GetComponentByType<RigidBodyComponent>();
+    const auto rb = gameObject->GetComponent<RigidBodyComponent>();
 
     if (rb != nullptr)
     {
@@ -186,5 +210,9 @@ void Mage::BoxColliderComponent::AttachToRigidbody(GameObject* gameObject)
 		{
 			AttachToRigidbody(parent);
 		}
+        else
+        {
+            std::cout << "[BoxColliderComponent] Could not find RigidBodyComponent to attach to." << std::endl;
+        }
     }
 }

@@ -11,12 +11,6 @@ namespace Mage
 	{
 	public:
 		BoxColliderComponent(const glm::vec2& size, const glm::vec2& offset, float angle, bool isTrigger = false);
-		~BoxColliderComponent() override;
-
-		BoxColliderComponent(const BoxColliderComponent& other) = delete;
-		BoxColliderComponent(BoxColliderComponent&& other) = delete;
-		BoxColliderComponent& operator=(const BoxColliderComponent& other) = delete;
-		BoxColliderComponent& operator=(BoxColliderComponent&& other) = delete;
 
 		void Initialize() override;
 		void RenderGizmos() const override;
@@ -24,6 +18,7 @@ namespace Mage
 		void OnEnable() override;
 		void OnDisable() override;
 		void OnDestroy() override;
+		void Update() override;
 
 		const glm::vec2& GetSize() const;
 		void SetSize(const glm::vec2& size);
@@ -45,6 +40,8 @@ namespace Mage
 		b2Fixture* GetRunTimeFixture() const { return m_RunTimeFixture; }
 		void SetRunTimeFixture(b2Fixture* fixture) { m_RunTimeFixture = fixture; }
 
+		void RigidBodyChanged();
+
 		void RecalculateShape();
 
 		void NotifyGameObjectOnTriggerEnter(BoxColliderComponent* other) const;
@@ -52,7 +49,7 @@ namespace Mage
 		void NotifyGameObjectOnCollisionEnter(BoxColliderComponent* other) const;
 		void NotifyGameObjectOnCollisionExit(BoxColliderComponent* other) const;
 
-		void AttachToRigidbody(GameObject* gameObject);
+		void AttachToRigidbody(const GameObject* gameObject);
 
 		// Collider shape
 		glm::vec2 m_Size = { 1.f, 1.f };
@@ -62,6 +59,7 @@ namespace Mage
 		bool m_IsTrigger = false;
 
 		RigidBodyComponent* m_pRigidbody = nullptr;
+		bool m_RigidbodyChanged = false;
 
 		// storage for runtime
 		b2Fixture* m_RunTimeFixture = nullptr;

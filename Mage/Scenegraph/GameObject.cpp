@@ -156,6 +156,20 @@ void Mage::GameObject::OnCollisionExit(Mage::BoxColliderComponent* other) const
 	}
 }
 
+void Mage::GameObject::OnDestroy() const
+{
+	for (const auto& pComponent : m_Components)
+    {
+	    pComponent->OnDestroy();
+    }
+
+	for (const auto& pChild : m_Children)
+    {
+        pChild->OnDestroy();
+    }
+}
+
+
 void Mage::GameObject::ChangeSceneGraph()
 {
 	// Add Children
@@ -177,6 +191,12 @@ void Mage::GameObject::ChangeSceneGraph()
 	m_ComponentsToAdd.clear();
 
 	// Destroy marked objects
+	for (const auto& child : m_Children)
+	{
+		if (child->IsMarkedForDestroy())
+			child->OnDestroy();
+	}
+
 	const auto pos = std::remove_if(m_Children.begin(), m_Children.end(),
 		[](const auto& o) { return o->IsMarkedForDestroy(); });
 

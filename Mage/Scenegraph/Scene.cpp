@@ -110,6 +110,12 @@ void Mage::Scene::ChangeSceneGraph()
 	m_ObjectsToAdd.clear();
 
 	// Destroy marked root objects
+	for (const auto& object : m_Objects)
+	{
+		if (object->IsMarkedForDestroy())
+			object->OnDestroy();
+	}
+
 	const auto pos = std::remove_if(m_Objects.begin(), m_Objects.end(),
 		[](const auto& o) { return o->IsMarkedForDestroy(); });
 

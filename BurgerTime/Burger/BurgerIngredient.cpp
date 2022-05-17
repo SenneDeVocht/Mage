@@ -18,7 +18,7 @@ BurgerIngredient::BurgerIngredient(Level* level, IngredientType type)
 
 void BurgerIngredient::Initialize()
 {
-	m_pRigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
+	m_pRigidBody = GetGameObject()->GetComponent<Mage::RigidBodyComponent>();
 
 	std::string name;
 	switch (m_Type)
@@ -101,7 +101,7 @@ void BurgerIngredient::OnTriggerEnter(Mage::BoxColliderComponent* other)
 {
 	if (other->GetGameObject()->GetTag() == "Ingredient")
 	{
-		const auto otherIngredient = other->GetGameObject()->GetComponentByType<BurgerIngredient>();
+		const auto otherIngredient = other->GetGameObject()->GetComponent<BurgerIngredient>();
 		if (otherIngredient->IsFalling() && !m_Falling)
 		{
 			StartFalling();
@@ -133,7 +133,7 @@ void BurgerIngredient::StartFalling()
 
 	if (m_FallDestination == pos.y)
 	{
-		GetGameObject()->GetComponentByType<Mage::BoxColliderComponent>()->SetTrigger(false);
+		GetGameObject()->GetComponent<Mage::BoxColliderComponent>()->SetTrigger(false);
 		m_KeepFalling = true;
 	}
 

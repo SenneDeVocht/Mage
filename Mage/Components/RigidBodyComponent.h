@@ -17,7 +17,7 @@ namespace Mage
 		};
 
 		RigidBodyComponent(BodyType type, bool fixedRotation = false, float gravityScale = 1.0f);
-		~RigidBodyComponent();
+		~RigidBodyComponent() = default;
 
 		RigidBodyComponent(const RigidBodyComponent& other) = delete;
 		RigidBodyComponent(RigidBodyComponent&& other) = delete;
@@ -26,7 +26,7 @@ namespace Mage
 
 		void Initialize() override;
 		void DrawProperties() override;
-
+		void OnDestroy() override;
 
 		BodyType GetType() const;
 		void SetType(BodyType type) const;
@@ -56,6 +56,8 @@ namespace Mage
 
 		void AddBoxCollider(BoxColliderComponent* boxCollider) const;
 		void RemoveBoxCollider(BoxColliderComponent* boxCollider) const;
+
+		void NotifyBoxCollidersOfChange(const GameObject* gameObject) const;
 
 		BodyType m_InitialType;
 		bool m_InitialFixedRotation;

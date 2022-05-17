@@ -15,7 +15,8 @@ namespace Mage
 		virtual void SetCamera(CameraComponent* pCamera) = 0;
 		virtual void SetBackgroundColor(const SDL_Color& color) = 0;
 
-		virtual void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer = 0) = 0;
+		virtual void RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer = 0) = 0;
+		virtual void RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer = 0) = 0;
 		virtual void RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) = 0;
 		virtual void RenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) = 0;
 	};
@@ -28,7 +29,8 @@ namespace Mage
 		void SetCamera(CameraComponent*) override {}
 		void SetBackgroundColor(const SDL_Color&) override {}
 
-		void RenderPolygon(const std::vector<glm::vec2>&, const glm::vec4&, float) override {}
+		void RenderPolygonOutline(const std::vector<glm::vec2>&, bool, const glm::vec4&, float) override {}
+		void RenderPolygonFilled(const std::vector<glm::vec2>&, const glm::vec4&, float) override {}
 		void RenderTexture(const Texture2D*, const glm::vec2&, float, const glm::vec2&, float) override {}
 		void RenderPartialTexture(const Texture2D*, int, int, int, int, const glm::vec2&, float, const glm::vec2&, float) override {}
 	};
@@ -49,7 +51,8 @@ namespace Mage
 		void SetCamera(CameraComponent* pCamera) override;
 		void SetBackgroundColor(const SDL_Color& color) override;
 
-		void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer = 0) override;
+		void RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer) override;
+		void RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer = 0) override;
 		void RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) override;
 		void RenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer = 0) override;
 

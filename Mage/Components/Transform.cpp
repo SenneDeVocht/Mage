@@ -59,11 +59,11 @@ void Mage::Transform::TransformChanged(bool updateRigidBody)
 	// Update rigidbody
     if (updateRigidBody)
     {
-		const auto rb = GetGameObject()->GetComponentByType<RigidBodyComponent>();
+		const auto rb = GetGameObject()->GetComponent<RigidBodyComponent>();
 		if (rb != nullptr)
 			rb->TransformChanged();
 
-		const auto boxCollider = GetGameObject()->GetComponentByType<BoxColliderComponent>();
+		const auto boxCollider = GetGameObject()->GetComponent<BoxColliderComponent>();
 		if (boxCollider != nullptr && rb == nullptr)
 			boxCollider->RecalculateShape();
     }

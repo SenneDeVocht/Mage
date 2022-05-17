@@ -17,9 +17,9 @@ Enemy::Enemy(Component* movement, const std::shared_ptr<Mage::SpriteAnimation>& 
 
 void Enemy::Initialize()
 {
-	m_pRigidBody = GetGameObject()->GetComponentByType<Mage::RigidBodyComponent>();
-	m_pAnimatedSprite = GetGameObject()->GetComponentByType<Mage::AnimatedSpriteComponent>();
-	m_pCollider = GetGameObject()->GetComponentByType<Mage::BoxColliderComponent>();
+	m_pRigidBody = GetGameObject()->GetComponent<Mage::RigidBodyComponent>();
+	m_pAnimatedSprite = GetGameObject()->GetComponent<Mage::AnimatedSpriteComponent>();
+	m_pCollider = GetGameObject()->GetComponent<Mage::BoxColliderComponent>();
 }
 
 void Enemy::Update()
@@ -76,7 +76,7 @@ void Enemy::OnTriggerEnter(Mage::BoxColliderComponent* other)
 
 	if (otherGameObject->GetTag() == "Ingredient")
 	{
-		m_pLastTouchedIngredient = otherGameObject->GetComponentByType<BurgerIngredient>();
+		m_pLastTouchedIngredient = otherGameObject->GetComponent<BurgerIngredient>();
 		m_TouchingIngredient = true;
 
 		const bool isHigher = otherGameObject->GetTransform()->GetWorldPosition().y > GetGameObject()->GetTransform()->GetWorldPosition().y;

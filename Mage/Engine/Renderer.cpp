@@ -32,12 +32,14 @@ namespace Mage {
 
 	    void Render();
 
-	    void RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer);
+		void RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer);
+	    void RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer);
 		void RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
 		void RenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer);
 
 	private:
-		void ActuallyRenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const;
+		void ActuallyRenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color) const;
+		void ActuallyRenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color) const;
 		void ActuallyRenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
 		void ActuallyRenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale) const;
 
@@ -194,9 +196,14 @@ void Mage::GLRenderer::GLRendererImpl::Render()
 #pragma endregion
 }
 
-void Mage::GLRenderer::GLRendererImpl::RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)
+void Mage::GLRenderer::GLRendererImpl::RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer)
 {
-	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPolygon, this, positions, color), layer });
+	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPolygonOutline, this, positions, closed, color), layer });
+}
+
+void Mage::GLRenderer::GLRendererImpl::RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)
+{
+	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPolygonFilled, this, positions, color), layer });
 }
 
 void Mage::GLRenderer::GLRendererImpl::RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
@@ -208,37 +215,86 @@ void Mage::GLRenderer::GLRendererImpl::RenderPartialTexture(const Texture2D* tex
 {
 	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPartialTexture, this, texture, srcX, srcY, srcW, srcH, position, rotation, scale), layer });
 }
-	
-void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color) const
+
+void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color) const
+{
+	if (positions.size() <= 1)
+		return;
+
+	// Draw
+	glPushMatrix();
+
+	    // First translate [0, 0] to the center of the screen
+	    int windowWidth, windowHeight;
+	    SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
+	    glTranslatef((float)windowWidth / 2.f, (float)windowHeight / 2.f, 0.0f);
+
+	    // Scale to camera size
+	    const auto camSize = m_pCamera->GetSize() * m_pCamera->GetGameObject()->GetTransform()->GetWorldScale();
+	    glScalef(windowWidth / camSize.x, windowHeight / camSize.y, 1.0f);
+
+	    // Translate to camera position
+	    const auto camPos = m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition();
+	    glTranslatef(-camPos.x, -camPos.y, 0.0f);
+
+	    // Rotate with camera
+	    glRotatef(m_pCamera->GetGameObject()->GetTransform()->GetWorldRotation(), 0.0f, 0.0f, 1.0f);
+
+	    glBegin(GL_LINES);
+
+	    	glColor4f(color.r, color.g, color.b, color.a);
+
+	        for (size_t i{ 0 }; i < positions.size() - 1; ++i)
+	        {
+				const auto pos1 = positions[i];
+				const auto pos2 = positions[i + 1];
+
+		        glVertex2f(pos1.x, pos1.y);
+		        glVertex2f(pos2.x, pos2.y);
+	        }
+
+	        if (closed)
+	        {
+				glVertex2f(positions.back().x, positions.back().y);
+		        glVertex2f(positions[0].x, positions[0].y);
+	        }
+
+	    glEnd();
+
+	glPopMatrix();
+}
+
+void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color) const
 {
 	// Draw
 	glPushMatrix();
 
-	// First translate [0, 0] to the center of the screen
-	int windowWidth, windowHeight;
-	SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
-	glTranslatef((float)windowWidth / 2.f, (float)windowHeight / 2.f, 0.0f);
+	    // First translate [0, 0] to the center of the screen
+	    int windowWidth, windowHeight;
+	    SDL_GetWindowSize(m_pWindow, &windowWidth, &windowHeight);
+	    glTranslatef((float)windowWidth / 2.f, (float)windowHeight / 2.f, 0.0f);
 
-	// Scale to camera size
-	const auto camSize = m_pCamera->GetSize() * m_pCamera->GetGameObject()->GetTransform()->GetWorldScale();
-	glScalef(windowWidth / camSize.x, windowHeight / camSize.y, 1.0f);
+	    // Scale to camera size
+	    const auto camSize = m_pCamera->GetSize() * m_pCamera->GetGameObject()->GetTransform()->GetWorldScale();
+	    glScalef(windowWidth / camSize.x, windowHeight / camSize.y, 1.0f);
 
-	// Translate to camera position
-	const auto camPos = m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition();
-	glTranslatef(-camPos.x, -camPos.y, 0.0f);
+	    // Translate to camera position
+	    const auto camPos = m_pCamera->GetGameObject()->GetTransform()->GetWorldPosition();
+	    glTranslatef(-camPos.x, -camPos.y, 0.0f);
 
-	// Rotate with camera
-	glRotatef(m_pCamera->GetGameObject()->GetTransform()->GetWorldRotation(), 0.0f, 0.0f, 1.0f);
+	    // Rotate with camera
+	    glRotatef(m_pCamera->GetGameObject()->GetTransform()->GetWorldRotation(), 0.0f, 0.0f, 1.0f);
 
-	glBegin(GL_QUADS);
+	    glBegin(GL_QUADS);
 
-	for (const auto& position : positions)
-	{
-		glColor4f(color.r, color.g, color.b, color.a);
-		glVertex2f(position.x, position.y);
-	}
+	        glColor4f(color.r, color.g, color.b, color.a);
 
-	glEnd();
+	        for (const auto& position : positions)
+	        {
+		        glVertex2f(position.x, position.y);
+	        }
+
+	    glEnd();
 
 	glPopMatrix();
 }
@@ -349,9 +405,14 @@ void Mage::GLRenderer::SetBackgroundColor(const SDL_Color& color)
 	m_pImpl->SetBackgroundColor(color);
 }
 
-void Mage::GLRenderer::RenderPolygon(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)
+void Mage::GLRenderer::RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer)
 {
-	m_pImpl->RenderPolygon(positions, color, layer);
+	m_pImpl->RenderPolygonOutline(positions, closed, color, layer);
+}
+
+void Mage::GLRenderer::RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)
+{
+	m_pImpl->RenderPolygonFilled(positions, color, layer);
 }
 
 void Mage::GLRenderer::RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)

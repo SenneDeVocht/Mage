@@ -14,12 +14,14 @@
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Components/TilemapComponent.h"
+#include "Mage/Components/TextComponent.h"
 
 #include "BurgerTime/PlayerAndEnemies/PlayerMovement.h"
 #include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyMovement.h"
 #include "BurgerTime/PlayerAndEnemies/Enemy.h"
 #include "BurgerTime/Level.h"
+#include "BurgerTime/PepperUI.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -79,7 +81,7 @@ void BurgerTime::LoadGame() const
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkBack.png",  16), 4, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkLeft.png",  16), 4, 0.1f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkRight.png", 16), 4, 0.1f));
-	peterPepperObject->CreateComponent<PeterPepper>(level,
+	const auto peterPepper = peterPepperObject->CreateComponent<PeterPepper>(level,
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Victory.png", 16), 2, 0.2f),
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Death.png",   16), 6, 0.1f, false));
 	
@@ -106,4 +108,17 @@ void BurgerTime::LoadGame() const
 		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/Death.png", 16), 4, 0.1f, false));
 
 #pragma endregion
+
+	// PEPPER UI
+	//----------
+	const auto pepperUIObject = scene->CreateChildObject("PepperUI");
+	pepperUIObject->GetTransform()->SetWorldPosition(glm::vec2{ camera->GetSize().x / 2.f - 1, camera->GetSize().y / 2.f - 0.125f });
+
+	const auto pepperUIImage = pepperUIObject->CreateChildObject("Image");
+	pepperUIImage->CreateComponent<Mage::SpriteComponent>(resourceManager.LoadTexture("UI/PepperTitle.png", 16, glm::vec2{ 1, 1 }));
+
+	const auto PepperUITextObject = pepperUIObject->CreateChildObject("Text");
+	PepperUITextObject->GetTransform()->SetLocalPosition({ 0.f, -0.4375f });
+	PepperUITextObject->CreateComponent<Mage::TextComponent>("X", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{ 255, 255, 255, 255 }, 16.f, glm::vec2{ 1.f, 1.f }, Mage::TextComponent::TextAlignment::Right);
+	PepperUITextObject->CreateComponent<PepperUI>(peterPepper);
 }

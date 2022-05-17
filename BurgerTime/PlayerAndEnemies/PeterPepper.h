@@ -19,6 +19,8 @@ public:
 	void Update() override;
 	void OnTriggerEnter(Mage::BoxColliderComponent* other) override;
 
+	int GetPepperCount() const { return m_PepperCount; }
+
 private:
 	void SprayPepper();
 	void StopSprayingPepper();
@@ -34,6 +36,7 @@ private:
 	std::shared_ptr<Mage::SpriteAnimation> m_pDeath{};
 
 	// PepperSpray
+	int m_PepperCount{ 5 };
 	bool m_SprayingPepper{ false };
 
 	Mage::GameObject* m_pPepperSpray{};

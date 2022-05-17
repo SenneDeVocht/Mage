@@ -55,7 +55,8 @@ void PeterPepper::Update()
 		}
 	}
 
-	if (!m_SprayingPepper && !m_IsDead && Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x20, Mage::InputState::Down))
+	if (!m_SprayingPepper && !m_IsDead && m_PepperCount > 0 &&
+		Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x20, Mage::InputState::Down))
 	{
 		SprayPepper();
 	}
@@ -75,6 +76,7 @@ void PeterPepper::OnTriggerEnter(Mage::BoxColliderComponent* other)
 void PeterPepper::SprayPepper()
 {
 	m_SprayingPepper = true;
+	--m_PepperCount;
 
 	const auto& dir = m_pMovement->GetDirection();
 	glm::vec2 pepperPos = GetGameObject()->GetTransform()->GetWorldPosition();

@@ -43,7 +43,8 @@ void Mage::AnimatedSpriteComponent::DrawProperties()
 	Mage::ImGuiHelper::Component("Animated Sprite Component", this, &m_ShouldBeEnabled, [&]()
 	{
 	    // Texture Image
-	    ImGuiHelper::Texture(m_pAnimation->pSpritesheet.get());
+		if(m_pAnimation != nullptr && m_pAnimation->pSpritesheet != nullptr)
+	        ImGuiHelper::Texture(m_pAnimation->pSpritesheet.get());
 		
 		ImGuiHelper::ItemLabel("Layer", ImGuiHelper::ItemLabelAlignment::Left);
 		ImGui::DragFloat("##Layer", &m_RenderLayer, 0.1f);

@@ -18,10 +18,9 @@
 
 #include "BurgerTime/PlayerAndEnemies/PlayerMovement.h"
 #include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
-#include "BurgerTime/PlayerAndEnemies/EnemyMovement.h"
-#include "BurgerTime/PlayerAndEnemies/Enemy.h"
 #include "BurgerTime/Level.h"
 #include "BurgerTime/PepperUI.h"
+#include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -87,30 +86,21 @@ void BurgerTime::LoadGame() const
 	
 	#pragma endregion
 
-	// MR HOT DOG
+	// ENEMIES
 	//-----------
-#pragma region MrHotDog
+    #pragma region MrHotDog
 
-	const auto mrHotDogObject = scene->CreateChildObject("MrHotDog");
-	mrHotDogObject->SetTag("Enemy");
-	mrHotDogObject->GetTransform()->SetLocalPosition({ -6, 4.6875f });
-	
-	mrHotDogObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
-	mrHotDogObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);
-	mrHotDogObject->CreateComponent<Mage::AnimatedSpriteComponent>();
-	const auto mrHotDogMovement = mrHotDogObject->CreateComponent<EnemyMovement>(level, peterPepperObject->GetTransform(),
-		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkFront.png", 16), 2, 0.1f),
-		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkBack.png",  16), 2, 0.1f),
-		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkLeft.png",  16), 2, 0.1f),
-		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/WalkRight.png", 16), 2, 0.1f));
-	mrHotDogObject->CreateComponent<Enemy>(mrHotDogMovement,
-		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/Stunned.png", 16), 2, 0.1f),
-		std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("MrHotDog/Death.png", 16), 4, 0.1f, false));
+	const auto enemyManagerObject = scene->CreateChildObject("EnemyManager");
+	enemyManagerObject->CreateComponent<EnemyManager>(
+		std::vector<glm::vec2>{ { -6, 4.6875f }, { 6, 4.6875f }, { -6, -4.3125f }, { 6, -4.3125f } },
+		level, peterPepperObject->GetTransform());
 
-#pragma endregion
+    #pragma endregion
 
 	// PEPPER UI
 	//----------
+    #pragma region PepperUI
+
 	const auto pepperUIObject = scene->CreateChildObject("PepperUI");
 	pepperUIObject->GetTransform()->SetWorldPosition(glm::vec2{ camera->GetSize().x / 2.f - 1, camera->GetSize().y / 2.f - 0.125f });
 
@@ -121,4 +111,6 @@ void BurgerTime::LoadGame() const
 	PepperUITextObject->GetTransform()->SetLocalPosition({ 0.f, -0.4375f });
 	PepperUITextObject->CreateComponent<Mage::TextComponent>("X", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{ 255, 255, 255, 255 }, 16.f, glm::vec2{ 1.f, 1.f }, Mage::TextComponent::TextAlignment::Right);
 	PepperUITextObject->CreateComponent<PepperUI>(peterPepper);
+
+    #pragma endregion
 }

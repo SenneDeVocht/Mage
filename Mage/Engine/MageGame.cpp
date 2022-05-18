@@ -75,6 +75,9 @@ void Mage::MageGame::Initialize()
 
 	// imgui
 	ImGuiHelper::InitImGui(m_pWindow);
+
+	// Initialize random number generator
+	srand((unsigned int)time(nullptr));
 }
 
 

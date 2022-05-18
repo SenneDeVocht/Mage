@@ -21,6 +21,8 @@ public:
 	void OnTriggerEnter(Mage::BoxColliderComponent* other) override;
 	void OnTriggerExit(Mage::BoxColliderComponent* other) override;
 
+	bool IsDead() const { return m_IsDead; }
+
 private:
 	void Die();
 

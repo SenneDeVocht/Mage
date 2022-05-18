@@ -27,7 +27,8 @@ public:
 	glm::vec2 GetNextPlatformDown(const glm::vec2& position) const;
 	int PositionToTileIndex(const glm::vec2& position) const;
 	glm::vec2 TileIndexToPosition(int index) const;
-	bool IsCompleted();
+
+    bool IsCompleted();
 
 private:
 

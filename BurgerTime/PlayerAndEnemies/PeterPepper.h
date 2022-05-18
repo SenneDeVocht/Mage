@@ -21,6 +21,9 @@ public:
 
 	int GetPepperCount() const { return m_PepperCount; }
 
+	int GetMaxLives() const { return m_MaxLives; }
+	int GetLivesLeft() const { return m_LivesLeft; }
+
 private:
 	void SprayPepper();
 	void StopSprayingPepper();
@@ -34,6 +37,10 @@ private:
 
 	std::shared_ptr<Mage::SpriteAnimation> m_pVictory{};
 	std::shared_ptr<Mage::SpriteAnimation> m_pDeath{};
+
+	// Lives
+	const int m_MaxLives{ 5 };
+	int m_LivesLeft{ m_MaxLives };
 
 	// PepperSpray
 	int m_PepperCount{ 5 };

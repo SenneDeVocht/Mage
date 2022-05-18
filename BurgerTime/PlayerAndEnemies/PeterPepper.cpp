@@ -68,6 +68,7 @@ void PeterPepper::OnTriggerEnter(Mage::BoxColliderComponent* other)
 	{
 		m_IsDead = true;
 
+		--m_LivesLeft;
 		m_pMovement->SetEnabled(false);
 		m_pAnimatedSprite->SetAnimation(m_pDeath);
 	}

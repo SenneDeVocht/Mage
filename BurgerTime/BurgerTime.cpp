@@ -20,6 +20,7 @@
 #include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
 #include "BurgerTime/Level.h"
 #include "BurgerTime/PepperUI.h"
+#include "BurgerTime/LivesUI.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
 
 // Other
@@ -38,6 +39,7 @@ void BurgerTime::LoadGame() const
 	#pragma region Camera
 	
 	const auto cameraObject = scene->CreateChildObject("Camera");
+	cameraObject->GetTransform()->SetWorldPosition({ 0.0f, -0.5f });
 	const auto camera = cameraObject->CreateComponent<Mage::CameraComponent>(glm::vec2{ 15.f, 15.f });
     Mage::ServiceLocator::GetRenderer()->SetCamera(camera);
 	
@@ -88,7 +90,7 @@ void BurgerTime::LoadGame() const
 
 	// ENEMIES
 	//-----------
-    #pragma region MrHotDog
+    #pragma region Enemies
 
 	const auto enemyManagerObject = scene->CreateChildObject("EnemyManager");
 	enemyManagerObject->CreateComponent<EnemyManager>(
@@ -102,7 +104,7 @@ void BurgerTime::LoadGame() const
     #pragma region PepperUI
 
 	const auto pepperUIObject = scene->CreateChildObject("PepperUI");
-	pepperUIObject->GetTransform()->SetWorldPosition(glm::vec2{ camera->GetSize().x / 2.f - 1, camera->GetSize().y / 2.f - 0.125f });
+	pepperUIObject->GetTransform()->SetWorldPosition(glm::vec2{ 6.5f, 6.875f });
 
 	const auto pepperUIImage = pepperUIObject->CreateChildObject("Image");
 	pepperUIImage->CreateComponent<Mage::SpriteComponent>(resourceManager.LoadTexture("UI/PepperTitle.png", 16, glm::vec2{ 1, 1 }));
@@ -111,6 +113,16 @@ void BurgerTime::LoadGame() const
 	PepperUITextObject->GetTransform()->SetLocalPosition({ 0.f, -0.4375f });
 	PepperUITextObject->CreateComponent<Mage::TextComponent>("X", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{ 255, 255, 255, 255 }, 16.f, glm::vec2{ 1.f, 1.f }, Mage::TextComponent::TextAlignment::Right);
 	PepperUITextObject->CreateComponent<PepperUI>(peterPepper);
+
+    #pragma endregion
+
+    // LIVES UI
+	//----------
+    #pragma region PepperUI
+
+	const auto livesUIObject = scene->CreateChildObject("LivesUI");
+	livesUIObject->GetTransform()->SetWorldPosition(glm::vec2{ -6.5f, -7.875f });
+	livesUIObject->CreateComponent<LivesUI>(peterPepper);
 
     #pragma endregion
 }

@@ -45,7 +45,8 @@ void Mage::Scene::Initialize() const
 {
 	for (const auto& object : m_Objects)
 	{
-		object->Initialize();
+		if (object->IsEnabled())
+    		object->Initialize();
 	}
 }
 
@@ -57,7 +58,8 @@ void Mage::Scene::DrawImGui()
 
 	for (const auto& object : m_Objects)
 	{
-		object->DrawImGui();
+		if (object->IsEnabled())
+			object->DrawImGui();
 	}
 }
 
@@ -65,7 +67,8 @@ void Mage::Scene::Update() const
 {
 	for (const auto& object : m_Objects)
 	{
-		object->Update();
+		if (object->IsEnabled())
+			object->Update();
 	}
 }
 
@@ -74,7 +77,8 @@ void Mage::Scene::FixedUpdate() const
 	// Fixed Update on objects
 	for (const auto& object : m_Objects)
 	{
-		object->FixedUpdate();
+		if (object->IsEnabled())
+			object->FixedUpdate();
 	}
 
 	// Update physics
@@ -85,7 +89,8 @@ void Mage::Scene::Render() const
 {
 	for (const auto& object : m_Objects)
 	{
-		object->Render();
+		if (object->IsEnabled())
+			object->Render();
 	}
 }
 
@@ -93,7 +98,8 @@ void Mage::Scene::RenderGizmos() const
 {
 	for (const auto& object : m_Objects)
 	{
-		object->RenderGizmos();
+		if (object->IsEnabled())
+			object->RenderGizmos();
 	}
 }
 

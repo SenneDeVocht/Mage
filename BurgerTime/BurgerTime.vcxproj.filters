@@ -12,6 +12,7 @@
     <ClInclude Include="PlayerAndEnemies\Enemy.h" />
     <ClInclude Include="PepperUI.h" />
     <ClInclude Include="PlayerAndEnemies\EnemyManager.h" />
+    <ClInclude Include="LivesUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -26,5 +27,6 @@
     <ClCompile Include="PlayerAndEnemies\Enemy.cpp" />
     <ClCompile Include="PepperUI.cpp" />
     <ClCompile Include="PlayerAndEnemies\EnemyManager.cpp" />
+    <ClCompile Include="LivesUI.cpp" />
   </ItemGroup>
 </Project>

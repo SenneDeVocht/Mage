@@ -38,9 +38,11 @@ namespace Mage
 		GameObject* CreateChildObject(const std::string& name);
 		std::vector<GameObject*> GetChildren() const;
 		GameObject* GetParent() const;
-
-		// Scene
+        
 		Scene* GetScene() const { return m_Scene; }
+
+		void SetEnabled(bool enabled);
+		bool IsEnabled() const;
 
 		// Destruction
 		void Destroy();
@@ -64,6 +66,8 @@ namespace Mage
 		void OnCollisionEnter(BoxColliderComponent* other) const;
 		void OnCollisionExit(BoxColliderComponent* other) const;
 
+		void OnEnable() const;
+		void OnDisable() const;
 		void OnDestroy() const;
 
 		void ChangeSceneGraph();
@@ -83,6 +87,9 @@ namespace Mage
 		Scene* m_Scene;
 
 		bool m_IsMarkedForDestroy = false;
+
+		bool m_IsEnabled{ true };
+		bool m_ShouldBeEnabled{ true };
 	};
 
 	template<typename componentType, typename... argTypes>

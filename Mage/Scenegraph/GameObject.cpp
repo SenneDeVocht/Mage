@@ -27,7 +27,8 @@ void Mage::GameObject::Initialize() const
 	// Update children
 	for (const auto& pChild : m_Children)
 	{
-		pChild->Initialize();
+		if (pChild->IsEnabled())
+            pChild->Initialize();
 	}
 }
 
@@ -43,7 +44,8 @@ void Mage::GameObject::Update() const
 	// Update children
 	for (const auto& pChild : m_Children)
 	{
-		pChild->Update();
+		if (pChild->IsEnabled())
+            pChild->Update();
 	}
 }
 
@@ -59,7 +61,8 @@ void Mage::GameObject::FixedUpdate() const
 	// Update children
 	for (const auto& pChild : m_Children)
 	{
-		pChild->FixedUpdate();
+		if (pChild->IsEnabled())
+            pChild->FixedUpdate();
 	}
 }
 
@@ -75,7 +78,8 @@ void Mage::GameObject::DrawImGui() const
 	// Update children
 	for (const auto& pChild : m_Children)
 	{
-		pChild->DrawImGui();
+		if (pChild->IsEnabled())
+            pChild->DrawImGui();
 	}
 }
 
@@ -99,7 +103,8 @@ void Mage::GameObject::Render() const
 	// Render children
 	for (const auto& pChild : m_Children)
 	{
-		pChild->Render();
+		if (pChild->IsEnabled())
+            pChild->Render();
 	}
 }
 
@@ -115,7 +120,8 @@ void Mage::GameObject::RenderGizmos() const
 	// Render children
 	for (const auto& pChild : m_Children)
 	{
-		pChild->RenderGizmos();
+		if (pChild->IsEnabled())
+            pChild->RenderGizmos();
 	}
 }
 
@@ -124,7 +130,7 @@ void Mage::GameObject::OnTriggerEnter(Mage::BoxColliderComponent* other) const
 {
 	for (const auto& pComponent : m_Components)
 	{
-		if (pComponent->IsEnabled())
+		if (pComponent->IsEnabled() && m_IsEnabled)
 			pComponent->OnTriggerEnter(other);
 	}
 }
@@ -133,7 +139,7 @@ void Mage::GameObject::OnTriggerExit(Mage::BoxColliderComponent* other) const
 {
 	for (const auto& pComponent : m_Components)
 	{
-		if (pComponent->IsEnabled())
+		if (pComponent->IsEnabled() && m_IsEnabled)
 			pComponent->OnTriggerExit(other);
 	}
 }
@@ -142,7 +148,7 @@ void Mage::GameObject::OnCollisionEnter(Mage::BoxColliderComponent* other) const
 {
 	for (const auto& pComponent : m_Components)
 	{
-		if (pComponent->IsEnabled())
+		if (pComponent->IsEnabled() && m_IsEnabled)
 			pComponent->OnCollisionEnter(other);
 	}
 }
@@ -151,9 +157,39 @@ void Mage::GameObject::OnCollisionExit(Mage::BoxColliderComponent* other) const
 {
 	for (const auto& pComponent : m_Components)
 	{
-		if (pComponent->IsEnabled())
+		if (pComponent->IsEnabled() && m_IsEnabled)
 			pComponent->OnCollisionExit(other);
 	}
+}
+
+void Mage::GameObject::OnEnable() const
+{
+    for (const auto& pComponent : m_Components)
+    {
+        if (pComponent->IsEnabled())
+            pComponent->OnEnable();
+    }
+
+	for (const auto& pChild : m_Children)
+    {
+		if (pChild->IsEnabled())
+            pChild->OnEnable();
+    }
+}
+
+void Mage::GameObject::OnDisable() const
+{
+    for (const auto& pComponent : m_Components)
+    {
+        if (pComponent->IsEnabled())
+            pComponent->OnDisable();
+    }
+
+    for (const auto& pChild : m_Children)
+    {
+		if (pChild->IsEnabled())
+            pChild->OnDisable();
+    }
 }
 
 void Mage::GameObject::OnDestroy() const
@@ -172,6 +208,15 @@ void Mage::GameObject::OnDestroy() const
 
 void Mage::GameObject::ChangeSceneGraph()
 {
+	// Enable Disable
+	if (m_ShouldBeEnabled && !m_IsEnabled)
+		OnEnable();
+
+	if (!m_ShouldBeEnabled && m_IsEnabled)
+		OnDisable();
+
+	m_IsEnabled = m_ShouldBeEnabled;
+
 	// Add Children
 	for (const auto& pChild : m_ChildrenToAdd)
 		m_Children.push_back(pChild);
@@ -285,6 +330,16 @@ std::vector<Mage::GameObject*> Mage::GameObject::GetChildren() const
 Mage::GameObject* Mage::GameObject::GetParent() const
 {
 	return m_pParentGameObject;
+}
+
+void Mage::GameObject::SetEnabled(bool enabled)
+{
+    m_ShouldBeEnabled = enabled;
+}
+
+bool Mage::GameObject::IsEnabled() const
+{
+    return m_IsEnabled;
 }
 
 void Mage::GameObject::Destroy()

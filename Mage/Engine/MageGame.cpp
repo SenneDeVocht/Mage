@@ -127,7 +127,7 @@ void Mage::MageGame::Run()
 		lag += timer.GetDeltaTime();
 
 		// Input
-		quit = !input->ProcessInput();
+		input->ProcessInput();
 
 		// Update
 		sceneManager.Update();
@@ -139,8 +139,22 @@ void Mage::MageGame::Run()
 			lag -= timer.GetFixedTimeStep();
 		}
 
+		// SDL Events
+		SDL_Event e;
+		while (SDL_PollEvent(&e))
+		{
+			// Quit application
+			if (e.type == SDL_QUIT)
+				quit = true;
+
+			// ImGui input
+			ImGui_ImplSDL2_ProcessEvent(&e);
+		}
+
 		// Render
 		renderer->BeginFrame();
+
+		    sceneManager.DrawImGui();
 
 		    sceneManager.Render();
 		    renderer->Draw();
@@ -149,8 +163,6 @@ void Mage::MageGame::Run()
 		        sceneManager.RenderGizmos();
 		        renderer->Draw();
             #endif
-
-		    sceneManager.DrawImGui();
 
 		renderer->EndFrame();
 	}

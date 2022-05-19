@@ -57,18 +57,6 @@ public:
 	        }
         }
 
-        // SDL Events
-        SDL_Event e;
-        while (SDL_PollEvent(&e))
-        {
-            // Quit application
-            if (e.type == SDL_QUIT)
-                return false;
-
-            // ImGui input
-            ImGui_ImplSDL2_ProcessEvent(&e);
-        }
-
         return true;
     }
 

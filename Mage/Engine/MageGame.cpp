@@ -109,7 +109,7 @@ void Mage::MageGame::Run()
 	LoadGame();
 	
 	const auto& renderer = ServiceLocator::GetRenderer();
-	const auto& sceneManager = SceneManager::GetInstance();
+	auto& sceneManager = SceneManager::GetInstance();
 	const auto& input = ServiceLocator::GetInputManager();
 	const auto& timer = Timer::GetInstance();
 
@@ -139,9 +139,20 @@ void Mage::MageGame::Run()
 			lag -= timer.GetFixedTimeStep();
 		}
 
-		
 		// Render
-		renderer->Render();
+		renderer->BeginFrame();
+
+		    sceneManager.Render();
+		    renderer->Draw();
+
+            #ifdef _DEBUG
+		        sceneManager.RenderGizmos();
+		        renderer->Draw();
+            #endif
+
+		    sceneManager.DrawImGui();
+
+		renderer->EndFrame();
 	}
 
 	Cleanup();

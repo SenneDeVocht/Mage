@@ -10,7 +10,9 @@ namespace Mage
 	public:
 		virtual ~Renderer() = default;
 		
-		virtual void Render() = 0;
+		virtual void BeginFrame() = 0;
+		virtual void Draw() = 0;
+		virtual void EndFrame() = 0;
 
 		virtual void SetCamera(CameraComponent* pCamera) = 0;
 		virtual void SetBackgroundColor(const SDL_Color& color) = 0;
@@ -24,7 +26,9 @@ namespace Mage
 	class NullRenderer final : public Renderer
 	{
 	public:
-		void Render() override {}
+		void BeginFrame() override {};
+		void Draw() override {};
+		void EndFrame() override {};
 
 		void SetCamera(CameraComponent*) override {}
 		void SetBackgroundColor(const SDL_Color&) override {}
@@ -46,7 +50,9 @@ namespace Mage
         GLRenderer& operator=(const GLRenderer& other) = delete;
         GLRenderer& operator=(GLRenderer&& other) noexcept = delete;
 
-		void Render() override;
+		void BeginFrame() override;
+		void Draw() override;
+		void EndFrame() override;
 		
 		void SetCamera(CameraComponent* pCamera) override;
 		void SetBackgroundColor(const SDL_Color& color) override;

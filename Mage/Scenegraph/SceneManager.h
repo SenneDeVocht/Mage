@@ -32,7 +32,7 @@ namespace Mage
 		void FixedUpdate() const;
 		void Render() const;
 		void RenderGizmos() const;
-		void ChangeSceneGraph() const;
+		void ChangeSceneGraph();
 
 	private:
 		friend class Singleton<SceneManager>;
@@ -40,5 +40,8 @@ namespace Mage
 
 		std::vector<SceneCreationInstructions> m_SceneInstructions;
 		std::shared_ptr<Scene> m_ActiveScene{};
+
+		bool m_NewSceneShouldLoad{ false };
+		int m_WantedSceneIndex{};
 	};
 }

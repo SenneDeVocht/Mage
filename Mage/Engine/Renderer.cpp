@@ -30,7 +30,9 @@ namespace Mage {
 		void SetCamera(CameraComponent* pCamera);
 		void SetBackgroundColor(const SDL_Color& color);
 
-	    void Render();
+		void BeginFrame() const;
+		void Draw();
+		void EndFrame() const;
 
 		void RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer);
 	    void RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer);
@@ -121,64 +123,42 @@ void Mage::GLRenderer::GLRendererImpl::SetBackgroundColor(const SDL_Color& color
     m_ClearColor = color;
 }
 
-void Mage::GLRenderer::GLRendererImpl::Render()
+void Mage::GLRenderer::GLRendererImpl::BeginFrame() const
 {
 	// CLEAR
 	//------
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// GAME WINDOW
-	//------------
-#pragma region GameWindow
-	if (m_pCamera != nullptr)
-	{
-		if (m_pCamera->IsEnabled())
-		{
-			// Render game
-			m_RenderCommands.clear();
-			SceneManager::GetInstance().Render();
-			std::stable_sort(
-				m_RenderCommands.begin(), m_RenderCommands.end(),
-				[](const RenderCommand& a, const RenderCommand& b)
-				{
-					return a.Layer < b.Layer;
-				});
-
-			for (auto& renderCommand : m_RenderCommands)
-				renderCommand.Command();
-
-			// Render Gizmos
-#ifdef _DEBUG
-			m_RenderCommands.clear();
-			SceneManager::GetInstance().RenderGizmos();
-			std::stable_sort(
-				m_RenderCommands.begin(), m_RenderCommands.end(),
-				[](const RenderCommand& a, const RenderCommand& b)
-				{
-					return a.Layer < b.Layer;
-				});
-
-			for (auto& renderCommand : m_RenderCommands)
-				renderCommand.Command();
-#endif
-		}
-	}
-#pragma endregion
-
 	// IMGUI
 	//------
-#pragma region ImGui
-	// Render
 	ImGui_ImplOpenGL2_NewFrame();
 	ImGui_ImplSDL2_NewFrame(m_pWindow);
 	ImGui::NewFrame();
+}
 
-	SceneManager::GetInstance().DrawImGui();
 
+void Mage::GLRenderer::GLRendererImpl::Draw()
+{
+	if (m_pCamera != nullptr && m_pCamera->IsEnabled())
+	{
+		std::stable_sort(
+			m_RenderCommands.begin(), m_RenderCommands.end(),
+			[](const RenderCommand& a, const RenderCommand& b)
+			{
+				return a.Layer < b.Layer;
+			});
+
+		for (auto& renderCommand : m_RenderCommands)
+			renderCommand.Command();
+
+		m_RenderCommands.clear();
+	}
+}
+
+void Mage::GLRenderer::GLRendererImpl::EndFrame() const
+{
 	ImGui::Render();
-
-	// Display
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 	SDL_GL_SwapWindow(m_pWindow);
 
@@ -193,27 +173,50 @@ void Mage::GLRenderer::GLRendererImpl::Render()
 
 		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 	}
-#pragma endregion
 }
 
 void Mage::GLRenderer::GLRendererImpl::RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer)
 {
-	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPolygonOutline, this, positions, closed, color), layer });
+	m_RenderCommands.push_back({ 
+		[=]()
+		{
+			ActuallyRenderPolygonOutline(positions, closed, color);
+		},
+        layer
+	});
 }
 
 void Mage::GLRenderer::GLRendererImpl::RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer)
 {
-	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPolygonFilled, this, positions, color), layer });
+	m_RenderCommands.push_back({
+	    [=]()
+		{
+			ActuallyRenderPolygonFilled(positions, color);
+		},
+		layer
+	});
 }
 
 void Mage::GLRenderer::GLRendererImpl::RenderTexture(const Texture2D* texture, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
 {
-	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderTexture, this, texture, position, rotation, scale), layer });
+	m_RenderCommands.push_back({
+		[=]()
+		{
+			ActuallyRenderTexture(texture, position, rotation, scale);
+		},
+		layer
+	});
 }
 
 void Mage::GLRenderer::GLRendererImpl::RenderPartialTexture(const Texture2D* texture, int srcX, int srcY, int srcW, int srcH, const glm::vec2& position, float rotation, const glm::vec2& scale, float layer)
 {
-	m_RenderCommands.push_back({ std::bind(&GLRendererImpl::ActuallyRenderPartialTexture, this, texture, srcX, srcY, srcW, srcH, position, rotation, scale), layer });
+	m_RenderCommands.push_back({
+		[=]()
+		{
+			ActuallyRenderPartialTexture(texture, srcX, srcY, srcW, srcH, position, rotation, scale);
+		},
+		layer
+	});
 }
 
 void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color) const
@@ -390,9 +393,19 @@ Mage::GLRenderer::GLRenderer(SDL_Window* window)
 
 Mage::GLRenderer::~GLRenderer() = default;
 
-void Mage::GLRenderer::Render()
+void Mage::GLRenderer::BeginFrame()
 {
-	m_pImpl->Render();
+	m_pImpl->BeginFrame();
+}
+
+void Mage::GLRenderer::Draw()
+{
+	m_pImpl->Draw();
+}
+
+void Mage::GLRenderer::EndFrame()
+{
+	m_pImpl->EndFrame();
 }
 
 void Mage::GLRenderer::SetCamera(CameraComponent* pCamera)

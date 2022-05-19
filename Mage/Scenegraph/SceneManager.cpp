@@ -31,8 +31,16 @@ void Mage::SceneManager::RenderGizmos() const
 	m_ActiveScene->RenderGizmos();
 }
 
-void Mage::SceneManager::ChangeSceneGraph() const
+void Mage::SceneManager::ChangeSceneGraph()
 {
+    if (m_NewSceneShouldLoad)
+    {
+		const auto scene = std::shared_ptr<Scene>(new Scene(m_SceneInstructions[m_WantedSceneIndex].Name));
+		m_SceneInstructions[m_WantedSceneIndex].CreationFunction(scene.get());
+		m_ActiveScene = scene;
+		m_NewSceneShouldLoad = false;
+    }
+
 	m_ActiveScene->ChangeSceneGraph();
 }
 
@@ -43,7 +51,6 @@ void Mage::SceneManager::RegisterScene(const SceneCreationInstructions& instruct
 
 void Mage::SceneManager::LoadScene(int sceneIndex)
 {
-	const auto scene = std::shared_ptr<Scene>(new Scene(m_SceneInstructions[sceneIndex].Name));
-	m_SceneInstructions[sceneIndex].CreationFunction(scene.get());
-	m_ActiveScene = scene;
+	m_WantedSceneIndex = sceneIndex;
+	m_NewSceneShouldLoad = true;
 }

@@ -1,6 +1,4 @@
 #pragma once
-#include "SceneManager.h"
-
 class b2World;
 
 namespace Mage

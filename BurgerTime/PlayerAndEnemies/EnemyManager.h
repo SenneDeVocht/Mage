@@ -22,6 +22,8 @@ public:
 
     void Update() override;
 
+    void Reset();
+
 private:
     void SpawnEnemy();
 

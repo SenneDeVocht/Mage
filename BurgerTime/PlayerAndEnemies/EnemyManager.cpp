@@ -45,6 +45,17 @@ void EnemyManager::Update()
     m_SpawnedEnemies.erase(pos, m_SpawnedEnemies.end());
 }
 
+void EnemyManager::Reset()
+{
+    for (auto& e : m_SpawnedEnemies)
+    {
+        e->GetGameObject()->Destroy();
+    }
+
+    m_SpawnedEnemies.clear();
+    m_TimeSinceLastSpawn = m_SpawnInterval;
+}
+
 void EnemyManager::SpawnEnemy()
 {
     // Pick random spawn position

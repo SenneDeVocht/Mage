@@ -1,6 +1,8 @@
 #pragma once
 #include "../Singleton.h"
 
+#include <functional>
+
 namespace Mage
 {
 	class Scene;
@@ -9,10 +11,21 @@ namespace Mage
 	class SceneManager final : public Singleton<SceneManager>
 	{
 	public:
-		~SceneManager() override;
+		struct SceneCreationInstructions
+		{
+		    std::string Name;
+			std::function<void(Scene*)> CreationFunction;
+		};
+		
+		~SceneManager() override = default;
+		
+        SceneManager(const SceneManager& other) = delete;
+        SceneManager(SceneManager&& other) noexcept = delete;
+        SceneManager& operator=(const SceneManager& other) = delete;
+        SceneManager& operator=(SceneManager&& other) noexcept = delete;
 
-		Scene* CreateScene(const std::string& name);
-		void SetActiveScene(int sceneIndex);
+		void RegisterScene(const SceneCreationInstructions& instructions);
+		void LoadScene(int sceneIndex);
 		
 		void DrawImGui() const;
 		void Update() const;
@@ -23,9 +36,9 @@ namespace Mage
 
 	private:
 		friend class Singleton<SceneManager>;
-		SceneManager();
+		SceneManager() = default;
 
-		std::vector<std::unique_ptr<Scene>> m_Scenes;
-		int m_ActiveScene{};
+		std::vector<SceneCreationInstructions> m_SceneInstructions;
+		std::shared_ptr<Scene> m_ActiveScene{};
 	};
 }

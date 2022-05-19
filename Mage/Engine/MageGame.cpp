@@ -107,45 +107,42 @@ void Mage::MageGame::Run()
 	ResourceManager::GetInstance().Init("../Data/");
 
 	LoadGame();
+	
+	const auto& renderer = ServiceLocator::GetRenderer();
+	const auto& sceneManager = SceneManager::GetInstance();
+	const auto& input = ServiceLocator::GetInputManager();
+	const auto& timer = Timer::GetInstance();
 
+	bool quit = false;
+	float lag = 0.0f;
+
+	// Game Loop
+	while (!quit)
 	{
-		const auto& renderer = ServiceLocator::GetRenderer();
-		const auto& sceneManager = SceneManager::GetInstance();
-		const auto& input = ServiceLocator::GetInputManager();
-		const auto& timer = Timer::GetInstance();
+		// Add, Remove, Enable, Disable, ...
+		sceneManager.ChangeSceneGraph();
 
-		bool quit = false;
-		auto lastTime = std::chrono::high_resolution_clock::now();
-		float lag = 0.0f;
+		// Time calculations
+		timer.CalculateTime();
+		lag += timer.GetDeltaTime();
 
-		// Game Loop
-		while (!quit)
+		// Input
+		quit = !input->ProcessInput();
+
+		// Update
+		sceneManager.Update();
+
+		// Fixed Update
+		while (lag >= timer.GetFixedTimeStep())
 		{
-			// Add, Remove, Enable, Disable, ...
-			sceneManager.ChangeSceneGraph();
-
-			// Time calculations
-			timer.CalculateTime();
-			lag += timer.GetDeltaTime();
-
-			// Input
-			quit = !input->ProcessInput();
-
-			// Update
-			sceneManager.Update();
-
-			// Fixed Update
-			while (lag >= timer.GetFixedTimeStep())
-			{
-				sceneManager.FixedUpdate();
-				lag -= timer.GetFixedTimeStep();
-			}
-
-			
-			// Render
-			renderer->Render();
+			sceneManager.FixedUpdate();
+			lag -= timer.GetFixedTimeStep();
 		}
 
-		Cleanup();
+		
+		// Render
+		renderer->Render();
 	}
+
+	Cleanup();
 }

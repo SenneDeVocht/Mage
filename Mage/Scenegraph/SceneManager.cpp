@@ -6,50 +6,44 @@
 
 #include "imgui.h"
 
-Mage::SceneManager::SceneManager() = default;
-Mage::SceneManager::~SceneManager() = default;
-
 void Mage::SceneManager::DrawImGui() const
 {
-	m_Scenes[m_ActiveScene]->DrawImGui();
+	m_ActiveScene->DrawImGui();
 }
 
 void Mage::SceneManager::Update() const
 {
-	m_Scenes[m_ActiveScene]->Update();
+	m_ActiveScene->Update();
 }
 
 void Mage::SceneManager::FixedUpdate() const
 {
-	m_Scenes[m_ActiveScene]->FixedUpdate();
+	m_ActiveScene->FixedUpdate();
 }
 
 void Mage::SceneManager::Render() const
 {
-	m_Scenes[m_ActiveScene]->Render();
+	m_ActiveScene->Render();
 }
 
 void Mage::SceneManager::RenderGizmos() const
 {
-	m_Scenes[m_ActiveScene]->RenderGizmos();
+	m_ActiveScene->RenderGizmos();
 }
 
 void Mage::SceneManager::ChangeSceneGraph() const
 {
-	m_Scenes[m_ActiveScene]->ChangeSceneGraph();
+	m_ActiveScene->ChangeSceneGraph();
 }
 
-Mage::Scene* Mage::SceneManager::CreateScene(const std::string & name)
+void Mage::SceneManager::RegisterScene(const SceneCreationInstructions& instructions)
 {
-	auto scene = std::unique_ptr<Scene>(new Scene(name));
-	const auto pScene = scene.get();
-
-	m_Scenes.push_back(std::move(scene));
-
-	return pScene;
+	m_SceneInstructions.emplace_back(instructions);
 }
 
-void Mage::SceneManager::SetActiveScene(int sceneIndex)
+void Mage::SceneManager::LoadScene(int sceneIndex)
 {
-	m_ActiveScene = sceneIndex;
+	const auto scene = std::shared_ptr<Scene>(new Scene(m_SceneInstructions[sceneIndex].Name));
+	m_SceneInstructions[sceneIndex].CreationFunction(scene.get());
+	m_ActiveScene = scene;
 }

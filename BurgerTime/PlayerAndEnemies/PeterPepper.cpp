@@ -2,10 +2,12 @@
 #include "PeterPepper.h"
 
 #include "BurgerTime/PlayerAndEnemies/PlayerMovement.h"
+#include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
 #include "BurgerTime/Level.h"
 
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Scenegraph/Scene.h"
+#include "Mage/Scenegraph/SceneManager.h"
 #include "Mage/Components/AnimatedSpriteComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
@@ -15,14 +17,17 @@
 #include "Mage/Input/InputManager.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
-PeterPepper::PeterPepper(Level* pLevel, const std::shared_ptr<Mage::SpriteAnimation>& pVictory, const std::shared_ptr<Mage::SpriteAnimation>& pDeath)
+PeterPepper::PeterPepper(Level* pLevel, EnemyManager* pEnemyManager, const std::shared_ptr<Mage::SpriteAnimation>& pVictory, const std::shared_ptr<Mage::SpriteAnimation>& pDeath)
 	: m_pLevel{ pLevel}
+    , m_pEnemyManager{ pEnemyManager }
 	, m_pVictory{ pVictory }
 	, m_pDeath{ pDeath }
 {}
 
 void PeterPepper::Initialize()
 {
+	m_StartPosition = GetGameObject()->GetTransform()->GetWorldPosition();
+
 	m_pMovement = GetGameObject()->GetComponent<PlayerMovement>();
 	m_pAnimatedSprite = GetGameObject()->GetComponent<Mage::AnimatedSpriteComponent>();
 
@@ -35,6 +40,7 @@ void PeterPepper::Initialize()
 
 void PeterPepper::Update()
 {
+	// Victory
 	if (m_pLevel->IsCompleted())
 	{
 		m_pMovement->SetEnabled(false);
@@ -45,6 +51,31 @@ void PeterPepper::Update()
 		return;
 	}
 
+    if (m_IsDead)
+    {
+        m_DeathTimer += Mage::Timer::GetInstance().GetDeltaTime();
+		if (m_DeathTimer >= m_DeathDuration)
+		{
+            if (m_LivesLeft > 0)
+            {
+			    Reset();
+			    m_DeathTimer = 0.0f;
+            }
+            else
+            {
+				Mage::SceneManager::GetInstance().LoadScene(0);
+            }
+		}
+    }
+
+	// Spray pepper
+	if (!m_SprayingPepper && !m_IsDead && m_PepperCount > 0 &&
+		Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x20, Mage::InputState::Down))
+	{
+		SprayPepper();
+	}
+
+	// Stop spraying pepper
 	if (m_SprayingPepper)
 	{
 		m_PepperSprayTimer += Mage::Timer::GetInstance().GetDeltaTime();
@@ -54,23 +85,14 @@ void PeterPepper::Update()
 			StopSprayingPepper();
 		}
 	}
-
-	if (!m_SprayingPepper && !m_IsDead && m_PepperCount > 0 &&
-		Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x20, Mage::InputState::Down))
-	{
-		SprayPepper();
-	}
 }
 
 void PeterPepper::OnTriggerEnter(Mage::BoxColliderComponent* other)
 {
-	if (!m_IsDead && !m_pLevel->IsCompleted() && other->GetGameObject()->GetTag() == "Enemy")
+	if (!m_IsDead && !m_pLevel->IsCompleted() &&
+		other->GetGameObject()->GetTag() == "Enemy")
 	{
-		m_IsDead = true;
-
-		--m_LivesLeft;
-		m_pMovement->SetEnabled(false);
-		m_pAnimatedSprite->SetAnimation(m_pDeath);
+		Die();
 	}
 }
 
@@ -119,4 +141,22 @@ void PeterPepper::StopSprayingPepper()
 	m_PepperSprayTimer = 0;
 	m_pPepperSpray->Destroy();
 	m_pPepperSpray = nullptr;
+}
+
+void PeterPepper::Die()
+{
+	m_IsDead = true;
+
+	--m_LivesLeft;
+	m_pMovement->SetEnabled(false);
+	m_pAnimatedSprite->SetAnimation(m_pDeath);
+}
+
+void PeterPepper::Reset()
+{
+	GetGameObject()->GetTransform()->SetWorldPosition(m_StartPosition);
+	m_IsDead = false;
+	m_pMovement->SetEnabled(true);
+
+	m_pEnemyManager->Reset();
 }

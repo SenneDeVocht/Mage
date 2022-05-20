@@ -29,6 +29,12 @@ void Mage::BoxColliderComponent::Update()
 {
     if (m_RigidbodyChanged)
     {
+	    if (m_pRigidbody != nullptr)
+	    {
+		    m_pRigidbody->RemoveBoxCollider(this);
+		    m_pRigidbody = nullptr;
+	    }
+
 		AttachToRigidbody(GetGameObject());
 		m_RigidbodyChanged = false;
     }

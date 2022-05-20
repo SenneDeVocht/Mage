@@ -109,6 +109,7 @@ void Mage::RigidBodyComponent::AddBoxCollider(BoxColliderComponent* boxCollider)
 void Mage::RigidBodyComponent::RemoveBoxCollider(BoxColliderComponent* boxCollider) const
 {
     m_RunTimeBody->DestroyFixture(boxCollider->GetRunTimeFixture());
+	boxCollider->SetRunTimeFixture(nullptr);
 }
 
 void Mage::RigidBodyComponent::TransformChanged() const

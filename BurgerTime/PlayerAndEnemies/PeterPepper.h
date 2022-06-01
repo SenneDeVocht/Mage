@@ -49,7 +49,7 @@ private:
 	glm::vec2 m_StartPosition{};
 
 	// Lives
-	const int m_MaxLives{ 5 };
+	const int m_MaxLives{ 3 };
 	int m_LivesLeft{ m_MaxLives };
 
 	// PepperSpray

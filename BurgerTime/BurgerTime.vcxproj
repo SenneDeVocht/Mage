@@ -194,6 +194,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="LivesUI.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="PlayerAndEnemies\EnemyManager.cpp" />
     <ClCompile Include="PepperUI.cpp" />
     <ClCompile Include="PlayerAndEnemies\Enemy.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="BurgerTime.h" />
     <ClInclude Include="BurgerTimePCH.h" />
     <ClInclude Include="LivesUI.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="PlayerAndEnemies\EnemyManager.h" />
     <ClInclude Include="PepperUI.h" />
     <ClInclude Include="PlayerAndEnemies\Enemy.h" />

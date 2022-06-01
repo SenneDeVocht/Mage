@@ -249,8 +249,8 @@ void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPolygonOutline(const std::v
 
 	        for (size_t i{ 0 }; i < positions.size() - 1; ++i)
 	        {
-				const auto pos1 = positions[i];
-				const auto pos2 = positions[i + 1];
+				const auto& pos1 = positions[i];
+				const auto& pos2 = positions[i + 1];
 
 		        glVertex2f(pos1.x, pos1.y);
 		        glVertex2f(pos2.x, pos2.y);
@@ -327,14 +327,14 @@ void Mage::GLRenderer::GLRendererImpl::ActuallyRenderPartialTexture(const Textur
 	// Determine texture coordinates
 	const float uvLeft = src.x / texture->GetWidth();
 	const float uvRight = (src.x + src.w) / texture->GetWidth();
-	const float uvTop = (src.y - src.h) / texture->GetHeight();
+	const float uvTop = (src.y + src.h) / texture->GetHeight();
 	const float uvBottom = src.y / texture->GetHeight();
 
 	// Determine vertex coordinates
 	const float vertexLeft{ (float)dst.x };
-	const float vertexBottom{ (float)dst.y };
+	const float vertexBottom{ (float)dst.y + dst.h };
 	const float vertexRight{ vertexLeft + dst.w };
-	const float vertexTop{ vertexBottom + dst.h };
+	const float vertexTop{  (float)dst.y };
 
 	// Tell opengl which texture we will use
 	glBindTexture(GL_TEXTURE_2D, texture->GetGLTexture());

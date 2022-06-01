@@ -10,7 +10,7 @@
 int main(int, char* [])
 {
     // Settings
-    Mage::GameSettings::GetInstance().SetWindowSize({ 240 * 4, 240 * 4 });
+    Mage::GameSettings::GetInstance().SetWindowSize({ 240 * 3, 240 * 3 });
     Mage::GameSettings::GetInstance().SetWindowTitle("Burger Time");
 
     // Run

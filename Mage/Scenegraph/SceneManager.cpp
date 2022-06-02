@@ -35,8 +35,12 @@ void Mage::SceneManager::ChangeSceneGraph()
 {
     if (m_NewSceneShouldLoad)
     {
-		const auto scene = std::shared_ptr<Scene>(new Scene(m_SceneInstructions[m_WantedSceneIndex].Name));
-		m_SceneInstructions[m_WantedSceneIndex].CreationFunction(scene.get());
+		// make sure wanted scene exists
+		assert(m_SceneInstructions.find(m_WantedSceneName) != m_SceneInstructions.end());
+
+
+		const auto scene = std::shared_ptr<Scene>(new Scene(m_WantedSceneName));
+		m_SceneInstructions.at(m_WantedSceneName)(scene.get());
 		m_ActiveScene = scene;
 		m_NewSceneShouldLoad = false;
     }
@@ -44,13 +48,17 @@ void Mage::SceneManager::ChangeSceneGraph()
 	m_ActiveScene->ChangeSceneGraph();
 }
 
-void Mage::SceneManager::RegisterScene(const SceneCreationInstructions& instructions)
+void Mage::SceneManager::RegisterScene(const std::string& name, const std::function<void(Scene*)>& instructions)
 {
-	m_SceneInstructions.emplace_back(instructions);
+	// Make sure scene doesn't already exist
+	assert(m_SceneInstructions.find(name) == m_SceneInstructions.end());
+
+	// Add scene
+    m_SceneInstructions.insert(std::make_pair(name, instructions));
 }
 
-void Mage::SceneManager::LoadScene(int sceneIndex)
+void Mage::SceneManager::LoadScene(const std::string& sceneName)
 {
-	m_WantedSceneIndex = sceneIndex;
+	m_WantedSceneName = sceneName;
 	m_NewSceneShouldLoad = true;
 }

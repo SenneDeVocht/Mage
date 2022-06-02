@@ -63,7 +63,7 @@ void PeterPepper::Update()
             }
             else
             {
-				Mage::SceneManager::GetInstance().LoadScene(0);
+				Mage::SceneManager::GetInstance().LoadScene("GameOver");
             }
 		}
     }

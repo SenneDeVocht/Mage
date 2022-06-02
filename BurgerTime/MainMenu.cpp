@@ -21,5 +21,5 @@ void MainMenu::Update()
     // Play
     const auto input = Mage::ServiceLocator::GetInputManager();
     if (input->CheckKeyboardKey(' ', Mage::InputState::Down))
-        Mage::SceneManager::GetInstance().LoadScene(1);
+        Mage::SceneManager::GetInstance().LoadScene("Level01");
 }

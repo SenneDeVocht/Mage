@@ -23,6 +23,7 @@
 #include "BurgerTime/PepperUI.h"
 #include "BurgerTime/LivesUI.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
+#include "GameOverManager.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -35,7 +36,7 @@ void BurgerTime::LoadGame() const
 
 	// MAIN MENU
 	//----------
-	Mage::SceneManager::GetInstance().RegisterScene({ "Level_01", [&](Mage::Scene* pScene)
+	Mage::SceneManager::GetInstance().RegisterScene("MainMenu", [&](Mage::Scene* pScene)
 	    {
 		    // Camera
 		    //-------
@@ -80,12 +81,11 @@ void BurgerTime::LoadGame() const
 		    mainMenuObject->CreateComponent<MainMenu>(playText);
 
             #pragma endregion
-	    }
-	});
+	    });
 
 	// LEVEL 01
 	//---------
-	Mage::SceneManager::GetInstance().RegisterScene({ "Level_01", [&](Mage::Scene* pScene)
+	Mage::SceneManager::GetInstance().RegisterScene("Level01", [&](Mage::Scene* pScene)
 	    {
 	        // Camera
 		    //-------
@@ -175,8 +175,45 @@ void BurgerTime::LoadGame() const
 		    livesUIObject->CreateComponent<LivesUI>(peterPepper);
 
 		    #pragma endregion
-	    }
-	});
+	    });
 
-	Mage::SceneManager::GetInstance().LoadScene(0);
+	// GAME OVER
+	//----------
+	Mage::SceneManager::GetInstance().RegisterScene("GameOver", [&](Mage::Scene* pScene)
+		{
+			// Camera
+			//-------
+			#pragma region Camera
+
+			const auto cameraObject = pScene->CreateChildObject("Camera");
+			const auto camera = cameraObject->CreateComponent<Mage::CameraComponent>(glm::vec2{ 15.f, 15.f });
+			Mage::ServiceLocator::GetRenderer()->SetCamera(camera);
+
+			#pragma endregion
+
+			// TEXT
+			//-----
+			#pragma region Text
+
+			const auto textObject = pScene->CreateChildObject("GameOverText");
+			textObject->CreateComponent<Mage::TextComponent>(
+				"GAME OVER",
+				Mage::ResourceManager::GetInstance().LoadFont("Fonts/PressStart2P.ttf", 8),
+				SDL_Color{ 255, 255, 255, 255 },
+				16.f,
+				glm::vec2{ 0.5f, 0.5f });
+
+			#pragma endregion
+
+			// MANAGER
+			//--------
+			#pragma region MainMenu
+
+			const auto gameOverObject = pScene->CreateChildObject("GameOverManager");
+			gameOverObject->CreateComponent<GameOverManager>();
+
+			#pragma endregion
+		});
+
+	Mage::SceneManager::GetInstance().LoadScene("MainMenu");
 }

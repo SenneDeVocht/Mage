@@ -14,6 +14,7 @@
     <ClInclude Include="PlayerAndEnemies\EnemyManager.h" />
     <ClInclude Include="LivesUI.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="GameOverManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -30,5 +31,6 @@
     <ClCompile Include="PlayerAndEnemies\EnemyManager.cpp" />
     <ClCompile Include="LivesUI.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="GameOverManager.cpp" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 #include "../Singleton.h"
 
 #include <functional>
+#include <map>
 
 namespace Mage
 {
@@ -10,13 +11,7 @@ namespace Mage
 
 	class SceneManager final : public Singleton<SceneManager>
 	{
-	public:
-		struct SceneCreationInstructions
-		{
-		    std::string Name;
-			std::function<void(Scene*)> CreationFunction;
-		};
-		
+	public:		
 		~SceneManager() override = default;
 		
         SceneManager(const SceneManager& other) = delete;
@@ -24,8 +19,8 @@ namespace Mage
         SceneManager& operator=(const SceneManager& other) = delete;
         SceneManager& operator=(SceneManager&& other) noexcept = delete;
 
-		void RegisterScene(const SceneCreationInstructions& instructions);
-		void LoadScene(int sceneIndex);
+		void RegisterScene(const std::string& name, const std::function<void(Scene*)>& instructions);
+		void LoadScene(const std::string& sceneName);
 		
 		void DrawImGui() const;
 		void Update() const;
@@ -38,10 +33,10 @@ namespace Mage
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
 
-		std::vector<SceneCreationInstructions> m_SceneInstructions;
+		std::map<std::string, std::function<void(Scene*)>> m_SceneInstructions;
 		std::shared_ptr<Scene> m_ActiveScene{};
 
 		bool m_NewSceneShouldLoad{ false };
-		int m_WantedSceneIndex{};
+		std::string m_WantedSceneName{};
 	};
 }

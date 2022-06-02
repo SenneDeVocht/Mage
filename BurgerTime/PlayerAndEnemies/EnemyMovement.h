@@ -36,7 +36,7 @@ private:
 
 	const float m_LadderThreshold{ 0.1f };
 
-	int m_LastIntersection{ -1 };
+	glm::ivec2 m_LastIntersection{ -1 };
 	glm::ivec2 m_CurrentDirection{ 0, 0 };
 	float m_Speed{ 2 };
 };

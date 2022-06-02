@@ -101,10 +101,11 @@ void BurgerTime::LoadGame() const
 		    // LEVEL
 		    //------
 		    #pragma region Level
+			
 
 		    const auto levelObject = pScene->CreateChildObject("Level");
 		    levelObject->GetTransform()->SetWorldPosition({ 0.f, -0.5f });
-		    const auto level = levelObject->CreateComponent<Level>();
+		    const auto level = levelObject->CreateComponent<Level>("D:/DAE/SEM_4/PROG_4/Mage/Data/Level01.txt");
 		    levelObject->CreateComponent<Mage::TilemapComponent>(
 			    std::vector <std::shared_ptr<Mage::Texture2D>>{
 				    resourceManager.LoadTexture("Level/Platform_Narrow.png", 16),

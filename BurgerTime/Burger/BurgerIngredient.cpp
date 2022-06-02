@@ -85,7 +85,7 @@ void BurgerIngredient::Update()
 		m_pRigidBody->SetGravityScale(0.f);
 		m_pRigidBody->SetVelocity({ 0, 0 });
 
-		transform->SetLocalPosition({ transform->GetWorldPosition().x, m_FallDestination });
+		transform->SetWorldPosition({ transform->GetWorldPosition().x, m_FallDestination });
 		m_Falling = false;
 
 		// Reset parts
@@ -137,7 +137,7 @@ void BurgerIngredient::StartFalling()
 		m_KeepFalling = true;
 	}
 
-	m_FallDestination += 5 / 16.f;
+	m_FallDestination -= 3 / 16.f;
 
 	m_pRigidBody->SetGravityScale(1.f);
 	m_Falling = true;

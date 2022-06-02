@@ -71,7 +71,7 @@ void PlayerMovement::FixedUpdate()
 	//-----
 	const glm::vec2 position = m_pGameObject->GetTransform()->GetWorldPosition();
 	glm::vec2 velocity{ 0, 0 };
-
+	
 	// Up - Down
 	if (m_Input.y > 0 && m_pLevel->CanMoveInDirection(position, Level::Direction::Up) ||
 		m_Input.y < 0 && m_pLevel->CanMoveInDirection(position, Level::Direction::Down))

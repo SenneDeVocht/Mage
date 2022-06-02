@@ -27,7 +27,7 @@ void EnemyMovement::FixedUpdate()
 {
 	const auto ownPos = GetGameObject()->GetTransform()->GetWorldPosition();
 	const auto targetPos = m_pTarget->GetWorldPosition();
-	const int currentTile = m_pLevel->PositionToTileIndex(ownPos);
+	const auto currentTile = m_pLevel->PositionToTilePosition(ownPos);
 
 	const bool cantKeepMovingInCurrentDirection = m_CurrentDirection.x == 1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right, true)
 		|| m_CurrentDirection.x == -1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Left, true)

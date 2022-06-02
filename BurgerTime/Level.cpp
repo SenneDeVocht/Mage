@@ -1,6 +1,9 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "Level.h"
 
+#include <fstream>
+#include <map>
+
 #include "Burger/BurgerIngredient.h"
 #include "Mage/Components/SpriteComponent.h"
 #include "Mage/Components/TilemapComponent.h"
@@ -10,142 +13,157 @@
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
+Level::Level(const std::string& filePath)
+    : m_FilePath{ filePath }
+{}
+
 void Level::Initialize()
 {
+	std::ifstream inputFile(m_FilePath);
+
+	if (!inputFile.is_open())
+		return;
+
+	std::string line;
+    while (std::getline(inputFile, line))
+    {
+        // make sure line isn't whitespace
+		if (line.empty())
+            continue;
+
+        // [str type] [int posX] [int posY]
+
+		std::string type = line.substr(0, line.find(" "));
+		int posX = std::stoi(line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1)));
+        int posY = std::stoi(line.substr(line.find(" ", line.find(" ") + 1) + 1));
+
+        if (type == "platform" ||
+			type == "ladder" ||
+            type == "both")
+        {
+            if (posX < m_SmallestX)
+                m_SmallestX = (float)posX;
+			if (posX > m_LargestX)
+				m_LargestX = (float)posX;
+			if (posY < m_SmallestY)
+                m_SmallestY = (float)posY;
+			if (posY > m_LargestY)
+                m_LargestY = (float)posY;
+
+			if (type == "platform")
+				m_Tiles[{ posX, posY }] = TileType::Platform;
+			if (type == "ladder")
+				m_Tiles[{ posX, posY }] = TileType::Ladder;
+			if (type == "both")
+				m_Tiles[{ posX, posY }] = TileType::Both;
+        }
+
+		if (type == "catcher")
+			SpawnBurgerCatcher({ posX, posY });
+
+		if (type == "bunTop")
+            SpawnIngredient(BurgerIngredient::IngredientType::BunTop, { posX, posY });
+		if (type == "bunBottom")
+            SpawnIngredient(BurgerIngredient::IngredientType::BunBottom, { posX, posY });
+		if (type == "cheese")
+            SpawnIngredient(BurgerIngredient::IngredientType::Cheese, { posX, posY });
+		if (type == "patty")
+            SpawnIngredient(BurgerIngredient::IngredientType::Patty, { posX, posY });
+		if (type == "salad")
+            SpawnIngredient(BurgerIngredient::IngredientType::Salad, { posX, posY });
+		if (type == "tomato")
+            SpawnIngredient(BurgerIngredient::IngredientType::Tomato, { posX, posY });
+    }
+
+	inputFile.close();
+
+	m_SmallestX *= 1.5f;
+	m_LargestX *= 1.5f;
+
 	// TILES
 	//------
 #pragma region tiles
-	// Init the stage
-	m_Tiles = {
-		TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform, TileType::Platform,
-		TileType::Ladder,   TileType::None,     TileType::Ladder,   TileType::Ladder,   TileType::Ladder,   TileType::None,     TileType::Ladder,   TileType::None,     TileType::Ladder,
-		TileType::Both,     TileType::Platform, TileType::Both,     TileType::Ladder,   TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,
-		TileType::None,     TileType::Ladder,   TileType::Both,     TileType::Both,     TileType::Both,     TileType::Ladder,   TileType::Ladder,   TileType::None,     TileType::Ladder,
-		TileType::Platform, TileType::Both,     TileType::Both,     TileType::None,     TileType::Ladder,   TileType::Ladder,   TileType::Both,     TileType::Platform, TileType::Both,
-		TileType::Ladder,   TileType::Ladder,   TileType::Both,     TileType::Platform, TileType::Both,     TileType::Both,     TileType::Both,     TileType::Ladder,   TileType::None,
-		TileType::Ladder,   TileType::Ladder,   TileType::Ladder,   TileType::None,     TileType::Ladder,   TileType::None,     TileType::Both,     TileType::Both,     TileType::Platform,
-		TileType::Both,     TileType::Both,     TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,     TileType::Ladder,   TileType::Ladder,
-		TileType::Ladder,   TileType::None,     TileType::Ladder,   TileType::None,     TileType::Ladder,   TileType::None,     TileType::Ladder,   TileType::Ladder,   TileType::Ladder,
-		TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,     TileType::Platform, TileType::Both,     TileType::Both,     TileType::Both
-	};
-
+	
 	auto tilemap = GetGameObject()->GetComponent<Mage::TilemapComponent>();
 
 	// Spawn sprites
-	for (int tileY = 0; tileY < m_NumRows; tileY++)
+	for (auto it = m_Tiles.begin(); it != m_Tiles.end(); ++it)
 	{
-		for (int tileX = 0; tileX < m_NumCols; tileX++)
+		// Narrow
+		if (it->first.x % 2 == 0)
 		{
-			const int index = tileY * m_NumCols + tileX;
-
-			const int posX = tileX - m_NumCols / 2;
-			const int posY = m_NumRows / 2 - tileY;
-
-			// Narrow
-			if (tileX % 2 == 0)
+			switch (it->second)
 			{
-				switch (m_Tiles[index])
+				case TileType::Platform:
 				{
-					case TileType::Platform:
-					{
-						tilemap->SetTile(glm::ivec2{ posX, posY }, 0);
-						break;
-					}
-					case TileType::Ladder:
-					{
-						tilemap->SetTile(glm::ivec2{ posX, posY }, 1);
-						break;
-					}
-					case TileType::Both:
-					{
-						tilemap->SetTile(glm::ivec2{ posX, posY }, 2);
-						break;
-					}
+					tilemap->SetTile(it->first, 0);
+					break;
+				}
+				case TileType::Ladder:
+				{
+					tilemap->SetTile(it->first, 1);
+					break;
+				}
+				case TileType::Both:
+				{
+					tilemap->SetTile(it->first, 2);
+					break;
 				}
 			}
-			// Wide
-			else
+		}
+		// Wide
+		else
+		{
+			switch (it->second)
 			{
-				switch (m_Tiles[index])
+				case TileType::Platform:
 				{
-					case TileType::Platform:
-					{
-						tilemap->SetTile(glm::ivec2{ posX, posY }, 3);
-						break;
-					}
-					case TileType::Ladder:
-					{
-						tilemap->SetTile(glm::ivec2{ posX, posY }, 4);
-						break;
-					}
-					case TileType::Both:
-					{
-						tilemap->SetTile(glm::ivec2{ posX, posY }, 5);
-						break;
-					}
+					tilemap->SetTile(it->first, 3);
+					break;
+				}
+				case TileType::Ladder:
+				{
+					tilemap->SetTile(it->first, 4);
+					break;
+				}
+				case TileType::Both:
+				{
+					tilemap->SetTile(it->first, 5);
+					break;
 				}
 			}
 		}
 	}
-#pragma endregion
 
-	// BURGER INGREDIENTS
-	//-------------------
-#pragma region burgerIngredients
-	auto burger = GetGameObject()->CreateChildObject("Burger");
-	burger->GetTransform()->SetLocalPosition({ -1.5f, 1.8125f });
-	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, BurgerIngredient::IngredientType::BunTop));
-	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
-	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
-	burger->SetTag("Ingredient", true);
-
-	burger = GetGameObject()->CreateChildObject("Burger");
-	burger->GetTransform()->SetLocalPosition({ -1.5f, -0.1875f });
-	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, BurgerIngredient::IngredientType::Patty));
-	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
-	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
-	burger->SetTag("Ingredient", true);
-
-	burger = GetGameObject()->CreateChildObject("Burger");
-	burger->GetTransform()->SetLocalPosition({ -1.5f, -2.1875f });
-	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, BurgerIngredient::IngredientType::BunBottom));
-	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
-	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
-	burger->SetTag("Ingredient", true);
-
-	const auto burgerCatcher = GetGameObject()->CreateChildObject("BurgerCatcher");
-	burgerCatcher->GetTransform()->SetLocalPosition({ -1.5f, -6.85f });
-	burgerCatcher->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
-	burgerCatcher->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.375f, 0.125f }, glm::vec2{ 0.f, -0.09375f }, 0.f);
-	burgerCatcher->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/BurgerCatcher.png", 16));
 #pragma endregion
 }
 
 bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, bool isAI) const
 {
+	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition();
+
 	switch (direction)
 	{
 		case Direction::Up:
 		{
 			// Cant go out of map
-			if (position.y > m_NumRows / 2.f - 0.5f + m_PlatformHeight)
+			if (position.y - wPos.y > m_LargestY + m_PlatformHeight)
 				return false;
 
-			int idx = PositionToTileIndex(position);
+			const auto tilePos = PositionToTilePosition(position);
+
+			if (m_Tiles.find(tilePos) == m_Tiles.end())
+				return false;
 
 			// Can only go up if horizontally on ladder
-			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
+			const float xRelToTile = position.x - wPos.x - tilePos.x * 1.5f;
 			if (abs(xRelToTile) > m_LadderWidth / 2.f)
 				return false;
-
-			// Can go up on all tiletypes except None
-			if (m_Tiles[idx] == TileType::None)
-				return false;
-
+			
 			// On platform can't go up if past the top of the platform
-			if (m_Tiles[idx] == TileType::Platform)
+			if (m_Tiles.at(tilePos) == TileType::Platform)
 			{
-				const float yRelToTile = position.y - TileIndexToPosition(idx).y;
+				const float yRelToTile = position.y - wPos.y - tilePos.y;
 				if (yRelToTile >= m_PlatformHeight)
 					return false;
 			}
@@ -155,26 +173,32 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 		case Direction::Down:
 		{
 			// Cant go out of map
-			if (position.y < -m_NumRows / 2.f + 0.5f)
+			if (position.y - wPos.y < m_SmallestY)
 				return false;
 
-			const int idx = PositionToTileIndex(position);
+			const auto tilePos = PositionToTilePosition(position);
+
+			if (m_Tiles.find(tilePos) == m_Tiles.end())
+				return false;
 
 			// Can only go down if horizontally on ladder
-			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
+			const float xRelToTile = position.x - wPos.x - tilePos.x * 1.5f;
 			if (abs(xRelToTile) > m_LadderWidth / 2.f)
 				return false;
 
 			// Can't go down if not ladder or both underneath
-			const float yRelToTile = position.y - TileIndexToPosition(idx).y;
+			const float yRelToTile = position.y - wPos.y - tilePos.y;
 			if (yRelToTile <= 0 ||
-				(m_Tiles[idx] == TileType::Platform || m_Tiles[idx] == TileType::Both) && yRelToTile <= m_PlatformHeight)
+				(m_Tiles.at(tilePos) == TileType::Platform || m_Tiles.at(tilePos) == TileType::Both) && yRelToTile <= m_PlatformHeight)
 			{
-				const int idxUnder = idx + m_NumCols;
-				if (idxUnder >= (int)m_Tiles.size())
+				const glm::ivec2 posUnder = glm::ivec2(tilePos.x, tilePos.y - 1);
+				if (posUnder.y < m_SmallestY)
 					return false;
 
-				if (m_Tiles[idxUnder] != TileType::Ladder && m_Tiles[idxUnder] != TileType::Both)
+                if (m_Tiles.find(posUnder) == m_Tiles.end())
+                    return false;
+
+				if (m_Tiles.at(posUnder) != TileType::Ladder && m_Tiles.at(posUnder) != TileType::Both)
 					return false;
 			}
 
@@ -183,26 +207,33 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 		case Direction::Left:
 		{
 			// Cant go out of map
-			if (position.x < -m_NumCols * 1.5f / 2.f + 0.75 || isAI && position.x < -m_NumCols * 1.5f / 2.f + 0.75 + m_LadderWidth / 2.f)
+			if (position.x - wPos.x < m_SmallestX * 1.5f + 0.75 || isAI && position.x - wPos.x < m_SmallestX * 1.5f + 0.75 + m_LadderWidth / 2.f)
 				return false;
 
-			const int idx = PositionToTileIndex(position);
+			const auto tilePos = PositionToTilePosition(position);
+
+			if (m_Tiles.find(tilePos) == m_Tiles.end())
+				return false;
 
 			// Needs to be aligned with platform
-			const float yRelToTile = position.y - TileIndexToPosition(idx).y;
+			const float yRelToTile = position.y - wPos.y - tilePos.y;
 			if (yRelToTile > m_MaxAbovePlatform || yRelToTile < -m_MaxBelowPlatform)
 				return false;
 
 			// Can't move horizontally if not on platform or both
-			if (m_Tiles[idx] != TileType::Platform && m_Tiles[idx] != TileType::Both)
+			if (m_Tiles.at(tilePos) != TileType::Platform && m_Tiles.at(tilePos) != TileType::Both)
 				return false;
 
 			// Tile left needs to be platform or both
-			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
+			const float xRelToTile = position.x - wPos.x - tilePos.x * 1.5f;
 			if (xRelToTile < 0 || isAI && xRelToTile < m_LadderWidth / 2.f)
 			{
-				const int idxLeft = idx - 1;
-				if (m_Tiles[idxLeft] != TileType::Platform && m_Tiles[idxLeft] != TileType::Both)
+				const glm::ivec2 posLeft = glm::ivec2(tilePos.x - 1, tilePos.y);
+
+				if (m_Tiles.find(posLeft) == m_Tiles.end())
+					return false;
+
+				if (m_Tiles.at(posLeft) != TileType::Platform && m_Tiles.at(posLeft) != TileType::Both)
 					return false;
 			}
 
@@ -211,26 +242,33 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 		case Direction::Right:
 		{
 			// Cant go out of map
-			if (position.x > m_NumCols * 1.5f / 2.f - 0.75 || isAI && position.x > m_NumCols * 1.5f / 2.f - 0.75 - m_LadderWidth / 2.f)
+			if (position.x - wPos.x > m_LargestX * 1.5f - 0.75 || isAI && position.x - wPos.x > m_LargestX * 1.5f - 0.75 - m_LadderWidth / 2.f)
 				return false;
 
-			const int idx = PositionToTileIndex(position);
+			const auto tilePos = PositionToTilePosition(position);
+
+			if (m_Tiles.find(tilePos) == m_Tiles.end())
+				return false;
 
 			// Needs to be aligned with platform
-			const float yRelToTile = position.y - TileIndexToPosition(idx).y;
+			const float yRelToTile = position.y - wPos.y - tilePos.y;
 			if (yRelToTile > m_MaxAbovePlatform || yRelToTile < -m_MaxBelowPlatform)
 				return false;
 
 			// Can't move horizontally if not on platform or both
-			if (m_Tiles[idx] != TileType::Platform && m_Tiles[idx] != TileType::Both)
+			if (m_Tiles.at(tilePos) != TileType::Platform && m_Tiles.at(tilePos) != TileType::Both)
 				return false;
 
 			// Tile right needs to be platform or both
-			const float xRelToTile = position.x - TileIndexToPosition(idx).x;
+			const float xRelToTile = position.x - wPos.x - tilePos.x * 1.5f;
 			if (xRelToTile > 0 || isAI && xRelToTile > -m_LadderWidth / 2.f)
 			{
-				const int idxRight = idx + 1;
-				if (m_Tiles[idxRight] != TileType::Platform && m_Tiles[idxRight] != TileType::Both)
+				const glm::ivec2 posRight = glm::ivec2(tilePos.x + 1, tilePos.y);
+
+				if (m_Tiles.find(posRight) == m_Tiles.end())
+					return false;
+
+				if (m_Tiles.at(posRight) != TileType::Platform && m_Tiles.at(posRight) != TileType::Both)
 					return false;
 			}
 
@@ -243,29 +281,35 @@ bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, b
 
 glm::vec2 Level::SnapToPlatform(const glm::vec2& position) const
 {
-	const int idx = PositionToTileIndex(position);
+	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition();
 
-	const float newYPos = TileIndexToPosition(idx).y + m_PlatformHeight;
+	const float newYPos = PositionToTilePosition(position).y + wPos.y + m_PlatformHeight;
 	return { position.x, newYPos };
 }
 
 glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
 {
-	const size_t currentIndex = PositionToTileIndex(position);
+	const auto currentPos = PositionToTilePosition(position);
 
 	for (size_t i = 1; i < m_Tiles.size(); i++)
 	{
-		const size_t indexToCheck = currentIndex + i * m_NumCols;
+		const auto posToCheck = glm::ivec2{ currentPos.x, currentPos.y - i };
 
 		// Could not find platform underneath
-		if (indexToCheck >= m_Tiles.size())
+		if (posToCheck.y < m_SmallestY)
 			break;
 
+		// No tile at position
+		if (m_Tiles.find(posToCheck) == m_Tiles.end())
+            continue;
+
 		// return if platform
-		if (m_Tiles[indexToCheck] == TileType::Platform ||
-			m_Tiles[indexToCheck] == TileType::Both)
+		if (m_Tiles.at(posToCheck) == TileType::Platform ||
+			m_Tiles.at(posToCheck) == TileType::Both)
 		{
-			return TileIndexToPosition((int)indexToCheck);
+			const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition();
+
+			return { posToCheck.x + wPos.x, posToCheck.y + wPos.y };
 		}
 	}
 
@@ -281,29 +325,40 @@ bool Level::IsCompleted()
 		});
 }
 
-glm::vec2 Level::TileIndexToPosition(int index) const
+glm::ivec2 Level::PositionToTilePosition(const glm::vec2& position) const
 {
-	const int tileX = index % m_NumCols;
-	const int tileY = index / m_NumCols;
+	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition();
+	
+	int tileY = (int)round(position.y - wPos.y);
 
-	const glm::vec2 offset = { (m_NumCols - 1) * 1.5f / 2.f, (m_NumRows - 1) / 2.f };
-	return { tileX * 1.5f - offset.x, -(tileY - offset.y) };
+	// alternating tile width of 1 and 2 units
+	int tileX = (int)floor(abs(position.x - wPos.x) / 3) * 2;
+
+	if (fmod(abs(position.x - wPos.x), 3.f) < 0.5f)
+        tileX += 0;
+	else if (fmod(abs(position.x - wPos.x), 3.f) < 2.5f)
+        tileX += 1;
+    else
+        tileX += 2;
+	
+	return { signbit(position.x - wPos.x) ? -tileX : tileX, tileY };
 }
 
-int Level::PositionToTileIndex(const glm::vec2 & position) const
+void Level::SpawnBurgerCatcher(const glm::ivec2& position)
 {
-	// Outside of level
-	if (abs(position.x) >= m_NumCols * 1.5f / 2 ||
-		abs(position.y) >= m_NumRows / 2.f)
-	{
-		return -1;
-	}
-	
-	const int smallIndexX = int(position.x + m_EquivalentNumSmallCols / 2.f);
-	constexpr int smallToNormalLookup[]{ 0, 1, 1, 2, 3, 3, 4, 5, 5, 6, 7, 7, 8 };
+	const auto burgerCatcher = GetGameObject()->CreateChildObject("BurgerCatcher");
+	burgerCatcher->GetTransform()->SetLocalPosition({ position.x * 1.5f, position.y + 0.15f });
+	burgerCatcher->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
+	burgerCatcher->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.375f, 0.125f }, glm::vec2{ 0.f, -0.09375f }, 0.f);
+	burgerCatcher->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/BurgerCatcher.png", 16));
+}
 
-	const int indexX = smallToNormalLookup[smallIndexX];
-	const int indexY = int(m_NumRows / 2.f - position.y);
-
-	return indexX + indexY * m_NumCols;
+void Level::SpawnIngredient(BurgerIngredient::IngredientType type, const glm::ivec2& position)
+{
+	const auto burger = GetGameObject()->CreateChildObject("Burger");
+	burger->GetTransform()->SetLocalPosition({ position.x * 1.5f, position.y - 3 / 16.f });
+	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, type));
+	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
+	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
+	burger->SetTag("Ingredient", true);
 }

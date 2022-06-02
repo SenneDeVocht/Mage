@@ -1,5 +1,8 @@
 #pragma once
 
+#include <unordered_map>
+
+#include "Burger/BurgerIngredient.h"
 #include "Mage/Components/Component.h"
 
 class BurgerIngredient;
@@ -14,28 +17,33 @@ public:
 
 	enum class TileType
 	{
-		None,
 		Platform,
 		Ladder,
 		Both
 	};
+
+	Level(const std::string& filePath);
 
 	void Initialize() override;
 
 	bool CanMoveInDirection(const glm::vec2& position, Direction direction, bool isAI = false) const;
 	glm::vec2 SnapToPlatform(const glm::vec2& position) const;
 	glm::vec2 GetNextPlatformDown(const glm::vec2& position) const;
-	int PositionToTileIndex(const glm::vec2& position) const;
-	glm::vec2 TileIndexToPosition(int index) const;
+	glm::ivec2 PositionToTilePosition(const glm::vec2& position) const;
 
     bool IsCompleted();
 
 private:
+	void SpawnBurgerCatcher(const glm::ivec2& position);
+	void SpawnIngredient(BurgerIngredient::IngredientType type, const glm::ivec2& position);
 
-	std::vector<TileType> m_Tiles;
-	const int m_NumCols{ 9 };
-	const int m_EquivalentNumSmallCols{ 13 };
-	const int m_NumRows{ 10 };
+	std::string m_FilePath;
+
+	std::unordered_map<glm::ivec2, TileType> m_Tiles;
+	float m_SmallestX{};
+	float m_SmallestY{};
+	float m_LargestX{};
+	float m_LargestY{};
 
 	const float m_LadderWidth{ 0.625f };
 	const float m_PlatformHeight{ 3/16.f };

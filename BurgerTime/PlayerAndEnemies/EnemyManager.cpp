@@ -3,6 +3,7 @@
 
 #include "BurgerTime/PlayerAndEnemies/EnemyMovement.h"
 #include "BurgerTime/PlayerAndEnemies/Enemy.h"
+#include "BurgerTime/Level.h"
 
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
@@ -13,12 +14,16 @@
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 
-EnemyManager::EnemyManager(const std::vector<glm::vec2>& spawnPositions, Level* level, Mage::Transform* targetTransform)
-    : m_SpawnPositions{ spawnPositions }
-    , m_pLevel{ level }
+EnemyManager::EnemyManager(Level* level, Mage::Transform* targetTransform)
+	: m_pLevel{ level }
     , m_pTargetTransform{ targetTransform }
     , m_TimeSinceLastSpawn{ m_SpawnInterval }
 {}
+
+void EnemyManager::Initialize()
+{
+	m_SpawnPositions = m_pLevel->GetEnemySpawnPositions();
+}
 
 void EnemyManager::Update()
 {

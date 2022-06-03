@@ -14,41 +14,37 @@
 #include "Mage/ResourceManagement/ResourceManager.h"
 
 Level::Level(const std::string& filePath)
-    : m_FilePath{ filePath }
-{}
-
-void Level::Initialize()
 {
-	std::ifstream inputFile(m_FilePath);
+	std::ifstream inputFile(filePath);
 
 	if (!inputFile.is_open())
 		return;
 
 	std::string line;
-    while (std::getline(inputFile, line))
-    {
-        // make sure line isn't whitespace
+	while (std::getline(inputFile, line))
+	{
+		// make sure line isn't whitespace
 		if (line.empty())
-            continue;
+			continue;
 
-        // [str type] [int posX] [int posY]
+		// [str type] [int posX] [int posY]
 
 		std::string type = line.substr(0, line.find(" "));
 		int posX = std::stoi(line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1)));
-        int posY = std::stoi(line.substr(line.find(" ", line.find(" ") + 1) + 1));
+		int posY = std::stoi(line.substr(line.find(" ", line.find(" ") + 1) + 1));
 
-        if (type == "platform" ||
+		if (type == "platform" ||
 			type == "ladder" ||
-            type == "both")
-        {
-            if (posX < m_SmallestX)
-                m_SmallestX = (float)posX;
+			type == "both")
+		{
+			if (posX < m_SmallestX)
+				m_SmallestX = (float)posX;
 			if (posX > m_LargestX)
 				m_LargestX = (float)posX;
 			if (posY < m_SmallestY)
-                m_SmallestY = (float)posY;
+				m_SmallestY = (float)posY;
 			if (posY > m_LargestY)
-                m_LargestY = (float)posY;
+				m_LargestY = (float)posY;
 
 			if (type == "platform")
 				m_Tiles[{ posX, posY }] = TileType::Platform;
@@ -56,37 +52,43 @@ void Level::Initialize()
 				m_Tiles[{ posX, posY }] = TileType::Ladder;
 			if (type == "both")
 				m_Tiles[{ posX, posY }] = TileType::Both;
-        }
+		}
+
+		if (type == "player")
+			m_PlayerSpawnPosition = { posX, posY };
+
+		if (type == "enemy")
+			m_EnemySpawnPositions.emplace_back(glm::ivec2{ posX, posY });
 
 		if (type == "catcher")
-			SpawnBurgerCatcher({ posX, posY });
+			m_CatcherPositions.emplace_back(glm::ivec2{ posX, posY });
 
 		if (type == "bunTop")
-            SpawnIngredient(BurgerIngredient::IngredientType::BunTop, { posX, posY });
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{posX, posY}, BurgerIngredient::IngredientType::BunTop));
 		if (type == "bunBottom")
-            SpawnIngredient(BurgerIngredient::IngredientType::BunBottom, { posX, posY });
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::BunBottom));
 		if (type == "cheese")
-            SpawnIngredient(BurgerIngredient::IngredientType::Cheese, { posX, posY });
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Cheese));
 		if (type == "patty")
-            SpawnIngredient(BurgerIngredient::IngredientType::Patty, { posX, posY });
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Patty));
 		if (type == "salad")
-            SpawnIngredient(BurgerIngredient::IngredientType::Salad, { posX, posY });
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Salad));
 		if (type == "tomato")
-            SpawnIngredient(BurgerIngredient::IngredientType::Tomato, { posX, posY });
-    }
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Tomato));
+	}
 
 	inputFile.close();
 
 	m_SmallestX *= 1.5f;
 	m_LargestX *= 1.5f;
+}
 
-	// TILES
-	//------
-#pragma region tiles
-	
+void Level::Initialize()
+{
+	// FILL TILEMAP
+	//-------------
 	auto tilemap = GetGameObject()->GetComponent<Mage::TilemapComponent>();
 
-	// Spawn sprites
 	for (auto it = m_Tiles.begin(); it != m_Tiles.end(); ++it)
 	{
 		// Narrow
@@ -135,7 +137,19 @@ void Level::Initialize()
 		}
 	}
 
-#pragma endregion
+	// SPAWN INGREDIENTS
+	//------------------
+	for (const auto& i : m_IngredientStartPositions)
+	{
+		SpawnIngredient(i.second, i.first);
+	}
+
+	// SPAWN CATCHERS
+	//---------------
+	for (const auto& pos : m_CatcherPositions)
+	{
+		SpawnBurgerCatcher(pos);
+	}
 }
 
 bool Level::CanMoveInDirection(const glm::vec2& position, Direction direction, bool isAI) const
@@ -314,6 +328,25 @@ glm::vec2 Level::GetNextPlatformDown(const glm::vec2& position) const
 	}
 
 	return position;
+}
+
+glm::vec2 Level::GetPlayerSpawnPosition() const
+{
+	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition();
+	return { m_PlayerSpawnPosition.x * 1.5f + wPos.x, m_PlayerSpawnPosition.y + wPos.y };
+}
+
+std::vector<glm::vec2> Level::GetEnemySpawnPositions() const
+{
+	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition();
+
+	std::vector<glm::vec2> positions;
+	for (const auto& spawnPos : m_EnemySpawnPositions)
+	{
+		positions.emplace_back(glm::vec2{ spawnPos.x * 1.5f + wPos.x, spawnPos.y + wPos.y });
+	}
+
+	return positions;
 }
 
 bool Level::IsCompleted()

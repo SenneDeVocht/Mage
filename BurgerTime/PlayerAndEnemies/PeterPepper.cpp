@@ -26,7 +26,9 @@ PeterPepper::PeterPepper(Level* pLevel, EnemyManager* pEnemyManager, const std::
 
 void PeterPepper::Initialize()
 {
-	m_StartPosition = GetGameObject()->GetTransform()->GetWorldPosition();
+	m_StartPosition = m_pLevel->GetPlayerSpawnPosition();
+	m_StartPosition.y += 3 / 16.f;
+	GetGameObject()->GetTransform()->SetWorldPosition(m_StartPosition);
 
 	m_pMovement = GetGameObject()->GetComponent<PlayerMovement>();
 	m_pAnimatedSprite = GetGameObject()->GetComponent<Mage::AnimatedSpriteComponent>();

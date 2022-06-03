@@ -83,6 +83,13 @@ patty -3 -2
 bunBottom -3 -4
 catcher -3 -7
 
+player 0 -4
+
+enemy -4 5
+enemy 4 5
+enemy -4 -4
+enemy 4 -4
+
 bunTop -1 5
 salad -1 0
 patty -1 -2

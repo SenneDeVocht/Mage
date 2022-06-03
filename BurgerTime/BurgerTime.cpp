@@ -64,7 +64,7 @@ void BurgerTime::LoadGame() const
 
 			const auto playTextObject = pScene->CreateChildObject("PlayText");
 		    const auto playText = playTextObject->CreateComponent<Mage::TextComponent>(
-				"Press SPACE to Play",
+				"Press SPACE to play",
 				Mage::ResourceManager::GetInstance().LoadFont("Fonts/PressStart2P.ttf", 8),
 				SDL_Color{ 255, 255, 255, 255 },
                 16.f,
@@ -105,7 +105,7 @@ void BurgerTime::LoadGame() const
 
 		    const auto levelObject = pScene->CreateChildObject("Level");
 		    levelObject->GetTransform()->SetWorldPosition({ 0.f, -0.5f });
-		    const auto level = levelObject->CreateComponent<Level>("D:/DAE/SEM_4/PROG_4/Mage/Data/Level01.txt");
+		    const auto level = levelObject->CreateComponent<Level>(Mage::ResourceManager::GetInstance().GetDataRoot() + "Level01.txt");
 		    levelObject->CreateComponent<Mage::TilemapComponent>(
 			    std::vector <std::shared_ptr<Mage::Texture2D>>{
 				    resourceManager.LoadTexture("Level/Platform_Narrow.png", 16),
@@ -139,9 +139,7 @@ void BurgerTime::LoadGame() const
 
             
 		    const auto enemyManagerObject = pScene->CreateChildObject("EnemyManager");
-		    const auto enemyManager = enemyManagerObject->CreateComponent<EnemyManager>(
-			    std::vector<glm::vec2>{ { -6, 4.6875f }, { 6, 4.6875f }, { -6, -4.3125f }, { 6, -4.3125f } },
-			    level, peterPepperObject->GetTransform());
+		    const auto enemyManager = enemyManagerObject->CreateComponent<EnemyManager>(level, peterPepperObject->GetTransform());
 
 
 		    const auto peterPepper = peterPepperObject->CreateComponent<PeterPepper>(level, enemyManager,

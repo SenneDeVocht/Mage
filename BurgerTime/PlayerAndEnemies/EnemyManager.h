@@ -12,7 +12,7 @@ class Enemy;
 class EnemyManager final : public Mage::Component
 {
 public:
-	EnemyManager(const std::vector<glm::vec2>& spawnPositions, Level* level, Mage::Transform* targetTransform);
+	EnemyManager(Level* level, Mage::Transform* targetTransform);
     ~EnemyManager() override = default;
 
     EnemyManager(const EnemyManager& other) = delete;
@@ -20,6 +20,7 @@ public:
     EnemyManager& operator=(const EnemyManager& other) = delete;
     EnemyManager& operator=(EnemyManager&& other) noexcept = delete;
 
+    void Initialize() override;
     void Update() override;
 
     void Reset();

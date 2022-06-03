@@ -31,13 +31,14 @@ public:
 	glm::vec2 GetNextPlatformDown(const glm::vec2& position) const;
 	glm::ivec2 PositionToTilePosition(const glm::vec2& position) const;
 
+	glm::vec2 GetPlayerSpawnPosition() const;
+	std::vector<glm::vec2> GetEnemySpawnPositions() const;
+
     bool IsCompleted();
 
 private:
 	void SpawnBurgerCatcher(const glm::ivec2& position);
 	void SpawnIngredient(BurgerIngredient::IngredientType type, const glm::ivec2& position);
-
-	std::string m_FilePath;
 
 	std::unordered_map<glm::ivec2, TileType> m_Tiles;
 	float m_SmallestX{};
@@ -52,5 +53,10 @@ private:
 	const float m_MaxBelowPlatform{ 0.f };
 
 	std::vector<BurgerIngredient*> m_Ingredients;
+
+	glm::ivec2 m_PlayerSpawnPosition;
+	std::vector<glm::ivec2> m_EnemySpawnPositions;
+	std::vector<glm::ivec2> m_CatcherPositions;
+	std::vector<std::pair<glm::ivec2, BurgerIngredient::IngredientType>> m_IngredientStartPositions;
 };
 

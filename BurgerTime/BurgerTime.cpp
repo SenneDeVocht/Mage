@@ -23,7 +23,8 @@
 #include "BurgerTime/PepperUI.h"
 #include "BurgerTime/LivesUI.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
-#include "GameOverManager.h"
+#include "BurgerTime/ScoreUI.h"
+#include "BurgerTime/GameOverManager.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -101,7 +102,6 @@ void BurgerTime::LoadGame() const
 		    // LEVEL
 		    //------
 		    #pragma region Level
-			
 
 		    const auto levelObject = pScene->CreateChildObject("Level");
 		    levelObject->GetTransform()->SetWorldPosition({ 0.f, -0.5f });
@@ -174,6 +174,17 @@ void BurgerTime::LoadGame() const
 		    livesUIObject->CreateComponent<LivesUI>(peterPepper);
 
 		    #pragma endregion
+
+			// SCORE UI
+			//---------
+			#pragma region ScoreUI
+
+			const auto scoreUIObject = pScene->CreateChildObject("ScoreUI");
+			scoreUIObject->GetTransform()->SetWorldPosition(glm::vec2{ -6.5f, 6.875f });
+			scoreUIObject->CreateComponent<ScoreUI>();
+			scoreUIObject->CreateComponent<Mage::TextComponent>("420", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{255, 255, 255, 255}, 16.f, glm::vec2{0.f, 1.f}, Mage::TextComponent::TextAlignment::Left);
+
+			#pragma endregion
 	    });
 
 	// GAME OVER

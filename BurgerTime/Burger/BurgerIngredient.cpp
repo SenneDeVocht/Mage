@@ -8,8 +8,9 @@
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
 
-#include "BurgerIngredientPart.h"
+#include "BurgerTime/Burger/BurgerIngredientPart.h"
 #include "BurgerTime/Level.h"
+#include "BurgerTime/ScoreManager.h"
 
 BurgerIngredient::BurgerIngredient(Level* level, IngredientType type)
 	: m_pLevel{ level }
@@ -141,4 +142,7 @@ void BurgerIngredient::StartFalling()
 
 	m_pRigidBody->SetGravityScale(1.f);
 	m_Falling = true;
+
+	// Score
+	ScoreManager::GetInstance().TriggerScoreEvent(ScoreManager::ScoreEvent::BurgerDropped);
 }

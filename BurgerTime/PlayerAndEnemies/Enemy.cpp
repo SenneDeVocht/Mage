@@ -1,7 +1,9 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "Enemy.h"
 
+#include "BurgerTime/ScoreManager.h"
 #include "BurgerTime/Burger/BurgerIngredient.h"
+
 #include "Mage/Components/AnimatedSpriteComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
@@ -29,7 +31,11 @@ void Enemy::Update()
 		m_DeadTimer += Mage::Timer::GetInstance().GetDeltaTime();
 
 		if (m_DeadTimer >= m_pDeath->NumFrames * m_pDeath->SecondsPerFrame)
+		{
+			ScoreManager::GetInstance().TriggerScoreEvent(ScoreManager::ScoreEvent::EnemyKilled);
 			GetGameObject()->Destroy();
+		}
+
 		return;
 	}
 

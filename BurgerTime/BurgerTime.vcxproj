@@ -204,6 +204,8 @@
     <ClCompile Include="PlayerAndEnemies\PeterPepper.cpp" />
     <ClCompile Include="PlayerAndEnemies\PlayerMovement.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="ScoreManager.cpp" />
+    <ClCompile Include="ScoreUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mage\Mage.vcxproj">
@@ -225,6 +227,8 @@
     <ClInclude Include="PlayerAndEnemies\EnemyMovement.h" />
     <ClInclude Include="PlayerAndEnemies\PlayerMovement.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="ScoreManager.h" />
+    <ClInclude Include="ScoreUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

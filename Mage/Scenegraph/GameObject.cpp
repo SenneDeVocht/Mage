@@ -194,15 +194,15 @@ void Mage::GameObject::OnDisable() const
 
 void Mage::GameObject::OnDestroy() const
 {
-	for (const auto& pComponent : m_Components)
-    {
-	    pComponent->OnDestroy();
-    }
-
 	for (const auto& pChild : m_Children)
     {
         pChild->OnDestroy();
     }
+
+	for (const auto& pComponent : m_Components)
+	{
+		pComponent->OnDestroy();
+	}
 }
 
 

@@ -6,13 +6,14 @@ namespace Mage
     class Transform;
 }
 
+class GameManager;
 class Level;
 class Enemy;
 
 class EnemyManager final : public Mage::Component
 {
 public:
-	EnemyManager(Level* level, Mage::Transform* targetTransform);
+	EnemyManager(GameManager* pGameManager, Level* level, Mage::Transform* targetTransform);
     ~EnemyManager() override = default;
 
     EnemyManager(const EnemyManager& other) = delete;

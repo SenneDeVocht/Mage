@@ -23,6 +23,7 @@ namespace Mage
 
         void SetTile(const glm::ivec2& position, int tileIndex);
         void EraseTile(const glm::ivec2& position);
+        void EraseAll();
 
     private:
         std::vector<std::shared_ptr<Texture2D>> m_TileTextures;

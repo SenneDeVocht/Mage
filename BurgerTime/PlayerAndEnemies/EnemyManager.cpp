@@ -1,6 +1,7 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "EnemyManager.h"
 
+#include "BurgerTime/GameManager.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyMovement.h"
 #include "BurgerTime/PlayerAndEnemies/Enemy.h"
 #include "BurgerTime/Level.h"
@@ -14,11 +15,13 @@
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 
-EnemyManager::EnemyManager(Level* level, Mage::Transform* targetTransform)
+EnemyManager::EnemyManager(GameManager* pGameManager, Level* level, Mage::Transform* targetTransform)
 	: m_pLevel{ level }
     , m_pTargetTransform{ targetTransform }
     , m_TimeSinceLastSpawn{ m_SpawnInterval }
-{}
+{
+    pGameManager->RegisterEnemyManager(this);
+}
 
 void EnemyManager::Initialize()
 {
@@ -59,10 +62,15 @@ void EnemyManager::Reset()
 
     m_SpawnedEnemies.clear();
     m_TimeSinceLastSpawn = m_SpawnInterval;
+
+    m_SpawnPositions = m_pLevel->GetEnemySpawnPositions();
 }
 
 void EnemyManager::SpawnEnemy()
 {
+	if (m_SpawnPositions.empty())
+		return;
+
     // Pick random spawn position
     const auto spawnPosition = m_SpawnPositions[rand() % m_SpawnPositions.size()];
 

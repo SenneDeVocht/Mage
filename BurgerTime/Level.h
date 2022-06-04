@@ -1,10 +1,15 @@
 #pragma once
-
 #include <unordered_map>
 
 #include "Burger/BurgerIngredient.h"
 #include "Mage/Components/Component.h"
 
+namespace Mage
+{
+	class TilemapComponent;
+}
+
+class GameManager;
 class BurgerIngredient;
 
 class Level : public Mage::Component
@@ -22,9 +27,10 @@ public:
 		Both
 	};
 
-	Level(const std::string& filePath);
+	Level(GameManager* pGameManager);
 
 	void Initialize() override;
+	void Update() override;
 
 	bool CanMoveInDirection(const glm::vec2& position, Direction direction, bool isAI = false) const;
 	glm::vec2 SnapToPlatform(const glm::vec2& position) const;
@@ -33,12 +39,16 @@ public:
 
 	glm::vec2 GetPlayerSpawnPosition() const;
 	std::vector<glm::vec2> GetEnemySpawnPositions() const;
-
-    bool IsCompleted();
+	
+	void LoadLevel(int level);
 
 private:
 	void SpawnBurgerCatcher(const glm::ivec2& position);
 	void SpawnIngredient(BurgerIngredient::IngredientType type, const glm::ivec2& position);
+
+	GameManager* m_pGameManager;
+
+	Mage::TilemapComponent* m_pTileMap{};
 
 	std::unordered_map<glm::ivec2, TileType> m_Tiles;
 	float m_SmallestX{};
@@ -53,10 +63,13 @@ private:
 	const float m_MaxBelowPlatform{ 0.f };
 
 	std::vector<BurgerIngredient*> m_Ingredients;
+	std::vector<Mage::GameObject*> m_Catchers;
 
 	glm::ivec2 m_PlayerSpawnPosition;
 	std::vector<glm::ivec2> m_EnemySpawnPositions;
 	std::vector<glm::ivec2> m_CatcherPositions;
 	std::vector<std::pair<glm::ivec2, BurgerIngredient::IngredientType>> m_IngredientStartPositions;
+
+	bool m_Initialized{ false };
 };
 

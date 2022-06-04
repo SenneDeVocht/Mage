@@ -4,7 +4,9 @@
 #include <fstream>
 #include <map>
 
-#include "Burger/BurgerIngredient.h"
+#include "BurgerTime/GameManager.h"
+#include "BurgerTime/Burger/BurgerIngredient.h"
+
 #include "Mage/Components/SpriteComponent.h"
 #include "Mage/Components/TilemapComponent.h"
 #include "Mage/Components/Transform.h"
@@ -13,142 +15,100 @@
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
-Level::Level(const std::string& filePath)
+Level::Level(GameManager* pGameManager)
+	: m_pGameManager{ pGameManager }
 {
-	std::ifstream inputFile(filePath);
-
-	if (!inputFile.is_open())
-		return;
-
-	std::string line;
-	while (std::getline(inputFile, line))
-	{
-		// make sure line isn't whitespace
-		if (line.empty())
-			continue;
-
-		// [str type] [int posX] [int posY]
-
-		std::string type = line.substr(0, line.find(" "));
-		int posX = std::stoi(line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1)));
-		int posY = std::stoi(line.substr(line.find(" ", line.find(" ") + 1) + 1));
-
-		if (type == "platform" ||
-			type == "ladder" ||
-			type == "both")
-		{
-			if (posX < m_SmallestX)
-				m_SmallestX = (float)posX;
-			if (posX > m_LargestX)
-				m_LargestX = (float)posX;
-			if (posY < m_SmallestY)
-				m_SmallestY = (float)posY;
-			if (posY > m_LargestY)
-				m_LargestY = (float)posY;
-
-			if (type == "platform")
-				m_Tiles[{ posX, posY }] = TileType::Platform;
-			if (type == "ladder")
-				m_Tiles[{ posX, posY }] = TileType::Ladder;
-			if (type == "both")
-				m_Tiles[{ posX, posY }] = TileType::Both;
-		}
-
-		if (type == "player")
-			m_PlayerSpawnPosition = { posX, posY };
-
-		if (type == "enemy")
-			m_EnemySpawnPositions.emplace_back(glm::ivec2{ posX, posY });
-
-		if (type == "catcher")
-			m_CatcherPositions.emplace_back(glm::ivec2{ posX, posY });
-
-		if (type == "bunTop")
-			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{posX, posY}, BurgerIngredient::IngredientType::BunTop));
-		if (type == "bunBottom")
-			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::BunBottom));
-		if (type == "cheese")
-			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Cheese));
-		if (type == "patty")
-			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Patty));
-		if (type == "salad")
-			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Salad));
-		if (type == "tomato")
-			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Tomato));
-	}
-
-	inputFile.close();
-
-	m_SmallestX *= 1.5f;
-	m_LargestX *= 1.5f;
+	m_pGameManager->RegisterLevel(this);
+	LoadLevel(1);
 }
 
 void Level::Initialize()
 {
-	// FILL TILEMAP
-	//-------------
-	auto tilemap = GetGameObject()->GetComponent<Mage::TilemapComponent>();
+	m_pTileMap = GetGameObject()->GetComponent<Mage::TilemapComponent>();
+}
 
-	for (auto it = m_Tiles.begin(); it != m_Tiles.end(); ++it)
+void Level::Update()
+{
+	if (!m_Initialized)
 	{
-		// Narrow
-		if (it->first.x % 2 == 0)
+		// FILL TILEMAP
+		//-------------
+		for (auto it = m_Tiles.begin(); it != m_Tiles.end(); ++it)
 		{
-			switch (it->second)
+			// Narrow
+			if (it->first.x % 2 == 0)
 			{
-				case TileType::Platform:
+				switch (it->second)
 				{
-					tilemap->SetTile(it->first, 0);
-					break;
+					case TileType::Platform:
+					{
+						m_pTileMap->SetTile(it->first, 0);
+						break;
+					}
+					case TileType::Ladder:
+					{
+						m_pTileMap->SetTile(it->first, 1);
+						break;
+					}
+					case TileType::Both:
+					{
+						m_pTileMap->SetTile(it->first, 2);
+						break;
+					}
 				}
-				case TileType::Ladder:
+			}
+			// Wide
+			else
+			{
+				switch (it->second)
 				{
-					tilemap->SetTile(it->first, 1);
-					break;
-				}
-				case TileType::Both:
-				{
-					tilemap->SetTile(it->first, 2);
-					break;
+					case TileType::Platform:
+					{
+						m_pTileMap->SetTile(it->first, 3);
+						break;
+					}
+					case TileType::Ladder:
+					{
+						m_pTileMap->SetTile(it->first, 4);
+						break;
+					}
+					case TileType::Both:
+					{
+						m_pTileMap->SetTile(it->first, 5);
+						break;
+					}
 				}
 			}
 		}
-		// Wide
-		else
+
+		// SPAWN INGREDIENTS
+		//------------------
+		for (const auto& i : m_IngredientStartPositions)
 		{
-			switch (it->second)
-			{
-				case TileType::Platform:
-				{
-					tilemap->SetTile(it->first, 3);
-					break;
-				}
-				case TileType::Ladder:
-				{
-					tilemap->SetTile(it->first, 4);
-					break;
-				}
-				case TileType::Both:
-				{
-					tilemap->SetTile(it->first, 5);
-					break;
-				}
-			}
+			SpawnIngredient(i.second, i.first);
 		}
-	}
 
-	// SPAWN INGREDIENTS
-	//------------------
-	for (const auto& i : m_IngredientStartPositions)
-	{
-		SpawnIngredient(i.second, i.first);
-	}
+		// SPAWN CATCHERS
+		//---------------
+		for (const auto& pos : m_CatcherPositions)
+		{
+			SpawnBurgerCatcher(pos);
+		}
 
-	// SPAWN CATCHERS
-	//---------------
-	for (const auto& pos : m_CatcherPositions)
+		m_Initialized = true;
+	}
+	else
 	{
-		SpawnBurgerCatcher(pos);
+		const bool completed = std::all_of(
+			m_Ingredients.begin(), m_Ingredients.end(),
+			[](BurgerIngredient* ingredient) {
+				return ingredient->IsCollected();
+			});
+
+		if (completed)
+		{
+			m_pGameManager->OnLevelCompleted();
+		}
 	}
 }
 
@@ -349,13 +309,106 @@ std::vector<glm::vec2> Level::GetEnemySpawnPositions() const
 	return positions;
 }
 
-bool Level::IsCompleted()
+void Level::LoadLevel(int level)
 {
-	return std::all_of(
-		m_Ingredients.begin(), m_Ingredients.end(),
-		[](BurgerIngredient* ingredient) {
-		    return ingredient->IsCollected();
-		});
+	// Delete previous
+	if (m_Initialized)
+	{
+		m_SmallestX = 0;
+		m_SmallestY = 0;
+		m_LargestX = 0;
+		m_LargestY = 0;
+
+		for (const auto i : m_Ingredients)
+		{
+			i->GetGameObject()->Destroy();
+		}
+
+		for (const auto c : m_Catchers)
+		{
+			c->Destroy();
+		}
+
+		m_pTileMap->EraseAll();
+
+		m_Tiles.clear();
+
+		m_Ingredients.clear();
+		m_Catchers.clear();
+		m_IngredientStartPositions.clear();
+		m_CatcherPositions.clear();
+		m_EnemySpawnPositions.clear();
+
+		m_Initialized = false;
+	}
+
+	// Load new
+	std::ifstream inputFile(Mage::ResourceManager::GetInstance().GetDataRoot() + "Level" + std::to_string(level) + ".txt");
+
+	if (!inputFile.is_open())
+		return;
+
+	std::string line;
+	while (std::getline(inputFile, line))
+	{
+		// make sure line isn't whitespace
+		if (line.empty())
+			continue;
+
+		// [str type] [int posX] [int posY]
+
+		std::string type = line.substr(0, line.find(" "));
+		int posX = std::stoi(line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1)));
+		int posY = std::stoi(line.substr(line.find(" ", line.find(" ") + 1) + 1));
+
+		if (type == "platform" ||
+			type == "ladder" ||
+			type == "both")
+		{
+			if (posX < m_SmallestX)
+				m_SmallestX = (float)posX;
+			if (posX > m_LargestX)
+				m_LargestX = (float)posX;
+			if (posY < m_SmallestY)
+				m_SmallestY = (float)posY;
+			if (posY > m_LargestY)
+				m_LargestY = (float)posY;
+
+			if (type == "platform")
+				m_Tiles[{ posX, posY }] = TileType::Platform;
+			if (type == "ladder")
+				m_Tiles[{ posX, posY }] = TileType::Ladder;
+			if (type == "both")
+				m_Tiles[{ posX, posY }] = TileType::Both;
+		}
+
+		if (type == "player")
+			m_PlayerSpawnPosition = { posX, posY };
+
+		if (type == "enemy")
+			m_EnemySpawnPositions.emplace_back(glm::ivec2{ posX, posY });
+
+		if (type == "catcher")
+			m_CatcherPositions.emplace_back(glm::ivec2{ posX, posY });
+
+		if (type == "bunTop")
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::BunTop));
+		if (type == "bunBottom")
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::BunBottom));
+		if (type == "cheese")
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Cheese));
+		if (type == "patty")
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Patty));
+		if (type == "salad")
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Salad));
+		if (type == "tomato")
+			m_IngredientStartPositions.emplace_back(std::make_pair(glm::ivec2{ posX, posY }, BurgerIngredient::IngredientType::Tomato));
+	}
+
+	inputFile.close();
+
+	m_SmallestX *= 1.5f;
+	m_LargestX *= 1.5f;
 }
 
 glm::ivec2 Level::PositionToTilePosition(const glm::vec2& position) const
@@ -384,6 +437,8 @@ void Level::SpawnBurgerCatcher(const glm::ivec2& position)
 	burgerCatcher->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Static);
 	burgerCatcher->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.375f, 0.125f }, glm::vec2{ 0.f, -0.09375f }, 0.f);
 	burgerCatcher->CreateComponent<Mage::SpriteComponent>(Mage::ResourceManager::GetInstance().LoadTexture("Level/BurgerCatcher.png", 16));
+
+	m_Catchers.push_back(burgerCatcher);
 }
 
 void Level::SpawnIngredient(BurgerIngredient::IngredientType type, const glm::ivec2& position)

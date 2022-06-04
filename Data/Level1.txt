@@ -77,18 +77,18 @@ both 2 -4
 both 3 -4
 both 4 -4
 
-bunTop -3 3
-salad -3 1
-patty -3 -2
-bunBottom -3 -4
-catcher -3 -7
-
 player 0 -4
 
 enemy -4 5
 enemy 4 5
 enemy -4 -4
 enemy 4 -4
+
+bunTop -3 3
+salad -3 1
+patty -3 -2
+bunBottom -3 -4
+catcher -3 -7
 
 bunTop -1 5
 salad -1 0

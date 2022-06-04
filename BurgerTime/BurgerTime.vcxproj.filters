@@ -17,6 +17,7 @@
     <ClInclude Include="GameOverManager.h" />
     <ClInclude Include="ScoreManager.h" />
     <ClInclude Include="ScoreUI.h" />
+    <ClInclude Include="GameManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -36,5 +37,6 @@
     <ClCompile Include="GameOverManager.cpp" />
     <ClCompile Include="ScoreManager.cpp" />
     <ClCompile Include="ScoreUI.cpp" />
+    <ClCompile Include="GameManager.cpp" />
   </ItemGroup>
 </Project>

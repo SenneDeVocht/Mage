@@ -36,7 +36,7 @@ private:
 	std::shared_ptr<Mage::SpriteAnimation> m_pWalkRight{};
 
 	glm::vec2 m_Input{ 0, 0 };
-	float m_Speed{ 2 };
+	float m_Speed{ 2.2f };
 
 	glm::ivec2 m_LastDirection{ 0, 0 };
 };

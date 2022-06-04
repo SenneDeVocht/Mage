@@ -25,6 +25,7 @@
 #include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
 #include "BurgerTime/ScoreUI.h"
 #include "BurgerTime/GameOverManager.h"
+#include "BurgerTime/GameManager.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -84,8 +85,8 @@ void BurgerTime::LoadGame() const
             #pragma endregion
 	    });
 
-	// LEVEL 01
-	//---------
+	// LEVEL
+	//------
 	Mage::SceneManager::GetInstance().RegisterScene("Level01", [&](Mage::Scene* pScene)
 	    {
 	        // Camera
@@ -99,13 +100,22 @@ void BurgerTime::LoadGame() const
 
 		    #pragma endregion
 
+			// GAME MANAGER
+			//-------------
+			#pragma region GameManager
+
+			const auto gameManagerObject = pScene->CreateChildObject("GameManager");
+			const auto gameManager = gameManagerObject->CreateComponent<GameManager>();
+
+			#pragma endregion
+
 		    // LEVEL
 		    //------
 		    #pragma region Level
 
 		    const auto levelObject = pScene->CreateChildObject("Level");
 		    levelObject->GetTransform()->SetWorldPosition({ 0.f, -0.5f });
-		    const auto level = levelObject->CreateComponent<Level>(Mage::ResourceManager::GetInstance().GetDataRoot() + "Level01.txt");
+		    const auto level = levelObject->CreateComponent<Level>(gameManager);
 		    levelObject->CreateComponent<Mage::TilemapComponent>(
 			    std::vector <std::shared_ptr<Mage::Texture2D>>{
 				    resourceManager.LoadTexture("Level/Platform_Narrow.png", 16),
@@ -119,8 +129,8 @@ void BurgerTime::LoadGame() const
 
 		    #pragma endregion
 
-		    // PETER PEPPER AND ENEMIES
-		    //-------------------------
+		    // PETER PEPPER
+		    //-------------
 		    #pragma region PeterPepper
 
 		    const auto peterPepperObject = pScene->CreateChildObject("PeterPepper");
@@ -136,15 +146,19 @@ void BurgerTime::LoadGame() const
 			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkBack.png",  16), 4, 0.1f),
 			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkLeft.png",  16), 4, 0.1f),
 			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkRight.png", 16), 4, 0.1f));
+			const auto peterPepper = peterPepperObject->CreateComponent<PeterPepper>(
+				gameManager, level,
+				std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Victory.png", 16), 2, 0.2f),
+				std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Death.png", 16), 6, 0.1f, false));
 
-            
+			#pragma endregion
+
+			// ENEMIES
+			//--------
+			#pragma region Enemies
+
 		    const auto enemyManagerObject = pScene->CreateChildObject("EnemyManager");
-		    const auto enemyManager = enemyManagerObject->CreateComponent<EnemyManager>(level, peterPepperObject->GetTransform());
-
-
-		    const auto peterPepper = peterPepperObject->CreateComponent<PeterPepper>(level, enemyManager,
-			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Victory.png", 16), 2, 0.2f),
-			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Death.png", 16), 6, 0.1f, false));
+		    enemyManagerObject->CreateComponent<EnemyManager>(gameManager, level, peterPepperObject->GetTransform());
 
 		    #pragma endregion
 

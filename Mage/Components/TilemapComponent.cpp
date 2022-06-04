@@ -66,3 +66,8 @@ void Mage::TilemapComponent::EraseTile(const glm::ivec2& position)
 {
     m_Tilemap.erase(position);
 }
+
+void Mage::TilemapComponent::EraseAll()
+{
+	m_Tilemap.clear();
+}

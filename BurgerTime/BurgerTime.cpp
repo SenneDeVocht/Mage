@@ -26,6 +26,8 @@
 #include "BurgerTime/ScoreUI.h"
 #include "BurgerTime/GameOverManager.h"
 #include "BurgerTime/GameManager.h"
+#include "BurgerTime/ScoreManager.h"
+#include "BurgerTime/HighScoreUI.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -74,6 +76,22 @@ void BurgerTime::LoadGame() const
 		    playTextObject->GetTransform()->SetWorldPosition({ 0, -3 });
 
             #pragma endregion
+
+			// HIGH SCORE TEXT
+			//-----------------
+			#pragma region HighScoreText
+
+			const auto highScoreTextObject = pScene->CreateChildObject("HighScoreText");
+			highScoreTextObject->CreateComponent<Mage::TextComponent>(
+				"High Score: 0",
+				Mage::ResourceManager::GetInstance().LoadFont("Fonts/PressStart2P.ttf", 8),
+				SDL_Color{ 255, 255, 255, 255 },
+				16.f,
+				glm::vec2{ 0.5f, 0.5f });
+			highScoreTextObject->CreateComponent<HighScoreUI>();
+			highScoreTextObject->GetTransform()->SetWorldPosition({ 0, -6 });
+
+			#pragma endregion
 
 		    // MAIN MENU
 		    //----------
@@ -158,7 +176,7 @@ void BurgerTime::LoadGame() const
 			#pragma region Enemies
 
 		    const auto enemyManagerObject = pScene->CreateChildObject("EnemyManager");
-		    enemyManagerObject->CreateComponent<EnemyManager>(gameManager, level, peterPepperObject->GetTransform());
+		    const auto enemyManager = enemyManagerObject->CreateComponent<EnemyManager>(gameManager, level, peterPepperObject->GetTransform());
 
 		    #pragma endregion
 
@@ -179,6 +197,15 @@ void BurgerTime::LoadGame() const
 
 		    #pragma endregion
 
+			// SCORE MANAGER
+			//--------------
+			#pragma region ScoreManager
+
+			const auto scoreManagerObject = pScene->CreateChildObject("ScoreManager");
+			const auto scoreManager = scoreManagerObject->CreateComponent<ScoreManager>(gameManager, level, enemyManager);
+
+			#pragma endregion
+
 		    // LIVES UI
 		    //----------
 		    #pragma region PepperUI
@@ -195,7 +222,7 @@ void BurgerTime::LoadGame() const
 
 			const auto scoreUIObject = pScene->CreateChildObject("ScoreUI");
 			scoreUIObject->GetTransform()->SetWorldPosition(glm::vec2{ -6.5f, 6.875f });
-			scoreUIObject->CreateComponent<ScoreUI>();
+			scoreUIObject->CreateComponent<ScoreUI>(scoreManager);
 			scoreUIObject->CreateComponent<Mage::TextComponent>("420", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{255, 255, 255, 255}, 16.f, glm::vec2{0.f, 1.f}, Mage::TextComponent::TextAlignment::Left);
 
 			#pragma endregion

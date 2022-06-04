@@ -1,29 +1,28 @@
 #pragma once
 #include <map>
 
-#include "Mage/Singleton.h"
+#include "EventSystem.h"
+#include "Mage/Components/Component.h"
 
-class ScoreManager : public Singleton<ScoreManager>
+class GameManager;
+class Level;
+class EnemyManager;
+
+class ScoreManager : public Mage::Component, public Observer
 {
 public:
-	enum class ScoreEvent
-	{
-		EnemyKilled,
-		BurgerDropped
-	};
+	ScoreManager(GameManager* gameManager, Level* pLevel, EnemyManager* pEnemyManager);
+
+	void OnNotify(Event event) override;
 
 	int GetScore() const { return m_Score; }
-	void TriggerScoreEvent(ScoreEvent eventType);
 
 private:
-	friend class Singleton<ScoreManager>;
-	ScoreManager() = default;
+	int m_Score{ 0 };
 
-	int m_Score;
-
-	std::map<ScoreEvent, int> m_ScoreEvents{
-		std::make_pair(ScoreEvent::EnemyKilled,   200),
-		std::make_pair(ScoreEvent::BurgerDropped, 50)
+	std::map<Event, int> m_ScoreEvents{
+		std::make_pair(Event::EnemyDeath, 200),
+		std::make_pair(Event::BurgerDrop, 50)
 	};
 };
 

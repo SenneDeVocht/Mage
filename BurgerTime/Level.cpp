@@ -4,6 +4,7 @@
 #include <fstream>
 #include <map>
 
+#include "BurgerTime/EventSystem.h"
 #include "BurgerTime/GameManager.h"
 #include "BurgerTime/Burger/BurgerIngredient.h"
 
@@ -12,6 +13,8 @@
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
+#include "Mage/Engine/ServiceLocator.h"
+#include "Mage/Input/InputManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
@@ -105,7 +108,7 @@ void Level::Update()
 				return ingredient->IsCollected();
 			});
 
-		if (completed)
+		if (completed || Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey('C', Mage::InputState::Down))
 		{
 			m_pGameManager->OnLevelCompleted();
 		}
@@ -411,6 +414,11 @@ void Level::LoadLevel(int level)
 	m_LargestX *= 1.5f;
 }
 
+void Level::AddBurgerObserver(Observer* pObserver)
+{
+	m_BurgerObservers.push_back(pObserver);
+}
+
 glm::ivec2 Level::PositionToTilePosition(const glm::vec2& position) const
 {
 	const auto wPos = GetGameObject()->GetTransform()->GetWorldPosition();
@@ -445,8 +453,14 @@ void Level::SpawnIngredient(BurgerIngredient::IngredientType type, const glm::iv
 {
 	const auto burger = GetGameObject()->CreateChildObject("Burger");
 	burger->GetTransform()->SetLocalPosition({ position.x * 1.5f, position.y - 3 / 16.f });
-	m_Ingredients.push_back(burger->CreateComponent<BurgerIngredient>(this, type));
+	const auto ingredient = burger->CreateComponent<BurgerIngredient>(this, type);
+	m_Ingredients.push_back(ingredient);
 	burger->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
 	burger->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 2.f, 0.5f }, glm::vec2{ 0.f, 0.f }, 0.f, true);
 	burger->SetTag("Ingredient", true);
+
+	for (const auto o : m_BurgerObservers)
+	{
+		ingredient->AddObserver(o);
+	}
 }

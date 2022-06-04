@@ -1,6 +1,8 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "GameManager.h"
 
+#include "SavedScoreManager.h"
+#include "ScoreManager.h"
 #include "BurgerTime/Level.h"
 #include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
@@ -17,6 +19,7 @@ void GameManager::Update()
 		if (m_VictoryTimer >= m_VictoryLength)
 		{
 			m_LevelCompleted = false;
+			m_VictoryTimer = 0.0f;
 			GoToNextLevel();
 		}
 	}	
@@ -26,7 +29,7 @@ void GameManager::OnPlayerDied(bool wasLastLife)
 {
 	if (wasLastLife)
 	{
-        Mage::SceneManager::GetInstance().LoadScene("GameOver");
+		GameOver();
         return;
 	}
 
@@ -44,9 +47,26 @@ void GameManager::GoToNextLevel()
 {
 	++m_CurrentLevel;
 
-	m_pLevel->LoadLevel(m_CurrentLevel);
+	if (m_CurrentLevel > 3)
+	{
+		GameOver();
+	}
+	else
+	{
+		m_pLevel->LoadLevel(m_CurrentLevel);
 
-	m_pPeterPepper->Reset();
-	m_pEnemyManager->Reset();
+		m_pPeterPepper->Reset();
+		m_pEnemyManager->Reset();
+	}
 }
 
+void GameManager::GameOver()
+{
+	const int score = m_pScoreManager->GetScore();
+	if (score > SavedScoreManager::GetSavedScore())
+	{
+		SavedScoreManager::SetSavedScore(score);
+	}
+
+	Mage::SceneManager::GetInstance().LoadScene("GameOver");
+}

@@ -53,6 +53,11 @@ void EnemyManager::Update()
     m_SpawnedEnemies.erase(pos, m_SpawnedEnemies.end());
 }
 
+void EnemyManager::AddEnemyObserver(Observer* observer)
+{
+	m_EnemyObservers.push_back(observer);
+}
+
 void EnemyManager::Reset()
 {
     for (auto& e : m_SpawnedEnemies)

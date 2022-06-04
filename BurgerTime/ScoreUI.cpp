@@ -5,6 +5,10 @@
 #include "Mage/Components/TextComponent.h"
 #include "Mage/Scenegraph/GameObject.h"
 
+ScoreUI::ScoreUI(ScoreManager* scoreManager)
+	: m_pScoreManager{ scoreManager }
+{}
+
 void ScoreUI::Initialize()
 {
 	m_pScoreText = GetGameObject()->GetComponent<Mage::TextComponent>();
@@ -12,5 +16,5 @@ void ScoreUI::Initialize()
 
 void ScoreUI::Update()
 {
-	m_pScoreText->SetText(std::to_string(ScoreManager::GetInstance().GetScore()));
+	m_pScoreText->SetText(std::to_string(m_pScoreManager->GetScore()));
 }

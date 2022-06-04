@@ -12,10 +12,13 @@
 #include "Mage/Scenegraph/GameObject.h"
 
 Enemy::Enemy(Component* movement, const std::shared_ptr<Mage::SpriteAnimation>& pStunned, const std::shared_ptr<Mage::SpriteAnimation>& pDeath)
-	: m_pMovement{ movement }
+	: m_pSubject{ std::make_unique<Subject>() }
+	, m_pMovement{ movement }
 	, m_pStunned{ pStunned }
 	, m_pDeath{ pDeath }
 {}
+
+Enemy::~Enemy() = default;
 
 void Enemy::Initialize()
 {
@@ -32,7 +35,7 @@ void Enemy::Update()
 
 		if (m_DeadTimer >= m_pDeath->NumFrames * m_pDeath->SecondsPerFrame)
 		{
-			ScoreManager::GetInstance().TriggerScoreEvent(ScoreManager::ScoreEvent::EnemyKilled);
+			m_pSubject->Notify(Event::EnemyDeath);
 			GetGameObject()->Destroy();
 		}
 
@@ -104,6 +107,11 @@ void Enemy::OnTriggerExit(Mage::BoxColliderComponent* other)
 {
 	if (other->GetGameObject()->GetTag() == "Ingredient")
 		m_TouchingIngredient = false;
+}
+
+void Enemy::AddObserver(Observer* observer)
+{
+	m_pSubject->AddObserver(observer);
 }
 
 void Enemy::Die()

@@ -193,8 +193,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameOverManager.cpp" />
+    <ClCompile Include="HighScoreUI.cpp" />
+    <ClCompile Include="SavedScoreManager.cpp" />
     <ClCompile Include="LivesUI.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="PlayerAndEnemies\EnemyManager.cpp" />
@@ -218,8 +221,11 @@
     <ClInclude Include="Burger\BurgerIngredientPart.h" />
     <ClInclude Include="BurgerTime.h" />
     <ClInclude Include="BurgerTimePCH.h" />
+    <ClInclude Include="EventSystem.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameOverManager.h" />
+    <ClInclude Include="HighScoreUI.h" />
+    <ClInclude Include="SavedScoreManager.h" />
     <ClInclude Include="LivesUI.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="PlayerAndEnemies\EnemyManager.h" />

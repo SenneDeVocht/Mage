@@ -18,6 +18,9 @@
     <ClInclude Include="ScoreManager.h" />
     <ClInclude Include="ScoreUI.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="EventSystem.h" />
+    <ClInclude Include="SavedScoreManager.h" />
+    <ClInclude Include="HighScoreUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -38,5 +41,8 @@
     <ClCompile Include="ScoreManager.cpp" />
     <ClCompile Include="ScoreUI.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="EventSystem.cpp" />
+    <ClCompile Include="SavedScoreManager.cpp" />
+    <ClCompile Include="HighScoreUI.cpp" />
   </ItemGroup>
 </Project>

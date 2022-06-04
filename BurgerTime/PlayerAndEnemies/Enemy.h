@@ -8,6 +8,8 @@ namespace Mage
 	struct SpriteAnimation;
 }
 
+class Subject;
+class Observer;
 class Level;
 class BurgerIngredient;
 
@@ -15,6 +17,7 @@ class Enemy final : public Mage::Component
 {
 public:
 	Enemy(Component* movement, const std::shared_ptr<Mage::SpriteAnimation>& pStunned, const std::shared_ptr<Mage::SpriteAnimation>& pDeath);
+	~Enemy();
 
 	void Initialize() override;
 	void Update() override;
@@ -23,8 +26,12 @@ public:
 
 	bool IsDead() const { return m_IsDead; }
 
+	void AddObserver(Observer* observer);
+
 private:
 	void Die();
+
+	std::unique_ptr<Subject> m_pSubject;
 
 	Component* m_pMovement{};
 	Mage::RigidBodyComponent* m_pRigidBody{};

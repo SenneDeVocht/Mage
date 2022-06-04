@@ -11,6 +11,8 @@ namespace Mage
 
 class GameManager;
 class BurgerIngredient;
+class Observer;
+class Subject;
 
 class Level : public Mage::Component
 {
@@ -26,7 +28,7 @@ public:
 		Ladder,
 		Both
 	};
-
+	
 	Level(GameManager* pGameManager);
 
 	void Initialize() override;
@@ -42,11 +44,15 @@ public:
 	
 	void LoadLevel(int level);
 
+	void AddBurgerObserver(Observer* pObserver);
+
 private:
 	void SpawnBurgerCatcher(const glm::ivec2& position);
 	void SpawnIngredient(BurgerIngredient::IngredientType type, const glm::ivec2& position);
 
 	GameManager* m_pGameManager;
+
+	std::vector<Observer*> m_BurgerObservers;
 
 	Mage::TilemapComponent* m_pTileMap{};
 

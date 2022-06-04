@@ -78,9 +78,6 @@ void EnemyMovement::FixedUpdate()
 					m_CurrentDirection = { 0, -1 };
 					m_LastIntersection = currentTile;
 				}
-
-				else
-					assert(false); // got stuck
 		    }
 			else if (m_CurrentDirection.y != 0)
 			{
@@ -94,9 +91,6 @@ void EnemyMovement::FixedUpdate()
 					m_CurrentDirection = { 1, 0 };
 					m_LastIntersection = currentTile;
 				}
-
-				else
-					assert(false); // got stuck
 			}
 	    }
 

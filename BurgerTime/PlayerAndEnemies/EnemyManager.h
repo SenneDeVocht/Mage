@@ -6,6 +6,7 @@ namespace Mage
     class Transform;
 }
 
+class Observer;
 class GameManager;
 class Level;
 class Enemy;
@@ -24,10 +25,13 @@ public:
     void Initialize() override;
     void Update() override;
 
+    void AddEnemyObserver(Observer* observer);
     void Reset();
 
 private:
     void SpawnEnemy();
+
+    std::vector<Observer*> m_EnemyObservers;
 
     std::vector<glm::vec2> m_SpawnPositions;
     Level* m_pLevel;

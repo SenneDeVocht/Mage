@@ -6,6 +6,8 @@ namespace Mage
     class RigidBodyComponent;
 }
 
+class Subject;
+class Observer;
 class Level;
 class BurgerIngredientPart;
 
@@ -28,12 +30,16 @@ public:
 	void Update() override;
 	void OnTriggerEnter(Mage::BoxColliderComponent* other) override;
 
+	void AddObserver(Observer* observer);
+
 	void PartSteppedOn();
 	bool IsFalling() const { return m_Falling; }
 	bool IsCollected() const { return m_KeepFalling; }
 
 private:
 	void StartFalling();
+
+	std::unique_ptr<Subject> m_pSubject;
 
 	Level* m_pLevel;
 	IngredientType m_Type;

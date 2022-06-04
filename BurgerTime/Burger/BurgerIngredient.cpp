@@ -13,7 +13,8 @@
 #include "BurgerTime/ScoreManager.h"
 
 BurgerIngredient::BurgerIngredient(Level* level, IngredientType type)
-	: m_pLevel{ level }
+	: m_pSubject{ std::make_unique<Subject>() }
+	, m_pLevel{ level }
 	, m_Type{ type }
 {}
 
@@ -110,6 +111,10 @@ void BurgerIngredient::OnTriggerEnter(Mage::BoxColliderComponent* other)
 	}
 }
 
+void BurgerIngredient::AddObserver(Observer* observer)
+{
+	m_pSubject->AddObserver(observer);
+}
 
 void BurgerIngredient::PartSteppedOn()
 {
@@ -144,5 +149,5 @@ void BurgerIngredient::StartFalling()
 	m_Falling = true;
 
 	// Score
-	ScoreManager::GetInstance().TriggerScoreEvent(ScoreManager::ScoreEvent::BurgerDropped);
+	m_pSubject->Notify(Event::BurgerDrop);
 }

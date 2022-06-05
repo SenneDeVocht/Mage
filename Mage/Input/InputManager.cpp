@@ -29,7 +29,7 @@ public:
     bool ProcessInput()
     {
         // Controller
-        memcpy(m_PreviousControllerStates.data(), m_CurrentControllerStates.data(), sizeof(m_CurrentControllerStates.data()));
+        m_PreviousControllerStates = m_CurrentControllerStates;
         for (DWORD i = 0; i < 4; i++)
         {
             XInputGetState(i, &(m_CurrentControllerStates[i]));

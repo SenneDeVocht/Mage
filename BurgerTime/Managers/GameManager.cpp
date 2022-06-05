@@ -55,7 +55,7 @@ void GameManager::Update()
 			numDeadPlayers++;
 	}
 
-	if (numDeadPlayers >= m_pPeterPeppers.size())
+	if (numDeadPlayers >= (int)m_pPeterPeppers.size())
 	{
 		m_LivesLeft--;
 

@@ -1,7 +1,7 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "LivesUI.h"
 
-#include "BurgerTime/GameManager.h"
+#include "BurgerTime/Managers/GameManager.h"
 
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Scenegraph/GameObject.h"
@@ -25,7 +25,7 @@ void LivesUI::Initialize()
 
 void LivesUI::Update()
 {
-    for (size_t i = 0; i < m_pLifeObjects.size(); i++)
+    for (int i = 0; i < (int)m_pLifeObjects.size(); i++)
     {
         if (i >= m_pGameManager->GetLivesLeft())
             m_pLifeObjects[i]->SetEnabled(false);

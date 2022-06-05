@@ -104,7 +104,7 @@ void Mage::MageGame::Run()
 	Initialize();
 
 	// tell the resource manager where he can find the game data
-	ResourceManager::GetInstance().Init("../Data/");
+	ResourceManager::GetInstance().Init("Data/");
 
 	LoadGame();
 	

@@ -1,7 +1,7 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "HighScoreUI.h"
 
-#include "BurgerTime/SavedScoreManager.h"
+#include "BurgerTime/Managers/SavedScoreManager.h"
 
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/TextComponent.h"

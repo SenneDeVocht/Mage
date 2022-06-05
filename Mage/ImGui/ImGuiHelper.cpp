@@ -186,17 +186,17 @@ void Mage::ImGuiHelper::SetCustomStyle()
 	config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
 	static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 
-	io.FontDefault = io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Medium.ttf", 16.f);
-	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+	io.FontDefault = io.Fonts->AddFontFromFileTTF("Data/Fonts/Montserrat-Medium.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
 
-	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Bold.ttf", 16.f);
-	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+	io.Fonts->AddFontFromFileTTF("Data/Fonts/Montserrat-Bold.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
 
-	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-Italic.ttf", 16.f);
-	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+	io.Fonts->AddFontFromFileTTF("Data/Fonts/Montserrat-Italic.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
 
-	io.Fonts->AddFontFromFileTTF("../Data/Fonts/Montserrat-BoldItalic.ttf", 16.f);
-	io.Fonts->AddFontFromFileTTF("../Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+	io.Fonts->AddFontFromFileTTF("Data/Fonts/Montserrat-BoldItalic.ttf", 16.f);
+	io.Fonts->AddFontFromFileTTF("Data/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
 
 	// COLORS
 	//-------

@@ -103,7 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
@@ -115,9 +115,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent />
+    <PostBuildEvent />
     <PostBuildEvent>
-      <Command> xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E
-</Command>
+      <Command>xcopy $(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
@@ -142,9 +147,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent />
+    <PostBuildEvent />
     <PostBuildEvent>
-      <Command> xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E
-</Command>
+      <Command>xcopy $(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -153,7 +163,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -165,9 +175,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent />
+    <PostBuildEvent />
     <PostBuildEvent>
-      <Command> xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E
-</Command>
+      <Command>xcopy $(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -178,7 +193,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)3rdParty\ImGui;$(SolutionDir)3rdParty\VLD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BurgerTime/BurgerTimePCH.h</PrecompiledHeaderFile>
@@ -192,9 +207,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent />
+    <PostBuildEvent />
     <PostBuildEvent>
-      <Command> xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E
-</Command>
+      <Command>xcopy $(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll $(OutputPath) /R /Y
+xcopy $(ProjectDir)Data $(OutputPath)Data\ /R /Y /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

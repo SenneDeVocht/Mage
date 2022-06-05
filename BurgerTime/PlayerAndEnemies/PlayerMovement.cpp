@@ -10,9 +10,10 @@
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Engine/ServiceLocator.h"
 
-PlayerMovement::PlayerMovement(Level* level, const std::shared_ptr<Mage::SpriteAnimation>& pIdle, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
+PlayerMovement::PlayerMovement(int playerIndex, Level* level, const std::shared_ptr<Mage::SpriteAnimation>& pIdle, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
 	const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack, const std::shared_ptr<Mage::SpriteAnimation>& pWalkLeft, const std::shared_ptr<Mage::SpriteAnimation>& pWalkRight)
-    : m_pLevel{ level }
+    : m_PlayerIndex{ playerIndex }
+	, m_pLevel{ level }
 	, m_pIdle{ pIdle }
 	, m_pWalkFront{ pWalkfront }
 	, m_pWalkBack{ pWalkBack }
@@ -32,19 +33,45 @@ void PlayerMovement::Update()
 {
 	// INPUT
 	//------
+	const auto inputManager = Mage::ServiceLocator::GetInputManager();
+
 	m_Input = { 0, 0 };
 	
-	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x26, Mage::InputState::Hold))
+	if (inputManager->CheckKeyboardKey(0x26, Mage::InputState::Hold) && m_PlayerIndex == 0 ||
+		inputManager->CheckControllerButton(0, Mage::ControllerButton::DPadUp, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+		inputManager->CheckControllerButton(1, Mage::ControllerButton::DPadUp, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+		inputManager->CheckControllerButton(2, Mage::ControllerButton::DPadUp, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+		inputManager->CheckControllerButton(3, Mage::ControllerButton::DPadUp, Mage::InputState::Hold) && m_PlayerIndex == 1)
+	{
 		++m_Input.y;
-	if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x28, Mage::InputState::Hold))
+	}
+	if (inputManager->CheckKeyboardKey(0x28, Mage::InputState::Hold) && m_PlayerIndex == 0 ||
+		inputManager->CheckControllerButton(0, Mage::ControllerButton::DPadDown, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+		inputManager->CheckControllerButton(1, Mage::ControllerButton::DPadDown, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+		inputManager->CheckControllerButton(2, Mage::ControllerButton::DPadDown, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+		inputManager->CheckControllerButton(3, Mage::ControllerButton::DPadDown, Mage::InputState::Hold) && m_PlayerIndex == 1)
+	{
 		--m_Input.y;
+	}
 
 	if (m_Input.y == 0)
 	{
-		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x25, Mage::InputState::Hold))
+		if (inputManager->CheckKeyboardKey(0x25, Mage::InputState::Hold) && m_PlayerIndex == 0 ||
+			inputManager->CheckControllerButton(0, Mage::ControllerButton::DPadLeft, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+			inputManager->CheckControllerButton(1, Mage::ControllerButton::DPadLeft, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+			inputManager->CheckControllerButton(2, Mage::ControllerButton::DPadLeft, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+			inputManager->CheckControllerButton(3, Mage::ControllerButton::DPadLeft, Mage::InputState::Hold) && m_PlayerIndex == 1)
+		{
 			--m_Input.x;
-		if (Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x27, Mage::InputState::Hold))
+		}
+		if (inputManager->CheckKeyboardKey(0x27, Mage::InputState::Hold) && m_PlayerIndex == 0 ||
+			inputManager->CheckControllerButton(0, Mage::ControllerButton::DPadRight, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+			inputManager->CheckControllerButton(1, Mage::ControllerButton::DPadRight, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+			inputManager->CheckControllerButton(2, Mage::ControllerButton::DPadRight, Mage::InputState::Hold) && m_PlayerIndex == 1 ||
+			inputManager->CheckControllerButton(3, Mage::ControllerButton::DPadRight, Mage::InputState::Hold) && m_PlayerIndex == 1)
+		{
 			++m_Input.x;
+		}
 	}
 
 	// ANIMATIONS

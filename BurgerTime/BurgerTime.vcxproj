@@ -210,6 +210,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="ScoreManager.cpp" />
     <ClCompile Include="ScoreUI.cpp" />
+    <ClCompile Include="SettingsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mage\Mage.vcxproj">
@@ -237,6 +238,7 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="ScoreManager.h" />
     <ClInclude Include="ScoreUI.h" />
+    <ClInclude Include="SettingsManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,6 @@
 #pragma once
 #include "Mage/Components/Component.h"
 
-class Level;
-
 namespace Mage
 {
 	class Transform;
@@ -11,10 +9,13 @@ namespace Mage
 	struct SpriteAnimation;
 }
 
+class PeterPepper;
+class Level;
+
 class EnemyMovement final : public Mage::Component
 {
 public:
-	EnemyMovement(Level* level, Mage::Transform* target, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront, const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack,
+	EnemyMovement(Level* level, const std::vector<PeterPepper*>& peterPeppers, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront, const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack,
 		const std::shared_ptr<Mage::SpriteAnimation>& pWalkLeft, const std::shared_ptr<Mage::SpriteAnimation>& pWalkRight);
 
 	void Initialize() override;
@@ -27,7 +28,7 @@ private:
 	Mage::AnimatedSpriteComponent* m_pAnimatedSprite{};
 
 	Level* m_pLevel{};
-    Mage::Transform* m_pTarget{};
+    const std::vector<PeterPepper*>& m_PeterPeppers{};
 	
 	std::shared_ptr<Mage::SpriteAnimation> m_pWalkFront{};
 	std::shared_ptr<Mage::SpriteAnimation> m_pWalkBack{};

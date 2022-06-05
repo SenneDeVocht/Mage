@@ -13,7 +13,7 @@ namespace Mage
 class PlayerMovement final : public Mage::Component
 {
 public:
-	PlayerMovement(Level* level, const std::shared_ptr<Mage::SpriteAnimation>& pIdle, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
+	PlayerMovement(int playerIndex, Level* level, const std::shared_ptr<Mage::SpriteAnimation>& pIdle, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
 		const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack, const std::shared_ptr<Mage::SpriteAnimation>& pWalkLeft, const std::shared_ptr<Mage::SpriteAnimation>& pWalkRight);
 
 	void Initialize() override;
@@ -24,6 +24,8 @@ public:
 	const glm::ivec2& GetDirection() const { return m_LastDirection; }
 
 private:
+	int m_PlayerIndex;
+
 	Level* m_pLevel{};
 
 	Mage::RigidBodyComponent* m_pRigidBody{};

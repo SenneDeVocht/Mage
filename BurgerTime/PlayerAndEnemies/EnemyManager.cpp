@@ -15,9 +15,8 @@
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 
-EnemyManager::EnemyManager(GameManager* pGameManager, Level* level, Mage::Transform* targetTransform)
+EnemyManager::EnemyManager(GameManager* pGameManager, Level* level)
 	: m_pLevel{ level }
-    , m_pTargetTransform{ targetTransform }
     , m_TimeSinceLastSpawn{ m_SpawnInterval }
 {
     pGameManager->RegisterEnemyManager(this);
@@ -111,7 +110,7 @@ void EnemyManager::SpawnEnemy()
     enemyObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
     enemyObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);
     enemyObject->CreateComponent<Mage::AnimatedSpriteComponent>();
-    const auto mrHotDogMovement = enemyObject->CreateComponent<EnemyMovement>(m_pLevel, m_pTargetTransform,
+    const auto mrHotDogMovement = enemyObject->CreateComponent<EnemyMovement>(m_pLevel, m_PeterPeppers,
         std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("Enemies/" + name + "/WalkFront.png", 16), 2, 0.1f),
         std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("Enemies/" + name + "/WalkBack.png", 16), 2, 0.1f),
         std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("Enemies/" + name + "/WalkLeft.png", 16), 2, 0.1f),

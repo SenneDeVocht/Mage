@@ -16,14 +16,12 @@
 #include "Mage/Input/InputManager.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
-PeterPepper::PeterPepper(GameManager* pGameManager, Level* pLevel, const std::shared_ptr<Mage::SpriteAnimation>& pVictory, const std::shared_ptr<Mage::SpriteAnimation>& pDeath)
-	: m_pGameManager{ pGameManager }
+PeterPepper::PeterPepper(int playerIndex, Level* pLevel, const std::shared_ptr<Mage::SpriteAnimation>& pVictory, const std::shared_ptr<Mage::SpriteAnimation>& pDeath)
+	: m_PlayerIndex{ playerIndex }
 	, m_pLevel{ pLevel}
 	, m_pVictory{ pVictory }
 	, m_pDeath{ pDeath }
-{
-	m_pGameManager->RegisterPeterPepper(this);
-}
+{}
 
 void PeterPepper::Initialize()
 {
@@ -48,8 +46,8 @@ void PeterPepper::Update()
     {
         m_DeathTimer += Mage::Timer::GetInstance().GetDeltaTime();
 
-    	if (m_DeathTimer >= m_DeathDuration)
-			m_pGameManager->OnPlayerDied(m_LivesLeft <= 0);
+		if (m_DeathTimer >= m_DeathDuration)
+			m_DeadAndReady = true;
     }
 
 	// Victory
@@ -60,8 +58,13 @@ void PeterPepper::Update()
 	}
 
 	// Spray pepper
+	const auto input = Mage::ServiceLocator::GetInputManager();
 	if (!m_SprayingPepper && m_State == State::Alive && m_PepperCount > 0 &&
-		Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey(0x20, Mage::InputState::Down))
+		(input->CheckKeyboardKey(0x20, Mage::InputState::Down) && m_PlayerIndex == 0 ||
+		input->CheckControllerButton(0, Mage::ControllerButton::A, Mage::InputState::Down) && m_PlayerIndex == 1 ||
+		input->CheckControllerButton(1, Mage::ControllerButton::A, Mage::InputState::Down) && m_PlayerIndex == 1 ||
+		input->CheckControllerButton(2, Mage::ControllerButton::A, Mage::InputState::Down) && m_PlayerIndex == 1 ||
+		input->CheckControllerButton(3, Mage::ControllerButton::A, Mage::InputState::Down) && m_PlayerIndex == 1))
 	{
 		SprayPepper();
 	}
@@ -136,8 +139,7 @@ void PeterPepper::StopSprayingPepper()
 void PeterPepper::Die()
 {
 	m_State = State::Dead;
-
-	--m_LivesLeft;
+	
 	m_pMovement->SetEnabled(false);
 	m_pAnimatedSprite->SetAnimation(m_pDeath);
 }
@@ -151,6 +153,7 @@ void PeterPepper::Reset()
 	m_State = State::Alive;
 	m_pMovement->SetEnabled(true);
 	m_DeathTimer = 0;
+	m_DeadAndReady = false;
 }
 
 void PeterPepper::StartVictory()

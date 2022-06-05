@@ -1,16 +1,18 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "EnemyMovement.h"
 
+#include "PeterPepper.h"
+
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/AnimatedSpriteComponent.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "BurgerTime/Level.h"
 
-EnemyMovement::EnemyMovement(Level* level, Mage::Transform* target, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
+EnemyMovement::EnemyMovement(Level* level, const std::vector<PeterPepper*>& peterPeppers, const std::shared_ptr<Mage::SpriteAnimation>& pWalkfront,
                              const std::shared_ptr<Mage::SpriteAnimation>& pWalkBack, const std::shared_ptr<Mage::SpriteAnimation>& pWalkLeft, const std::shared_ptr<Mage::SpriteAnimation>& pWalkRight)
 	: m_pLevel{ level }
-    , m_pTarget{ target }
+    , m_PeterPeppers{ peterPeppers }
 	, m_pWalkFront{ pWalkfront }
 	, m_pWalkBack{ pWalkBack }
 	, m_pWalkLeft{ pWalkLeft }
@@ -26,7 +28,20 @@ void EnemyMovement::Initialize()
 void EnemyMovement::FixedUpdate()
 {
 	const auto ownPos = GetGameObject()->GetTransform()->GetWorldPosition();
-	const auto targetPos = m_pTarget->GetWorldPosition();
+	glm::vec2 targetPos{ 0, 0 };
+	float closestDistance = std::numeric_limits<float>::max();
+
+	for (auto& pPeterPepper : m_PeterPeppers)
+	{
+		const auto pPeterPepperPos = pPeterPepper->GetGameObject()->GetTransform()->GetWorldPosition();
+		const auto distance = glm::distance(ownPos, pPeterPepperPos);
+		if (distance < closestDistance)
+		{
+			closestDistance = distance;
+			targetPos = pPeterPepperPos;
+		}
+	}
+
 	const auto currentTile = m_pLevel->PositionToTilePosition(ownPos);
 
 	const bool cantKeepMovingInCurrentDirection = m_CurrentDirection.x == 1 && !m_pLevel->CanMoveInDirection(ownPos, Level::Direction::Right, true)

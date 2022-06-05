@@ -1,4 +1,5 @@
 #pragma once
+#include "SettingsManager.h"
 #include "Mage/Components/Component.h"
 
 namespace Mage
@@ -9,13 +10,15 @@ namespace Mage
 class MainMenu : public Mage::Component
 {
 public:
-	explicit MainMenu(Mage::TextComponent* pPlayText);
+	explicit MainMenu(Mage::TextComponent* pOptionsText);
 
 	void Update() override;
 
 private:
-	Mage::TextComponent* m_pPlayText;
-	const float m_BlinkSpeed{ 3.f };
-	float m_Timer;
+	void SwitchToSinglePlayer();
+	void SwitchToMultiplayer();
+
+	Mage::TextComponent* m_pOptionsText;
+	SettingsManager::GameMode m_SelectedOption;
 };
 

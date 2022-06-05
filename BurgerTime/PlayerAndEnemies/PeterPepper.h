@@ -16,7 +16,7 @@ class PlayerMovement;
 class PeterPepper final : public Mage::Component
 {
 public:
-	PeterPepper(GameManager* pGameManager, Level* pLevel, const std::shared_ptr<Mage::SpriteAnimation>& pVictory, const std::shared_ptr<Mage::SpriteAnimation>& pDeath);
+	PeterPepper(int playerIndex, Level* pLevel, const std::shared_ptr<Mage::SpriteAnimation>& pVictory, const std::shared_ptr<Mage::SpriteAnimation>& pDeath);
 
 	void Initialize() override;
 	void Update() override;
@@ -24,11 +24,10 @@ public:
 
 	int GetPepperCount() const { return m_PepperCount; }
 
-	int GetMaxLives() const { return m_MaxLives; }
-	int GetLivesLeft() const { return m_LivesLeft; }
-
 	void StartVictory();
 	void Reset();
+
+	bool IsDeadAndReady() const { return m_DeadAndReady; }
 
 private:
 	enum class State
@@ -43,23 +42,21 @@ private:
 
 	void Die();
 
-	GameManager* m_pGameManager{};
+	int m_PlayerIndex;
+	
 	Level* m_pLevel{};
 
 	State m_State{ State::Alive };
 
 	const float m_DeathDuration{ 3.0f };
 	float m_DeathTimer{ 0.0f };
+	bool m_DeadAndReady{ false };
 
 	PlayerMovement* m_pMovement{};
 	Mage::AnimatedSpriteComponent* m_pAnimatedSprite{};
 
 	std::shared_ptr<Mage::SpriteAnimation> m_pVictory{};
 	std::shared_ptr<Mage::SpriteAnimation> m_pDeath{};
-
-	// Lives
-	const int m_MaxLives{ 3 };
-	int m_LivesLeft{ m_MaxLives };
 
 	// PepperSpray
 	int m_PepperCount{ 5 };

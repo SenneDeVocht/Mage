@@ -1,20 +1,20 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "LivesUI.h"
 
-#include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
+#include "BurgerTime/GameManager.h"
 
 #include "Mage/ResourceManagement/ResourceManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/SpriteComponent.h"
 
-LivesUI::LivesUI(const PeterPepper* pPeterPepper)
-    : m_pPeterPepper{ pPeterPepper }
+LivesUI::LivesUI(const GameManager* pPeterPepper)
+    : m_pGameManager{ pPeterPepper }
 {}
 
 void LivesUI::Initialize()
 {
-	for (int i = 0; i < m_pPeterPepper->GetMaxLives(); i++)
+	for (int i = 0; i < m_pGameManager->GetMaxLives(); i++)
 	{
 		auto lifeObject = GetGameObject()->CreateChildObject("Life");
 		lifeObject->GetTransform()->SetLocalPosition({ 0.25f, i * 0.5f + 0.25f });
@@ -27,7 +27,7 @@ void LivesUI::Update()
 {
     for (size_t i = 0; i < m_pLifeObjects.size(); i++)
     {
-        if (i >= m_pPeterPepper->GetLivesLeft())
+        if (i >= m_pGameManager->GetLivesLeft())
             m_pLifeObjects[i]->SetEnabled(false);
 
         else

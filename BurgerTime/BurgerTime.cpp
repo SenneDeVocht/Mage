@@ -10,15 +10,10 @@
 #include "Mage/Components/CameraComponent.h"
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/SpriteComponent.h"
-#include "Mage/Components/AnimatedSpriteComponent.h"
-#include "Mage/Components/RigidBodyComponent.h"
-#include "Mage/Components/BoxColliderComponent.h"
 #include "Mage/Components/TilemapComponent.h"
 #include "Mage/Components/TextComponent.h"
 
 #include "BurgerTime/MainMenu.h"
-#include "BurgerTime/PlayerAndEnemies/PlayerMovement.h"
-#include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
 #include "BurgerTime/Level.h"
 #include "BurgerTime/PepperUI.h"
 #include "BurgerTime/LivesUI.h"
@@ -62,18 +57,19 @@ void BurgerTime::LoadGame() const
 
             #pragma endregion
 
-			// PLAY TEXT
-		    //----------
-            #pragma region PlayText
+			// OPTIONS TEXT
+		    //-------------
+			#pragma region OptionsText
 
-			const auto playTextObject = pScene->CreateChildObject("PlayText");
-		    const auto playText = playTextObject->CreateComponent<Mage::TextComponent>(
-				"Press SPACE to play",
+			const auto optionsTextObject = pScene->CreateChildObject("OptionsText");
+			const auto optionsText = optionsTextObject->CreateComponent<Mage::TextComponent>(
+				"> 1 PLAYER\n\n  2 PLAYERS",
 				Mage::ResourceManager::GetInstance().LoadFont("Fonts/PressStart2P.ttf", 8),
 				SDL_Color{ 255, 255, 255, 255 },
-                16.f,
-				glm::vec2{ 0.5f, 0.5f });
-		    playTextObject->GetTransform()->SetWorldPosition({ 0, -3 });
+				16.f,
+				glm::vec2{ 0.5f, 0.5f },
+				Mage::TextComponent::TextAlignment::Left);
+			optionsTextObject->GetTransform()->SetWorldPosition({ 0, -2 });
 
             #pragma endregion
 
@@ -98,7 +94,7 @@ void BurgerTime::LoadGame() const
             #pragma region MainMenu
 
 		    const auto mainMenuObject = pScene->CreateChildObject("MainMenu");
-		    mainMenuObject->CreateComponent<MainMenu>(playText);
+		    mainMenuObject->CreateComponent<MainMenu>(optionsText);
 
             #pragma endregion
 	    });
@@ -147,53 +143,12 @@ void BurgerTime::LoadGame() const
 
 		    #pragma endregion
 
-		    // PETER PEPPER
-		    //-------------
-		    #pragma region PeterPepper
-
-		    const auto peterPepperObject = pScene->CreateChildObject("PeterPepper");
-		    peterPepperObject->SetTag("PeterPepper");
-		    peterPepperObject->GetTransform()->SetLocalPosition({ 0, -4.3125f });
-
-		    peterPepperObject->CreateComponent<Mage::RigidBodyComponent>(Mage::RigidBodyComponent::BodyType::Dynamic, true, 0.f);
-		    peterPepperObject->CreateComponent<Mage::BoxColliderComponent>(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 0.f, -0.25f }, 0.f, true);
-		    peterPepperObject->CreateComponent<Mage::AnimatedSpriteComponent>();
-		    peterPepperObject->CreateComponent<PlayerMovement>(level,
-			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Idle.png",      16), 1, 0.f),
-			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkFront.png", 16), 4, 0.1f),
-			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkBack.png",  16), 4, 0.1f),
-			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkLeft.png",  16), 4, 0.1f),
-			    std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/WalkRight.png", 16), 4, 0.1f));
-			const auto peterPepper = peterPepperObject->CreateComponent<PeterPepper>(
-				gameManager, level,
-				std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Victory.png", 16), 2, 0.2f),
-				std::make_shared<Mage::SpriteAnimation>(resourceManager.LoadTexture("PeterPepper/Death.png", 16), 6, 0.1f, false));
-
-			#pragma endregion
-
 			// ENEMIES
 			//--------
 			#pragma region Enemies
 
 		    const auto enemyManagerObject = pScene->CreateChildObject("EnemyManager");
-		    const auto enemyManager = enemyManagerObject->CreateComponent<EnemyManager>(gameManager, level, peterPepperObject->GetTransform());
-
-		    #pragma endregion
-
-		    // PEPPER UI
-		    //----------
-		    #pragma region PepperUI
-
-		    const auto pepperUIObject = pScene->CreateChildObject("PepperUI");
-		    pepperUIObject->GetTransform()->SetWorldPosition(glm::vec2{ 6.5f, 6.875f });
-
-		    const auto pepperUIImage = pepperUIObject->CreateChildObject("Image");
-		    pepperUIImage->CreateComponent<Mage::SpriteComponent>(resourceManager.LoadTexture("UI/PepperTitle.png", 16, glm::vec2{ 1, 1 }));
-
-		    const auto PepperUITextObject = pepperUIObject->CreateChildObject("Text");
-		    PepperUITextObject->GetTransform()->SetLocalPosition({ 0.f, -0.4375f });
-		    PepperUITextObject->CreateComponent<Mage::TextComponent>("X", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{ 255, 255, 255, 255 }, 16.f, glm::vec2{ 1.f, 1.f }, Mage::TextComponent::TextAlignment::Right);
-		    PepperUITextObject->CreateComponent<PepperUI>(peterPepper);
+		    const auto enemyManager = enemyManagerObject->CreateComponent<EnemyManager>(gameManager, level);
 
 		    #pragma endregion
 
@@ -206,24 +161,24 @@ void BurgerTime::LoadGame() const
 
 			#pragma endregion
 
-		    // LIVES UI
-		    //----------
-		    #pragma region PepperUI
+			// LIVES UI
+			//----------
+			#pragma region LivesUI
 
-		    const auto livesUIObject = pScene->CreateChildObject("LivesUI");
-		    livesUIObject->GetTransform()->SetWorldPosition(glm::vec2{ -6.5f, -7.875f });
-		    livesUIObject->CreateComponent<LivesUI>(peterPepper);
+			const auto livesUIObject = pScene->CreateChildObject("LivesUI");
+			livesUIObject->GetTransform()->SetWorldPosition(glm::vec2{ -6.5f, -7.875f });
+			livesUIObject->CreateComponent<LivesUI>(gameManager);
 
-		    #pragma endregion
+			#pragma endregion
 
 			// SCORE UI
 			//---------
 			#pragma region ScoreUI
 
 			const auto scoreUIObject = pScene->CreateChildObject("ScoreUI");
-			scoreUIObject->GetTransform()->SetWorldPosition(glm::vec2{ -6.5f, 6.875f });
+			scoreUIObject->GetTransform()->SetWorldPosition(glm::vec2{ 0.f, 6.875f });
 			scoreUIObject->CreateComponent<ScoreUI>(scoreManager);
-			scoreUIObject->CreateComponent<Mage::TextComponent>("420", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{255, 255, 255, 255}, 16.f, glm::vec2{0.f, 1.f}, Mage::TextComponent::TextAlignment::Left);
+			scoreUIObject->CreateComponent<Mage::TextComponent>("420", resourceManager.LoadFont("Fonts/PressStart2P.ttf", 8), SDL_Color{255, 255, 255, 255}, 16.f, glm::vec2{0.5f, 1.f}, Mage::TextComponent::TextAlignment::Left);
 
 			#pragma endregion
 	    });

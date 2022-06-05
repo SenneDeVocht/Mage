@@ -21,6 +21,7 @@
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="SavedScoreManager.h" />
     <ClInclude Include="HighScoreUI.h" />
+    <ClInclude Include="SettingsManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BurgerTime.cpp" />
@@ -44,5 +45,6 @@
     <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="SavedScoreManager.cpp" />
     <ClCompile Include="HighScoreUI.cpp" />
+    <ClCompile Include="SettingsManager.cpp" />
   </ItemGroup>
 </Project>

@@ -385,6 +385,7 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
     <ClCompile Include="Engine\SoundManager.cpp" />
     <ClCompile Include="ResourceManagement\SoundClip.cpp" />
     <ClCompile Include="Components\TilemapComponent.cpp" />
+    <ClCompile Include="Components\SoundPlayerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\ImGui\backends\imgui_impl_opengl2.h" />
@@ -421,6 +422,7 @@ xcopy $(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll $(OutputPath) 
     <ClInclude Include="Engine\SoundManager.h" />
     <ClInclude Include="ResourceManagement\SoundClip.h" />
     <ClInclude Include="Components\TilemapComponent.h" />
+    <ClInclude Include="Components\SoundPlayerComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

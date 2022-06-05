@@ -22,7 +22,13 @@ void Mage::SoundClip::SetVolume(float volume)
     Mix_VolumeChunk(m_pSample, static_cast<int>(volume * MIX_MAX_VOLUME));
 }
 
-void Mage::SoundClip::Play()
+void Mage::SoundClip::Play(bool loop)
 {
-    Mix_PlayChannel(-1, m_pSample, 0);
+    m_Channel = Mix_PlayChannel(-1, m_pSample, loop ? -1 : 0);
+}
+
+void Mage::SoundClip::Stop()
+{
+	if (m_Channel != -1)
+		Mix_HaltChannel(m_Channel);
 }

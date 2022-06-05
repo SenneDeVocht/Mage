@@ -6,6 +6,8 @@
 
 namespace Mage
 {
+	class SoundPlayerComponent;
+	class SoundClip;
 	class TilemapComponent;
 }
 
@@ -29,7 +31,8 @@ public:
 		Both
 	};
 	
-	Level(GameManager* pGameManager);
+	Level(GameManager* pGameManager, Mage::SoundPlayerComponent* pStartSound, Mage::SoundPlayerComponent* pMusic, Mage::SoundPlayerComponent* pCompleteSound);
+	~Level();
 
 	void Initialize() override;
 	void Update() override;
@@ -77,5 +80,13 @@ private:
 	std::vector<std::pair<glm::ivec2, BurgerIngredient::IngredientType>> m_IngredientStartPositions;
 
 	bool m_Initialized{ false };
+
+	Mage::SoundPlayerComponent* m_pStartSound;
+	Mage::SoundPlayerComponent* m_pCompleteSound;
+	bool m_CompleteSoundPlayed{ false };
+	Mage::SoundPlayerComponent* m_pMusic;
+	const float m_TimeBeforeMusic{ 3.f };
+	float m_MusicTimer{ 0 };
+	bool m_MusicPlaying{ false };
 };
 

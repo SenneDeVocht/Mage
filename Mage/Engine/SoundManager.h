@@ -15,13 +15,13 @@ namespace Mage
         SoundManager& operator=(const SoundManager& other) = delete;
         SoundManager& operator=(SoundManager&& other) noexcept = delete;
 
-		virtual void PlaySound(SoundClip* pSoundClip, float volume = 1.0f) = 0;
+		virtual void PlaySound(SoundClip* pSoundClip, float volume = 1.0f, bool loops = false) = 0;
 	};
 
 	class NullSoundManager final : public SoundManager
 	{
 	public:
-		void PlaySound(SoundClip*, float) override {}
+		void PlaySound(SoundClip*, float, bool) override {}
 	};
 
 
@@ -36,7 +36,7 @@ namespace Mage
         SDLSoundManager& operator=(const SDLSoundManager& other) = delete;
         SDLSoundManager& operator=(SDLSoundManager&& other) noexcept = delete;
 
-		void PlaySound(SoundClip* pSoundClip, float volume = 1.0f) override;
+		void PlaySound(SoundClip* pSoundClip, float volume = 1.0f, bool loops = false) override;
 
 	private:
 		class SDLSoundManagerImpl;
@@ -46,7 +46,7 @@ namespace Mage
 	class DebugSDLSoundManager final : public SoundManager
 	{
 	public:
-		void PlaySound(SoundClip* pSoundClip, float volume = 1.0f) override;
+		void PlaySound(SoundClip* pSoundClip, float volume = 1.0f, bool loops = false) override;
 
 	private:
 		std::unique_ptr<SDLSoundManager> m_pActualSoundManager = std::make_unique<SDLSoundManager>();

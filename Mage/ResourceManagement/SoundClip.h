@@ -13,11 +13,14 @@ namespace Mage
         bool IsLoaded() const { return m_pSample != nullptr; }
         void Load();
 
-        void Play();
+        void Play(bool loop = false);
+        void Stop();
         void SetVolume(float volume);
 
     private:
         std::string m_FilePath;
         Mix_Chunk* m_pSample{ nullptr };
+        
+        int m_Channel{ -1 };
     };
 }

@@ -13,17 +13,24 @@
 #include "Mage/Components/Transform.h"
 #include "Mage/Components/RigidBodyComponent.h"
 #include "Mage/Components/BoxColliderComponent.h"
+#include "Mage/Components/SoundPlayerComponent.h"
 #include "Mage/Engine/ServiceLocator.h"
+#include "Mage/Engine/Timer.h"
 #include "Mage/Input/InputManager.h"
 #include "Mage/Scenegraph/GameObject.h"
 #include "Mage/ResourceManagement/ResourceManager.h"
 
-Level::Level(GameManager* pGameManager)
+Level::Level(GameManager* pGameManager, Mage::SoundPlayerComponent* pStartSound, Mage::SoundPlayerComponent* pMusic, Mage::SoundPlayerComponent* pCompleteSound)
 	: m_pGameManager{ pGameManager }
+	, m_pStartSound{ pStartSound }
+	, m_pMusic{ pMusic }
+	, m_pCompleteSound{ pCompleteSound }
 {
 	m_pGameManager->RegisterLevel(this);
 	LoadLevel(1);
 }
+
+Level::~Level() = default;
 
 void Level::Initialize()
 {
@@ -110,8 +117,22 @@ void Level::Update()
 
 		if (completed || Mage::ServiceLocator::GetInputManager()->CheckKeyboardKey('C', Mage::InputState::Down))
 		{
+			if (!m_CompleteSoundPlayed)
+			{
+				m_pMusic->Stop();
+				m_pCompleteSound->Play();
+				m_CompleteSoundPlayed = true;
+			}
+
 			m_pGameManager->OnLevelCompleted();
 		}
+	}
+
+	m_MusicTimer += Mage::Timer::GetInstance().GetDeltaTime();
+	if (m_MusicTimer >= m_TimeBeforeMusic && !m_MusicPlaying)
+	{
+		m_pMusic->Play();
+		m_MusicPlaying = true;
 	}
 }
 
@@ -412,6 +433,15 @@ void Level::LoadLevel(int level)
 
 	m_SmallestX *= 1.5f;
 	m_LargestX *= 1.5f;
+
+
+	// Sound
+	m_pMusic->Stop();
+	m_pCompleteSound->Stop();
+	m_CompleteSoundPlayed = false;
+	m_pStartSound->Play();
+	m_MusicPlaying = false;
+	m_MusicTimer = 0.0f;
 }
 
 void Level::AddBurgerObserver(Observer* pObserver)

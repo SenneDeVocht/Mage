@@ -8,10 +8,10 @@
 
 #include "Mage/ResourceManagement/SoundClip.h"
 
-void Mage::DebugSDLSoundManager::PlaySound(SoundClip* pSoundClip, float volume)
+void Mage::DebugSDLSoundManager::PlaySound(SoundClip* pSoundClip, float volume, bool loops)
 {
     std::cout << "[SDL Sound Manager] Playing sound." << std::endl;
-    m_pActualSoundManager->PlaySound(pSoundClip, volume);
+    m_pActualSoundManager->PlaySound(pSoundClip, volume, loops);
 }
 
 class Mage::SDLSoundManager::SDLSoundManagerImpl
@@ -42,14 +42,15 @@ public:
                 lock.unlock();
 
                 // Play the sound
-                const auto clip = soundToPlay.first;
-                const float volume = soundToPlay.second;
+                const auto clip = soundToPlay.clip;
+                const float volume = soundToPlay.volume;
+                const float loops = soundToPlay.loops;
 
                 if (!clip->IsLoaded())
                     clip->Load();
 
                 clip->SetVolume(volume);
-                clip->Play();
+                clip->Play(loops);
             }
         });
     }
@@ -66,15 +67,22 @@ public:
     SDLSoundManagerImpl& operator=(const SDLSoundManagerImpl& other) = delete;
     SDLSoundManagerImpl& operator=(SDLSoundManagerImpl&& other) noexcept = delete;
 
-    void PlaySound(SoundClip* pSoundClip, float volume = 1.0f)
+    void PlaySound(SoundClip* pSoundClip, float volume = 1.0f, bool loops = false)
     {
         std::lock_guard<std::mutex> lock(m_SoundQueueMutex);
-        m_SoundQueue.push(std::make_pair(pSoundClip, volume));
+        m_SoundQueue.push({ pSoundClip, volume, loops });
         m_SoundQueueCV.notify_all();
     }
 
 private:
-    std::queue<std::pair<SoundClip*, float>> m_SoundQueue;
+    struct Sound
+	{
+		SoundClip* clip;
+		float volume;
+        bool loops;
+	};
+
+    std::queue<Sound> m_SoundQueue;
     std::thread m_SoundThread;
     std::mutex m_SoundQueueMutex;
     std::condition_variable m_SoundQueueCV;
@@ -87,8 +95,8 @@ Mage::SDLSoundManager::SDLSoundManager()
 
 Mage::SDLSoundManager::~SDLSoundManager() = default;
 
-void Mage::SDLSoundManager::PlaySound(SoundClip* pSoundClip, float volume)
+void Mage::SDLSoundManager::PlaySound(SoundClip* pSoundClip, float volume, bool loops)
 {
-    m_pImpl->PlaySound(pSoundClip, volume);
+    m_pImpl->PlaySound(pSoundClip, volume, loops);
 }
 

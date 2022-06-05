@@ -12,6 +12,7 @@
 #include "Mage/Components/SpriteComponent.h"
 #include "Mage/Components/TilemapComponent.h"
 #include "Mage/Components/TextComponent.h"
+#include "Mage/Components/SoundPlayerComponent.h"
 
 #include "BurgerTime/Level.h"
 #include "BurgerTime/Managers/GameManager.h"
@@ -128,8 +129,11 @@ void BurgerTime::LoadGame() const
 
 		    const auto levelObject = pScene->CreateChildObject("Level");
 		    levelObject->GetTransform()->SetWorldPosition({ 0.f, -0.5f });
-		    const auto level = levelObject->CreateComponent<Level>(gameManager);
-		    levelObject->CreateComponent<Mage::TilemapComponent>(
+			const auto startSound = levelObject->CreateComponent<Mage::SoundPlayerComponent>(Mage::ResourceManager::GetInstance().LoadSoundClip("Sounds/Start.mp3"));
+			const auto music = levelObject->CreateComponent<Mage::SoundPlayerComponent>(Mage::ResourceManager::GetInstance().LoadSoundClip("Sounds/Music.mp3"), 1.f, true);
+			const auto victorySound = levelObject->CreateComponent<Mage::SoundPlayerComponent>(Mage::ResourceManager::GetInstance().LoadSoundClip("Sounds/Complete.mp3"));
+			const auto level = levelObject->CreateComponent<Level>(gameManager, startSound, music, victorySound);
+			levelObject->CreateComponent<Mage::TilemapComponent>(
 			    std::vector <std::shared_ptr<Mage::Texture2D>>{
 				    resourceManager.LoadTexture("Level/Platform_Narrow.png", 16),
 				    resourceManager.LoadTexture("Level/Ladder_Narrow.png", 16),

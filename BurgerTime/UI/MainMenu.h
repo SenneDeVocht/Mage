@@ -1,5 +1,5 @@
 #pragma once
-#include "SettingsManager.h"
+#include "BurgerTime/Managers/SettingsManager.h"
 #include "Mage/Components/Component.h"
 
 namespace Mage

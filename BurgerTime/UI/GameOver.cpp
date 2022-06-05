@@ -1,10 +1,10 @@
 #include "BurgerTime/BurgerTimePCH.h"
-#include "GameOverManager.h"
+#include "GameOver.h"
 
 #include "Mage/Engine/Timer.h"
 #include "Mage/Scenegraph/SceneManager.h"
 
-void GameOverManager::Update()
+void GameOver::Update()
 {
     m_Timer += Mage::Timer::GetInstance().GetDeltaTime();
 

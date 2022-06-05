@@ -1,7 +1,7 @@
 #pragma once
 #include "Mage/Components/Component.h"
 
-class GameOverManager final : public Mage::Component
+class GameOver final : public Mage::Component
 {
 public:
 	void Update() override;

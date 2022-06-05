@@ -1,8 +1,9 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "PepperUI.h"
 
+#include "BurgerTime/PlayerAndEnemies/PeterPepper.h"
+
 #include "Mage/Scenegraph/GameObject.h"
-#include "PlayerAndEnemies/PeterPepper.h"
 #include "Mage/Components/TextComponent.h"
 
 PepperUI::PepperUI(const PeterPepper* pPeterPepper)

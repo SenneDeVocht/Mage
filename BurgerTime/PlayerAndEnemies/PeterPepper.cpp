@@ -1,7 +1,7 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "PeterPepper.h"
 
-#include "BurgerTime/GameManager.h"
+#include "BurgerTime/Managers/GameManager.h"
 #include "BurgerTime/PlayerAndEnemies/PlayerMovement.h"
 #include "BurgerTime/Level.h"
 

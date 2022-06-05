@@ -1,7 +1,7 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "Enemy.h"
 
-#include "BurgerTime/ScoreManager.h"
+#include "BurgerTime/Managers/ScoreManager.h"
 #include "BurgerTime/Burger/BurgerIngredient.h"
 
 #include "Mage/Components/AnimatedSpriteComponent.h"

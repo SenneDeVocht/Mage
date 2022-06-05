@@ -13,16 +13,15 @@
 #include "Mage/Components/TilemapComponent.h"
 #include "Mage/Components/TextComponent.h"
 
-#include "BurgerTime/MainMenu.h"
 #include "BurgerTime/Level.h"
-#include "BurgerTime/PepperUI.h"
-#include "BurgerTime/LivesUI.h"
+#include "BurgerTime/Managers/GameManager.h"
+#include "BurgerTime/Managers/ScoreManager.h"
+#include "BurgerTime/UI/MainMenu.h"
+#include "BurgerTime/UI/LivesUI.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyManager.h"
-#include "BurgerTime/ScoreUI.h"
-#include "BurgerTime/GameOverManager.h"
-#include "BurgerTime/GameManager.h"
-#include "BurgerTime/ScoreManager.h"
-#include "BurgerTime/HighScoreUI.h"
+#include "BurgerTime/UI/ScoreUI.h"
+#include "BurgerTime/UI/GameOver.h"
+#include "BurgerTime/UI/HighScoreUI.h"
 
 // Other
 #include "Mage/Engine/ServiceLocator.h"
@@ -216,7 +215,7 @@ void BurgerTime::LoadGame() const
 			#pragma region MainMenu
 
 			const auto gameOverObject = pScene->CreateChildObject("GameOverManager");
-			gameOverObject->CreateComponent<GameOverManager>();
+			gameOverObject->CreateComponent<GameOver>();
 
 			#pragma endregion
 		});

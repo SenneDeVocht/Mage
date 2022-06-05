@@ -5,7 +5,7 @@
 #include <map>
 
 #include "BurgerTime/EventSystem.h"
-#include "BurgerTime/GameManager.h"
+#include "BurgerTime/Managers/GameManager.h"
 #include "BurgerTime/Burger/BurgerIngredient.h"
 
 #include "Mage/Components/SpriteComponent.h"

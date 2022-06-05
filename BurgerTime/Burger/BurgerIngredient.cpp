@@ -10,7 +10,7 @@
 
 #include "BurgerTime/Burger/BurgerIngredientPart.h"
 #include "BurgerTime/Level.h"
-#include "BurgerTime/ScoreManager.h"
+#include "BurgerTime/Managers/ScoreManager.h"
 
 BurgerIngredient::BurgerIngredient(Level* level, IngredientType type)
 	: m_pSubject{ std::make_unique<Subject>() }

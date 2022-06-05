@@ -194,23 +194,23 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="EventSystem.cpp" />
-    <ClCompile Include="GameManager.cpp" />
-    <ClCompile Include="GameOverManager.cpp" />
-    <ClCompile Include="HighScoreUI.cpp" />
-    <ClCompile Include="SavedScoreManager.cpp" />
-    <ClCompile Include="LivesUI.cpp" />
-    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Managers\GameManager.cpp" />
+    <ClCompile Include="UI\GameOver.cpp" />
+    <ClCompile Include="UI\HighScoreUI.cpp" />
+    <ClCompile Include="Managers\SavedScoreManager.cpp" />
+    <ClCompile Include="UI\LivesUI.cpp" />
+    <ClCompile Include="UI\MainMenu.cpp" />
     <ClCompile Include="PlayerAndEnemies\EnemyManager.cpp" />
-    <ClCompile Include="PepperUI.cpp" />
+    <ClCompile Include="UI\PepperUI.cpp" />
     <ClCompile Include="PlayerAndEnemies\Enemy.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PlayerAndEnemies\EnemyMovement.cpp" />
     <ClCompile Include="PlayerAndEnemies\PeterPepper.cpp" />
     <ClCompile Include="PlayerAndEnemies\PlayerMovement.cpp" />
     <ClCompile Include="Level.cpp" />
-    <ClCompile Include="ScoreManager.cpp" />
-    <ClCompile Include="ScoreUI.cpp" />
-    <ClCompile Include="SettingsManager.cpp" />
+    <ClCompile Include="Managers\ScoreManager.cpp" />
+    <ClCompile Include="UI\ScoreUI.cpp" />
+    <ClCompile Include="Managers\SettingsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mage\Mage.vcxproj">
@@ -223,22 +223,22 @@
     <ClInclude Include="BurgerTime.h" />
     <ClInclude Include="BurgerTimePCH.h" />
     <ClInclude Include="EventSystem.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="GameOverManager.h" />
-    <ClInclude Include="HighScoreUI.h" />
-    <ClInclude Include="SavedScoreManager.h" />
-    <ClInclude Include="LivesUI.h" />
-    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Managers\GameManager.h" />
+    <ClInclude Include="UI\GameOver.h" />
+    <ClInclude Include="UI\HighScoreUI.h" />
+    <ClInclude Include="Managers\SavedScoreManager.h" />
+    <ClInclude Include="UI\LivesUI.h" />
+    <ClInclude Include="UI\MainMenu.h" />
     <ClInclude Include="PlayerAndEnemies\EnemyManager.h" />
-    <ClInclude Include="PepperUI.h" />
+    <ClInclude Include="UI\PepperUI.h" />
     <ClInclude Include="PlayerAndEnemies\Enemy.h" />
     <ClInclude Include="PlayerAndEnemies\PeterPepper.h" />
     <ClInclude Include="PlayerAndEnemies\EnemyMovement.h" />
     <ClInclude Include="PlayerAndEnemies\PlayerMovement.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="ScoreManager.h" />
-    <ClInclude Include="ScoreUI.h" />
-    <ClInclude Include="SettingsManager.h" />
+    <ClInclude Include="Managers\ScoreManager.h" />
+    <ClInclude Include="UI\ScoreUI.h" />
+    <ClInclude Include="Managers\SettingsManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

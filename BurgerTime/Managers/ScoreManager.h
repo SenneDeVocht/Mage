@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 
-#include "EventSystem.h"
+#include "BurgerTime/EventSystem.h"
 #include "Mage/Components/Component.h"
 
 class GameManager;

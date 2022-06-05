@@ -1,7 +1,7 @@
 #include "BurgerTime/BurgerTimePCH.h"
 #include "EnemyManager.h"
 
-#include "BurgerTime/GameManager.h"
+#include "BurgerTime/Managers/GameManager.h"
 #include "BurgerTime/PlayerAndEnemies/EnemyMovement.h"
 #include "BurgerTime/PlayerAndEnemies/Enemy.h"
 #include "BurgerTime/Level.h"

@@ -28,6 +28,20 @@ public:
 
     bool ProcessInput()
     {
+        bool quit = false;
+
+        // SDL Events
+        SDL_Event e;
+        while (SDL_PollEvent(&e))
+        {
+            // Quit application
+            if (e.type == SDL_QUIT)
+                quit = true;
+
+            // ImGui input
+            ImGui_ImplSDL2_ProcessEvent(&e);
+        }
+
         // Controller
         m_PreviousControllerStates = m_CurrentControllerStates;
         for (DWORD i = 0; i < 4; i++)
@@ -57,7 +71,7 @@ public:
 	        }
         }
 
-        return true;
+        return quit;
     }
 
     void AddInputAction(InputAction* action)

@@ -30,9 +30,7 @@ namespace Mage {
 		void SetCamera(CameraComponent* pCamera);
 		void SetBackgroundColor(const SDL_Color& color);
 
-		void BeginFrame() const;
-		void Draw();
-		void EndFrame() const;
+		void Render();
 
 		void RenderPolygonOutline(const std::vector<glm::vec2>& positions, bool closed, const glm::vec4& color, float layer);
 	    void RenderPolygonFilled(const std::vector<glm::vec2>& positions, const glm::vec4& color, float layer);
@@ -123,46 +121,73 @@ void Mage::GLRenderer::GLRendererImpl::SetBackgroundColor(const SDL_Color& color
     m_ClearColor = color;
 }
 
-void Mage::GLRenderer::GLRendererImpl::BeginFrame() const
+void Mage::GLRenderer::GLRendererImpl::Render()
 {
 	// CLEAR
 	//------
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// IMGUI
-	//------
-	ImGui_ImplOpenGL2_NewFrame();
-	ImGui_ImplSDL2_NewFrame(m_pWindow);
-	ImGui::NewFrame();
-}
-
-
-void Mage::GLRenderer::GLRendererImpl::Draw()
-{
+	// RENDER
+	//-------
 	if (m_pCamera != nullptr && m_pCamera->IsEnabled())
 	{
+		// RENDER GAME
+		SceneManager::GetInstance().Render();
+
+		// Sort by layer
 		std::stable_sort(
 			m_RenderCommands.begin(), m_RenderCommands.end(),
 			[](const RenderCommand& a, const RenderCommand& b)
 			{
 				return a.Layer < b.Layer;
-			});
+			}
+		);
 
+		// Draw to target
 		for (auto& renderCommand : m_RenderCommands)
 			renderCommand.Command();
 
 		m_RenderCommands.clear();
-	}
-}
 
-void Mage::GLRenderer::GLRendererImpl::EndFrame() const
-{
+#ifdef DEBUG
+		// RENDER GUIZMOS
+		SceneManager::GetInstance().RenderGizmos();
+
+		// Sort by layer
+		std::stable_sort(
+			m_RenderCommands.begin(), m_RenderCommands.end(),
+			[](const RenderCommand& a, const RenderCommand& b)
+			{
+				return a.Layer < b.Layer;
+			}
+		);
+
+		// Draw to target
+		for (auto& renderCommand : m_RenderCommands)
+			renderCommand.Command();
+
+		m_RenderCommands.clear();
+#endif
+	}
+
+	// IMGUI
+	//------
+	ImGui_ImplOpenGL2_NewFrame();
+	ImGui_ImplSDL2_NewFrame(m_pWindow);
+	ImGui::NewFrame();
+
+	SceneManager::GetInstance().DrawImGui();
+
 	ImGui::Render();
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
+	// SHOW
+	//-----
 	SDL_GL_SwapWindow(m_pWindow);
 
-	// Additional ImGui viewports
+	// ADDITIONAL VIEWPORST
+	//---------------------
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
@@ -393,19 +418,9 @@ Mage::GLRenderer::GLRenderer(SDL_Window* window)
 
 Mage::GLRenderer::~GLRenderer() = default;
 
-void Mage::GLRenderer::BeginFrame()
+void Mage::GLRenderer::Render()
 {
-	m_pImpl->BeginFrame();
-}
-
-void Mage::GLRenderer::Draw()
-{
-	m_pImpl->Draw();
-}
-
-void Mage::GLRenderer::EndFrame()
-{
-	m_pImpl->EndFrame();
+	m_pImpl->Render();
 }
 
 void Mage::GLRenderer::SetCamera(CameraComponent* pCamera)
